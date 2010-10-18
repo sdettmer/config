@@ -1378,6 +1378,8 @@ map ,ifs ^istatus = <ESC>Oif (status == CBASE_ERR_OK) {<ESC>j==o}<ESC><CR>
 " You can avoid loading this plugin by setting the loaded_matchparen variable:
 :let loaded_matchparen = 1
 
+" Feature F2
+
 " highlight long lines (>80 chars)
 "highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 if v:version >= 600
