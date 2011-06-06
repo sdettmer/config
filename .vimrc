@@ -634,7 +634,6 @@ au BufEnter *.pl        set ai et sw=4 ts=4
 au BufEnter .vimrc      set ai et sw=4 ts=4
 au BufEnter *.html      set ai    sw=2 ts=2
 au BufEnter *.shtml     set ai    sw=2 ts=2
-
 au BufEnter confspec.prepare  set tw=0
 au BufEnter configure.{in,ac} set tw=0
 au BufEnter Makefile*   set tw=0
