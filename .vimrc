@@ -8,6 +8,7 @@ version 5.3
 " test 2
 " test 3
 " test 4
+" test 6
 
   set noexpandtab
 
