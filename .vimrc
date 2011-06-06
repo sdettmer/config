@@ -12,6 +12,12 @@ version 5.3
     set autoindent
     set smartindent
     set nocindent
+"       autoread: When a file has been detected to have been changed
+"       outside of Vim and it has not been changed inside of Vim,
+"       automatically read it again.
+if v:version >= 600
+  set autoread
+endif
 "
 "       autowrite: Automatically save modifications to files
 "       when you use critical (rxternal) commands.
@@ -49,6 +55,14 @@ version 5.3
 
 "       esckeys:    allow usage of cursor keys within insert mode
   set   esckeys
+
+
+"       foldlevelstart: sets 'foldlevel' when starting to edit another
+"       buffer in a window. Useful to always start editing with all folds
+"       closed (value zero), some folds closed (one) or no folds closed (99).
+if v:version >= 600
+    set foldlevelstart=99
+endif
 "
 "       formatoptions:  Options for the "text format" command ("gq")
 "                       I need all those options (but 'o')!
@@ -139,6 +153,7 @@ set listchars=trail:·,tab:»·
 "  set   path=.,,~/.P/vim,~/.P/vim/syntax,~/.P/vim/source,$VIM/syntax/
 " set   path=.,,~/.P/vim,~/.P/mutt/,~/.P/elm,~/.P/slrn/,~/.P/nn
 "
+  set path+=*/src,build/$HOSTNAME/*/src
 "       report: show a report when N lines were changed.
 "               report=0 thus means "show all changes"!
   set   report=0
@@ -207,7 +222,8 @@ set listchars=trail:·,tab:»·
   set notextmode
 "
 "       textwidth
-  set   textwidth=65
+"  set   textwidth=65
+"  NOW in au BufEnter *
 "
 "       title:
   set notitle
@@ -249,6 +265,9 @@ set listchars=trail:·,tab:»·
 "
 "       writebackup:
   set nowritebackup
+
+" needing more entries than the default of 20
+  set history=2000
 "
 "     Yruler : A ruler.
   iab Yruler 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
@@ -467,8 +486,16 @@ set listchars=trail:·,tab:»·
 "     Stws = show trailing whitespace
   nmap ,Stws :%s/  *$/_/g<C-M>
   vmap ,Stws :%s/  *$/_/g<C-M>
-  nmap ,ktws :%s/  *$//g<C-M>
-  vmap ,ktws :%s/  *$//g<C-M>
+" kill trailing whitespace
+fun Ktws()
+  let x=line(".")
+  let y=col(".")
+  "silent %s/ \+$//eg
+  %s/ \+$//eg
+  call cursor(x,y)
+endfun
+  nmap ,ktws :call Ktws()<C-M>
+  vmap ,ktws :call Ktws()<C-M>
 "
 " General Editing - Turning umlauts into ascii (for German keyboards)
 "
@@ -590,10 +617,16 @@ set listchars=trail:·,tab:»·
 "
 " set the textwidth to 65 characters for replies (email&usenet)
   au BufNewFile,BufRead .letter,mutt*,nn.*,snd.* set tw=65
+  au BufNewFile,BufRead ,bash-fc-* set paste nolist
+  fun NadineMod()
+    %s/n.woitziske@beratung-sk.de/NadineWoitziske@aol.com/igce
+  endfun
+  au BufNewFile,BufRead  .letter,mutt*,nn.*,snd.* call NadineMod()
 "
 " Some more autocommand examples which set the values for
 " "autoindent", "expandtab", "shiftwidth", "tabstop", and "textwidth":
 "au BufEnter *.[ch]      set ai et sw=3 ts=3
+au BufEnter *           set tw=65 noet
 au BufEnter *.cc        set ai et sw=4 ts=4
 au BufEnter *.java      set ai et sw=4 ts=4
 au BufEnter *.idl       set ai et sw=4 ts=4
@@ -602,12 +635,15 @@ au BufEnter .vimrc      set ai et sw=4 ts=4
 au BufEnter *.html      set ai    sw=2 ts=2
 au BufEnter *.shtml     set ai    sw=2 ts=2
 
+au BufEnter confspec.prepare  set tw=0
+au BufEnter configure.{in,ac} set tw=0
+au BufEnter Makefile*   set tw=0
 au BufEnter *.utf8      set encoding=utf8
 
-au BufWrite *.[ch]      :%s/ \+$//e
-au BufWrite *.cc        :%s/ \+$//e
-au BufWrite *.java      :%s/ \+$//e
-au BufWrite *.idl       :%s/ \+$//e
+au BufWrite *.[ch]      call Ktws()
+au BufWrite *.cc        call Ktws()
+au BufWrite *.java      call Ktws()
+au BufWrite *.idl       call Ktws()
 
 " au BufEnter *.java      set ai    sw=4 ts=4
 " au BufEnter */drafts/*  set tw=72
@@ -702,7 +738,7 @@ au BufWrite *.idl       :%s/ \+$//e
 "      ,j = join line in commented text
 "           (can be used anywhere on the line)
 " nmap ,j Jxx
-  nmap ,j Vjgq
+"  nmap ,j Vjgq
 "
 "      ,B = break line at current position *and* join the next line
 " nmap ,B i<CR>><ESC>Jxx
@@ -1330,11 +1366,45 @@ nmap ,tfc wwxxx/<C-V><C-I><CR>r llllxxxA.<ESC>
 
 nmap ,nofmtall :s/^/{noformat}<C-V><CR>/<CR>kyyGp
 nmap ,jir2 madwcw*<ESC>jdwdwdw<ESC>kllPli wrote on <ESC>A:<ESC>jd4d^VG,qp'a,nofmtall,ktws
+
 let templatefile="/home/users/steffen/work/pds_sys/igdevtools/templates/template.vim"
 if filereadable( templatefile )
   so/home/users/steffen/work/pds_sys/igdevtools/templates/template.vim
 endif
 
 
+" :set makeprg=/home/users/steffen/work/pds_sys/igdevtools/mhmake
+
 " let mysyntaxfile = "~/.vim/mysyntax.vim"
 " so "~/.vim/doxyvim.vim"
+"so ~/.vim/doxygen.vim
+"so ~/.vim/mszlog.vim
+if !exists("log_command_loaded")
+    let log_command_loaded = 1
+    augroup log_read
+        autocmd!
+        autocmd BufReadPost *.log :so ~/.vim/mszlog.vim
+        autocmd BufReadPost *.log :set nowrap
+    augroup END
+endif
+
+" make clogEnter and clogLeave around the current C function
+map ,enter ?^{<CR>?(<CR>byw/^{<CR>ocbaseErrorId_t status = CBASE_ERR_OK;<CR>clogEnter(("<ESC>pA"));<CR><ESC>?^{<CR>%O<CR>clogLeave(("<ESC>pA"));<CR>return status;<ESC>
+" add if (status == OK) block and prefix status = current line
+map ,ifs ^istatus = <ESC>Oif (status == CBASE_ERR_OK) {<ESC>j==o}<ESC><CR>
+
+
+" Highlighting matching parens
+" You can avoid loading this plugin by setting the loaded_matchparen variable:
+:let loaded_matchparen = 1
+
+" Feature F2
+
+" highlight long lines (>80 chars)
+"highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+if v:version >= 600
+highlight OverLength ctermbg=blue guibg=#592929
+"match OverLength /\%81v.*/
+match OverLength /.\%>81v/
+endif
+" test 4
