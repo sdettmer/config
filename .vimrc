@@ -637,6 +637,7 @@ au BufEnter *.shtml     set ai    sw=2 ts=2
 au BufEnter confspec.prepare  set tw=0
 au BufEnter configure.{in,ac} set tw=0
 au BufEnter Makefile*   set tw=0
+au BufEnter *.utf8      set encoding=utf8
 
 au BufWrite *.[ch]      call Ktws()
 au BufWrite *.cc        call Ktws()
@@ -1356,6 +1357,7 @@ cabbrev Ydsp  import/dsp/src/ingenico/de/dsp
 iabbrev Ydsp  ingenico/de/dsp
 cabbrev Yidbc import/dsp/src/ingenico/de/idbc
 iabbrev Yidbc ingenico/de/idbc
+
 nmap ,tfu /Submit<CR>wwxxxwwwwwwwwwwhr llllxxxwwhr<CR>whxllx;w<CR>:w<CR>
 nmap ,tf2 ddpkdwxxi* <ESC>Jxdwxi wrote on<ESC>A:<ESC>jd3d:,$s/^/> /<CR>:%s/  *$//g<C-M>
 nmap ,tf3 2xi*<ESC>$Xjd2dVG,qp,ktwsggjgqG
@@ -1364,11 +1366,11 @@ nmap ,tfc wwxxx/<C-V><C-I><CR>r llllxxxA.<ESC>
 nmap ,nofmtall :s/^/{noformat}<C-V><CR>/<CR>kyyGp
 nmap ,jir2 madwcw*<ESC>jdwdwdw<ESC>kllPli wrote on <ESC>A:<ESC>jd4d^VG,qp'a,nofmtall,ktws
 
-
 let templatefile="/home/users/steffen/work/pds_sys/igdevtools/templates/template.vim"
 if filereadable( templatefile )
   so/home/users/steffen/work/pds_sys/igdevtools/templates/template.vim
 endif
+
 :set makeprg=/home/users/steffen/work/pds_sys/igdevtools/mhmake
 
 " let mysyntaxfile = "~/.vim/mysyntax.vim"
