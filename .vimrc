@@ -222,7 +222,8 @@ set listchars=trail:·,tab:»·
   set notextmode
 "
 "       textwidth
-  set   textwidth=65
+"  set   textwidth=65
+"  NOW in au BufEnter *
 "
 "       title:
   set notitle
@@ -486,8 +487,15 @@ set listchars=trail:·,tab:»·
   nmap ,Stws :%s/  *$/_/g<C-M>
   vmap ,Stws :%s/  *$/_/g<C-M>
 " kill trailing whitespace
-  nmap ,ktws :%s/ \+$//g<C-M>
-  vmap ,ktws :%s/ \+$//g<C-M>
+fun Ktws()
+  let x=line(".")
+  let y=col(".")
+  "silent %s/ \+$//eg
+  %s/ \+$//eg
+  call cursor(x,y)
+endfun
+  nmap ,ktws :call Ktws()<C-M>
+  vmap ,ktws :call Ktws()<C-M>
 "
 " General Editing - Turning umlauts into ascii (for German keyboards)
 "
@@ -618,6 +626,7 @@ set listchars=trail:·,tab:»·
 " Some more autocommand examples which set the values for
 " "autoindent", "expandtab", "shiftwidth", "tabstop", and "textwidth":
 "au BufEnter *.[ch]      set ai et sw=3 ts=3
+au BufEnter *           set tw=65 noet
 au BufEnter *.cc        set ai et sw=4 ts=4
 au BufEnter *.java      set ai et sw=4 ts=4
 au BufEnter *.idl       set ai et sw=4 ts=4
@@ -625,11 +634,14 @@ au BufEnter *.pl        set ai et sw=4 ts=4
 au BufEnter .vimrc      set ai et sw=4 ts=4
 au BufEnter *.html      set ai    sw=2 ts=2
 au BufEnter *.shtml     set ai    sw=2 ts=2
+au BufEnter confspec.prepare  set tw=0
+au BufEnter configure.{in,ac} set tw=0
+au BufEnter Makefile*   set tw=0
 
-au BufWrite *.[ch]      :%s/ \+$//e
-au BufWrite *.cc        :%s/ \+$//e
-au BufWrite *.java      :%s/ \+$//e
-au BufWrite *.idl       :%s/ \+$//e
+au BufWrite *.[ch]      call Ktws()
+au BufWrite *.cc        call Ktws()
+au BufWrite *.java      call Ktws()
+au BufWrite *.idl       call Ktws()
 
 " au BufEnter *.java      set ai    sw=4 ts=4
 " au BufEnter */drafts/*  set tw=72
@@ -724,7 +736,7 @@ au BufWrite *.idl       :%s/ \+$//e
 "      ,j = join line in commented text
 "           (can be used anywhere on the line)
 " nmap ,j Jxx
-  nmap ,j Vjgq
+"  nmap ,j Vjgq
 "
 "      ,B = break line at current position *and* join the next line
 " nmap ,B i<CR>><ESC>Jxx
