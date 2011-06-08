@@ -4,6 +4,7 @@ version 5.3
 " ==================================================================
 " File:         $HOME/.vimrc.forall  (sourced by ~USER/.vimrc)
 " Last update:  Thu Jul 01 20:00:00 MET DST 1999
+" master branch
 
   set noexpandtab
 
@@ -625,19 +626,19 @@ endfun
 "
 " Some more autocommand examples which set the values for
 " "autoindent", "expandtab", "shiftwidth", "tabstop", and "textwidth":
-"au BufEnter *.[ch]      set ai et sw=3 ts=3
-au BufEnter *           set tw=65 noet
-au BufEnter *.cc        set ai et sw=4 ts=4
-au BufEnter *.java      set ai et sw=4 ts=4
-au BufEnter *.idl       set ai et sw=4 ts=4
-au BufEnter *.pl        set ai et sw=4 ts=4
-au BufEnter .vimrc      set ai et sw=4 ts=4
-au BufEnter *.html      set ai    sw=2 ts=2
-au BufEnter *.shtml     set ai    sw=2 ts=2
-au BufEnter confspec.prepare  set tw=0
-au BufEnter configure.{in,ac} set tw=0
-au BufEnter Makefile*   set tw=0
-au BufEnter *.utf8      set encoding=utf8
+au BufNewFile,BufRead *.[ch]      set ai et sw=3 ts=3
+au BufNewFile,BufRead *           set tw=65 noet ts=8 sts=0
+au BufNewFile,BufRead *.cc        set ai et sw=4 ts=4
+au BufNewFile,BufRead *.java      set ai et sw=4 ts=4
+au BufNewFile,BufRead *.idl       set ai et sw=4 ts=4
+au BufNewFile,BufRead *.pl        set ai et sw=4 ts=4
+au BufNewFile,BufRead .vimrc      set ai et sw=4 ts=4
+au BufNewFile,BufRead *.html      set ai et sw=2 ts=2
+au BufNewFile,BufRead *.shtml     set ai et sw=2 ts=2
+au BufNewFile,BufRead confspec.prepare  set tw=0 sts=0
+au BufNewFile,BufRead configure.{in,ac} set tw=0 sts=0
+au BufNewFile,BufRead Makefile*   set tw=0 noet ts=8 sts=0
+au BufNewFile,BufRead *.utf8      set encoding=utf8
 
 au BufWrite *.[ch]      call Ktws()
 au BufWrite *.cc        call Ktws()
