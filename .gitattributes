@@ -1,0 +1,5 @@
+.vimrc eol=lf
+.vim/* eol=lf
+.vim/*/* eol=lf
+.vim/*/*/* eol=lf
+*.vim eol=lf
