@@ -215,9 +215,9 @@ set listchars=trail:·,tab:»·
 
 " Set the colors for vim on "xterm"
 "  if &term=="xterm"
-  set t_Co=8
-  set t_AB=[%?%p1%{8}%<%t%p1%{40}%+%e%p1%{92}%+%;%dm
-  set t_AF=[%?%p1%{8}%<%t%p1%{30}%+%e%p1%{82}%+%;%dm
+"  set t_Co=8
+"  set t_AB=[%?%p1%{8}%<%t%p1%{40}%+%e%p1%{92}%+%;%dm
+"  set t_AF=[%?%p1%{8}%<%t%p1%{30}%+%e%p1%{82}%+%;%dm
 "  endif
 "
 "       textmode:    no - I am using Vim on UNIX!
@@ -1373,7 +1373,7 @@ if filereadable( templatefile )
   so/home/users/steffen/work/pds_sys/igdevtools/templates/template.vim
 endif
 
-:set makeprg=/home/users/steffen/work/pds_sys/igdevtools/mhmake
+" :set makeprg=/home/users/steffen/work/pds_sys/igdevtools/mhmake
 
 " let mysyntaxfile = "~/.vim/mysyntax.vim"
 " so "~/.vim/doxyvim.vim"
