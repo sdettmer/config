@@ -5,6 +5,7 @@ version 5.3
 " File:         $HOME/.vimrc.forall  (sourced by ~USER/.vimrc)
 " Last update:  Thu Jul 01 20:00:00 MET DST 1999
 " master branch
+" Windows version (no colors)
 
   set noexpandtab
 
