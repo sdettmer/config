@@ -19,8 +19,8 @@ set var $is_show_clog = 1
 
 # must be last statement, because gdb-6.8 (w/o Python)
 #   stops execution because of the error in the file.
-echo ~steffen/.gdbinit explicitely sourcing ~steffen/.gdbinit.py:\n
-source ~steffen/.gdbinit.py
+# echo ~steffen/.gdbinit explicitely sourcing ~steffen/.gdbinit.py:\n
+# source ~steffen/.gdbinit.py
 echo ~steffen/.gdbinit explicitely sourcing gdb-commands.txt:\n
 source gdb-commands.txt
 
