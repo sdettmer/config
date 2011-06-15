@@ -632,7 +632,7 @@ au BufNewFile,BufRead *           set tw=65 noet ts=8 sts=0
 au BufNewFile,BufRead *.cc        set ai et sw=4 ts=4
 au BufNewFile,BufRead *.java      set ai et sw=4 ts=4
 au BufNewFile,BufRead *.idl       set ai et sw=4 ts=4
-au BufNewFile,BufRead *.pl        set ai et sw=4 ts=4
+au BufNewFile,BufRead *.pl,*.rb,*.hs set ai et sw=4 ts=4
 au BufNewFile,BufRead .vimrc      set ai et sw=4 ts=4
 au BufNewFile,BufRead *.html      set ai et sw=2 ts=2
 au BufNewFile,BufRead *.shtml     set ai et sw=2 ts=2
