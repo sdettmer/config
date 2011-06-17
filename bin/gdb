@@ -1,0 +1,27 @@
+#!/bin/bash
+PATH=/usr/local/build/gdb-7.2/linux/gdb:/usr/local/build/gdb-7.1.90/linux/gdb:/usr/local/build/gdb-6.8:/usr/local/bin:/usr/bin:$PATH ;
+if [ -e ./ingenico ] ; then
+   f=`file ./ingenico`;
+   # "${f/*ARM*}" matches on .*ARM.* and deletes the match, i.e.
+   #    if $f contains ARM, it returns empty, otherwise unchanged $f,
+   # See TWiki.Main.BashProgramming
+   if [ -z "${f/*ARM*}" ] ; then
+      echo "(auto-gdb: preceeding ARM)" ;
+      PATH=/usr/local/build/gdb-7.2/build/gdb/:$PATH ;
+   fi
+fi
+export PATH
+gdb=$(type -p gdb)
+gdb0=$(type -p $0)
+if [ "$gdb" = "$gdb0" ] ; then
+   echo "Arggh, found myself in PATH!" >&2
+   echo "   me: $0 ($gdb0)" >&2
+   echo "   from PATH: $gdb" >&2
+   echo "   PATH: $PATH" >&2
+   exit 2
+fi
+echo "Exec $gdb..."
+# Note: "$@" is shell special (!) and makes parameters be passed 1:1
+test -x $gdb && exec $gdb "$@"
+echo "Failed to exec $gdb" >&2
+exit 2
