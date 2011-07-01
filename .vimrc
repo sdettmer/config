@@ -1410,3 +1410,13 @@ highlight OverLength ctermbg=blue guibg=#592929
 match OverLength /.\%>81v/
 endif
 " test 4
+" Automatically cd into the directory that the file is in
+" autocmd BufEnter * execute "chdir ".escape(expand("%:p:h"), ' ')
+" doesn't cripple command line:
+" autocmd BufEnter * silent! lcd %:p:h:gs/ /\\ /
+" only recent autochdir
+" similar to bash shell completion:
+"   first TAB completes to longest unique match, second prints
+"   list. Extra goodie: third press iterates all matches (like
+"   vim default)
+set wildmode=longest,list,list:full
