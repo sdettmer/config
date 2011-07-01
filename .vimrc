@@ -613,6 +613,9 @@ endfun
 " autocommands twice when the vimrc file is sourced again.
   autocmd!
 "
+" au Buf* are executed in order of definition in file, followed
+"   by file mode line. So file defaults first:
+au BufNewFile,BufRead *           set tw=65 noet ts=8 sts=0
 " Let Vim identify itself when editing emails with Mutt:
 " au! BufNewFile,BufRead mutt* let @"="X-Editor: Vim-".version." http://www.vim.org/\n"|exe 'norm 1G}""P'
 "au! BufNewFile,BufRead mutt* let @"="X-Editor: Vim-".version." http://www.vim.org/\n"|exe 'norm 1G}""P'
@@ -628,7 +631,6 @@ endfun
 " Some more autocommand examples which set the values for
 " "autoindent", "expandtab", "shiftwidth", "tabstop", and "textwidth":
 au BufNewFile,BufRead *.[ch]      set ai et sw=3 ts=3
-au BufNewFile,BufRead *           set tw=65 noet ts=8 sts=0
 au BufNewFile,BufRead *.cc        set ai et sw=4 ts=4
 au BufNewFile,BufRead *.java      set ai et sw=4 ts=4
 au BufNewFile,BufRead *.idl       set ai et sw=4 ts=4
