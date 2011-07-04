@@ -61,7 +61,7 @@ endfunction
 " returns the text part for the parameter list 
 function! DoxyParamList()
     normal mz
-    normal /(
+    normal /(<CR>
     normal "ay%
 
     let p = CScanParam(@a)
