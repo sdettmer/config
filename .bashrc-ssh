@@ -1,0 +1,56 @@
+# Bash knows 3 diferent shells: normal shell, interactive shell, login shell.
+# ~/.bashrc is read for interactive shells and ~/.profile is read for login
+# shells. We just let ~/.profile also read ~/.bashrc and put everything in
+# ~/.bashrc.
+
+test -z "$PROFILEREAD" && . /etc/profile
+
+if kill -0 "$SSH_AGENT_PID" ; then
+	echo "SSH-Agent ready."
+	PS1="ssh \u@\h:\w # "
+	ssh-add && PS1="SSH \u@\h:\w # "
+else
+	echo "WARNING, no agent!"
+	echo -n "trying to start it..."
+	eval `ssh-agent`
+	if kill -0 "$SSH_AGENT_PID" ; then
+		echo " succeeded. SSH-Agent ready"
+		PS1="ssh \u@\h:\w # "
+		ssh-add && PS1="SSH \u@\h:\w # "
+	else
+		echo "FATAL: couldn't start SSH-Agent!"
+	fi
+fi
+
+# commands common to all logins
+
+if ! [ $TERM ] ; then
+    eval `tset -s -Q`
+    case $TERM in
+      con*|vt100) tset -Q -e ^?
+        ;;
+    esac
+fi
+
+#export LANG=de_DE.ISO-8859-1
+
+
+#
+# try to set DISPLAY smart (from Hans) :)
+#
+if test -z "$DISPLAY" -a "$TERM" = "xterm" -a -x /usr/bin/who ; then
+    WHOAMI="`/usr/bin/who am i`"
+    _DISPLAY="`expr "$WHOAMI" : '.*(\([^\.][^\.]*\).*)'`:0.0"
+    if [ "${_DISPLAY}" != ":0:0.0" -a "${_DISPLAY}" != " :0.0" \
+         -a "${_DISPLAY}" != ":0.0" ]; then
+        export DISPLAY="${_DISPLAY}";
+    fi
+    unset WHOAMI _DISPLAY
+fi
+
+
+test -e ~/.alias && . ~/.alias
+
+
+export DISPLAY LESS PS1 PS2
+umask 022
