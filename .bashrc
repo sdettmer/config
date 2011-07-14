@@ -98,6 +98,7 @@ fi
 
 test -e ~/.alias && . ~/.alias
 
+test -e ~/.git-completion.bash && . ~/.git-completion.bash
 
 export DISPLAY PS1 PS2
 umask 022
