@@ -650,6 +650,21 @@ au BufWrite *.idl       call Ktws()
 
 " au BufEnter *.java      set ai    sw=4 ts=4
 " au BufEnter */drafts/*  set tw=72
+
+" Extra syntax - GIT from vim-7.3 (also needs the syntax files)
+" Git
+autocmd BufNewFile,BufRead *.git/COMMIT_EDITMSG setf gitcommit
+autocmd BufNewFile,BufRead *.git/config,.gitconfig,.gitmodules setf gitconfig
+autocmd BufNewFile,BufRead git-rebase-todo      setf gitrebase
+autocmd BufNewFile,BufRead .msg.[0-9]*
+      \ if getline(1) =~ '^From.*# This line is ignored.$' |
+      \   setf gitsendemail |
+      \ endif
+autocmd BufNewFile,BufRead *.git/**
+      \ if getline(1) =~ '^\x\{40\}\>\|^ref: ' |
+      \   setf git |
+      \ endif
+
 " Examples used by talg@CS.Berkeley.edu - thanks!
 "
 " Try to use the mapping ",D" when doing a followup.
