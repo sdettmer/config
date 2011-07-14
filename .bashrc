@@ -3,8 +3,6 @@
 # shells. We just let ~/.profile also read ~/.bashrc and put everything in
 # ~/.bashrc.
 
-test -z "$PROFILEREAD" && . /etc/profile
-
 test -z "${LESS/*-R*/}" || LESS="$LESS -R"
 export LESS
 test -z "$PROFILEREAD" && { PROFILEREAD=1 ; . /etc/profile ; }
