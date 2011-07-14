@@ -5,7 +5,11 @@
 
 test -z "${LESS/*-R*/}" || LESS="$LESS -R"
 export LESS
-test -z "$PROFILEREAD" && { PROFILEREAD=1 ; . /etc/profile ; }
+test -z "$PROFILEREAD" && { export PROFILEREAD=true ; . /etc/profile ; }
+
+# git-unlock-pack wasn't found
+# test -z "${PATH/*local*/}" || PATH="$PATH:/usr/local/bin/"
+# export PATH
 
 function xterm_title()
 {

@@ -3,7 +3,7 @@
 # So read .bashrc also from .profile and make all changes to .bashrc.
 # Then you should always have your correct setup.
 
-test -z "$PROFILEREAD" && { PROFILEREAD=1 ; . /etc/profile ; }
+test -z "$PROFILEREAD" && { export PROFILEREAD=true ; . /etc/profile ; }
 
 #export PATH=$PATH:/home/pub/bin:/home/pub/sbin
 
