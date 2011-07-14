@@ -3,7 +3,12 @@
 # So read .bashrc also from .profile and make all changes to .bashrc.
 # Then you should always have your correct setup.
 
-test -z "$PROFILEREAD" && { export PROFILEREAD=true ; . /etc/profile ; }
+# We cannot set PROFILEREAD before, because then it SuSE
+# /etc/profile does not set all options (e.g. no PATH), we cannot
+# set PROFILEREAD after sourcing, then on cywgwin /etc/profile
+# and endless recursion happens... So we use a second variable
+test -z "$PROFILEREAD" && test -z "$PROFILEONCE" &&
+    { export PROFILEONCE=true ; . /etc/profile ; }
 
 #export PATH=$PATH:/home/pub/bin:/home/pub/sbin
 

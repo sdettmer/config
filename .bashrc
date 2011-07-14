@@ -5,7 +5,13 @@
 
 test -z "${LESS/*-R*/}" || LESS="$LESS -R"
 export LESS
-test -z "$PROFILEREAD" && { export PROFILEREAD=true ; . /etc/profile ; }
+
+# We cannot set PROFILEREAD before, because then it SuSE
+# /etc/profile does not set all options (e.g. no PATH), we cannot
+# set PROFILEREAD after sourcing, then on cywgwin /etc/profile
+# and endless recursion happens... So we use a second variable
+test -z "$PROFILEREAD" && test -z "$PROFILEONCE" &&
+    { export PROFILEONCE=true ; . /etc/profile ; }
 
 # git-unlock-pack wasn't found
 # test -z "${PATH/*local*/}" || PATH="$PATH:/usr/local/bin/"
