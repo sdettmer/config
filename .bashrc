@@ -7,6 +7,7 @@ test -z "$PROFILEREAD" && . /etc/profile
 
 test -z "${LESS/*-R*/}" || LESS="$LESS -R"
 export LESS
+test -z "$PROFILEREAD" && { PROFILEREAD=1 ; . /etc/profile ; }
 
 function xterm_title()
 {
