@@ -623,6 +623,7 @@ au BufNewFile,BufRead *           set tw=65 noet ts=8 sts=0
 " set the textwidth to 65 characters for replies (email&usenet)
   au BufNewFile,BufRead .letter,mutt*,nn.*,snd.* set tw=65
   au BufNewFile,BufRead ,bash-fc-*,/tmp/cvs* set paste nolist
+  au BufNewFile,BufRead *.git/COMMIT_EDITMSG set paste nolist
   fun NadineMod()
     %s/n.woitziske@beratung-sk.de/NadineWoitziske@aol.com/igce
   endfun
