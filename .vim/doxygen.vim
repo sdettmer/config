@@ -114,7 +114,7 @@ endfunction
 " This function is not fail save!
 function! CScanRet()
     normal mz
-    normal /(B
+    normal /(<CR>B
     let c = col(".")
     if c == 1
         normal k
