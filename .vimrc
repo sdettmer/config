@@ -215,11 +215,17 @@ set listchars=trail:·,tab:»·
 
 " Set the colors for vim on "xterm"
 "  if &term=="xterm"
-  set t_Co=8
-  set t_AB=[%?%p1%{8}%<%t%p1%{40}%+%e%p1%{92}%+%;%dm
-  set t_AF=[%?%p1%{8}%<%t%p1%{30}%+%e%p1%{82}%+%;%dm
+"  set t_Co=8
+"  set t_AB=[%?%p1%{8}%<%t%p1%{40}%+%e%p1%{92}%+%;%dm
+"  set t_AF=[%?%p1%{8}%<%t%p1%{30}%+%e%p1%{82}%+%;%dm
 "  endif
 "
+
+" colors
+" Search is used in "copen". Default is Brightwhite-on-yellow?!
+"   Set black(0) on yellow (3)
+highlight Search term=standout ctermfg=0 ctermbg=3
+
 "       textmode:    no - I am using Vim on UNIX!
   set notextmode
 "
