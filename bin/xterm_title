@@ -5,4 +5,6 @@ function xterm_title()
    echo -n "]2;$@]1;$*"
 }
 
+[ "$1" = "" ] && { echo "Usage: $0 <Title text>"; exit 1; }
+
 xterm_title "$@"
