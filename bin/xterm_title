@@ -1,0 +1,8 @@
+#!/bin/bash
+# Found in the Web years ago by Steffen Dettmer <steffen@dett.de> :-)
+function xterm_title()
+{
+   echo -n "]2;$@]1;$*"
+}
+
+xterm_title "$@"
