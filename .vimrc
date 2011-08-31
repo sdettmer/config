@@ -293,6 +293,7 @@ set listchars=trail:·,tab:»·
   let MAILNEWSFILES = "*.article,*.followup,*.letter,mutt*"
 
   ab MYADDR "Steffen Dettmer" <steffen@dett.de>
+  ab MYADDRI "Steffen Dettmer" <Steffen.DETTMER@ingenico.com>
   ab Yoki   oki,<CR><CR>Steffen
   
   ab Yline1 ------------------------------------------------------------------->8=======
