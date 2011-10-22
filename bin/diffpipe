@@ -1,0 +1,74 @@
+#!/bin/bash
+#New unified version of diffpipe.
+
+function warn() { echo "$@" >&2 ; }
+function die() { warn "FATAL: $@" ; exit 2 ; }
+
+function usage()
+{
+  echo "Diffs the view contents as defined by two config specs."
+  echo "Usage: $0 [-p <pipe>] <config_spec_a.cs> <config_spec_b.cs> [path]"
+}
+
+function abort()
+{
+  warn "$@"
+  myname=$(basename -- $0)
+  warn "Try $myname -h for help."
+  exit 1
+}
+
+if [ -x "`type -p colordiff`" ] ; then
+  pipe=`type -p colordiff`
+fi
+if [ -x "`type -p colordiff2`" ] ; then
+  pipe=`type -p colordiff2`
+fi
+
+while getopts ":khp:C" opt; do
+  case $opt in
+    p) pipe=$OPTARG;;
+    h)  usage
+        exit 0
+        ;;
+    \?) abort "Invalid option: -$OPTARG."
+        ;;
+    :)  abort "Option -$OPTARG requires an argument."
+        ;;
+  esac
+done
+shift $((OPTIND-1))
+
+PATH_A=$1
+shift
+PATH_B=$1
+shift
+# if [ -z "$PATH_B" ] ; then
+#    PATH_B="${PATH_A}"
+#    PATH_A="${PATH_A}.dist"
+# fi
+
+if [ -z "$PATH_B" ] ; then
+  abort "Need second parameter"
+fi
+
+if [ ! -r "$PATH_A" ] ; then
+  abort "No $PATH_A."
+fi
+if [ ! -r "$PATH_B" ] ; then
+  abort "No $PATH_B."
+fi
+if [ "$pipe" -a ! -x "`type -p $pipe`" ] ; then
+  abort "$pipe fail."
+fi
+
+test -e  $HOME/.diffpiperc && . $HOME/.diffpiprrc
+
+if [ "$pipe" ] ; then
+  diff -Nur "$PATH_A" "$PATH_B" | $pipe
+else
+  warn "pipe failed, falling back to normal diff."
+  diff -Nur "$PATH_A" "$PATH_B"
+fi
+
+# vi: set et ts=2 sw=2:
