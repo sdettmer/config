@@ -1,0 +1,507 @@
+# ----- $HOME/.muttrc -------------------------------------------
+#
+# for reference try "less /usr/doc/packages/mutt/manual.txt"
+
+# nimm die Kommentare nicht sonderlich ernst, die sind tw noch
+# alt (ich nutze keinerlei Umlaute und sehr viel kuerzere Zeilen)
+# und nicht beim "Umschalten" mitgefuehrt
+
+#GPG:
+source /usr/share/doc/packages/mutt/gpg.rc
+
+#Einlesen des Alias-Files
+source ~/.mutt_alias
+
+#Apr-2009
+#set imap_pass =
+
+set read_inc = 10
+set write_inc = 10
+unset save_address
+
+set attribution = "* %n wrote on %d:"
+
+#sendmail 8.8.x + kann DNS notifies zurücksenden.
+#set dsn_notify="failure,delay,success"
+#set dsn_notify="failure,delay"
+
+#PGP Passphrase nicht cachen
+set pgp_timeout=0
+
+#Follow Up anzeigen
+set followup_to
+
+#Alias anzeigen, wenn vorhanden
+set reverse_alias
+
+#Mutt soll keinen Domainnamen an e-Mail-Adressen anfügen
+unset use_domain
+
+#Anzahl der Zeilen, die im Pager für die Index-Darstellung verwendet werden
+set pager_index_lines=10
+
+#Beim Threading wird im Thread nach Datum sortiert; Threads werden 
+#so sortiert, daß die mit neuen Mails ganz unten stehen
+#set sort_aux=subject
+
+#Wenn man beim Erstellen einer Mail nichts eingibt (als Body), wird man
+#nicht gefragt, ob man abbrechen will
+set abort_unmodified=ask-no
+
+#Gelesene Mail nicht in einen Extrafolder verschieben
+set move=no
+
+#Beim Speichern von Mails in einen anderen (schon existierenden) Ordner wird
+#nicht nachgefragt, ob man das denn auch wirklich will
+unset confirmappend
+
+set mbox_type=Maildir
+
+#Festlegen des Defaultverzeichnisses für Mailfolder
+set folder=/home/users/steffen/Mail/
+
+#Festlegen des Spoolfiles
+# gsi:  da wird vsm draus, wenn ich nichts anderes sage
+# set spoolfile=+Inbox
+#set spoolfile=/home/steffen/Mail-In/!inbox!
+#set spoolfile=imap://sdettmer:steffen@mail.bln/INBOX
+#set spoolfile=imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX 
+set spoolfile=imap://steffen:steffen@raven/INBOX
+
+#Mutt läßt sich nicht mit Strg-Z stoppen
+set suspend
+
+#LDAP
+set query_command = "~/mutt_ldap_query3.pl '%s'"
+
+#Zeilenweises Scrollen, nicht den Ganzen Screen löschen und nächste Seite
+#zeigen
+set menu_scroll
+
+#Regulärer Ausdruck für Quote-Erkennung
+set quote_regexp="^([ \t]*[>|#:}])+"
+set quote_regexp="^([ \t]*([>|:]|-+>))+|^([ \t]*[A-Za-z._]{1,15}>)+|^([ \t]*\\+-{3,})+"
+#set quote_regexp="(^[ \t]*([>|:]|-+>))|(^[ \t]*[A-Za-z._]{1,15}>)|(^[ \t]*\\+-{3,})"
+
+#Regulärer Ausdruck für Reply-Erkennung
+set reply_regexp="^(re|aw|betr\.?|antw\.?|antwort|wg|fwd|)(.[0-9])?:[ \t]*"
+
+#Threads auch an gleichem Subject der Mails erkennen (dabei muß eine Antwort
+#mit dem Regexp reply_regexp anfangen, um als zum Thread gehörig erkannt zu
+#werden), falls das übliche Threading nicht funktioniert, weil die References-
+#Header fehlen
+unset strict_threads 
+set sort_re
+
+my_hdr From: "Steffen DETTMER" <Steffen.DETTMER@ingenico.com>
+#my_hdr Reply-To: "Steffen Dettmer" <steffen@dett.de>
+#my_hdr Reply-To: "Steffen Dettmer" <steffen@dett.de>
+my_hdr X-Editor: Vim http://www.vim.org/
+
+#Eigene e-Mail-Aressen (als Regexp)
+set alternates="(steffen@dett\.de|steffen@bedinetz\.de|steffen@tfh-berlin\.de)"
+
+
+#Anzeige der " +TCF"-Attribute im Index unterdrücken
+# set to_chars="     "
+
+#Größe des History-Puffers (für Mutt-Editierfelder)
+set history=50
+
+#Editor zum verfassen der Mails
+# set editor='joe -nobackups -wordwrap -rmargin 65'
+# set editor='mutt_edit 2>>~/log/mutt_edit_error'
+
+#erste freie Zeilen suchen, "o" öffnet neue 
+set editor='vim -c "/^$"'
+
+#Editor als Ersatz des internen Editors (???)
+set visual='joe -nobackups'
+
+#Beim Reply Originalmessage quoten
+set include
+set edit_headers
+
+#Beim Reply nicht nach Adresse und Subject fragen
+set fast_reply
+
+# nicht mehr das bescheuerte Subject beim forwarden
+set forward_format="%s (fwd)"
+
+#Beim seitenweisen Nach-Unten-Scrollen in Mails nicht zur nächste Mail springen
+set pager_stop
+
+#Folder für postponed messages
+set postponed=+postponed-msgs
+
+#Folder für versandte Messages
+set record=+sent-mail
+
+#Standard-Folder für saved messages
+#save-hook "root@speedy.gsinet" +log
+#save-hook "g.sittig@abo.freiepresse.de" +muell
+#save-hook "gmxred@gmx.net" +admin
+#save-hook . +@alias
+#save-hook . +ANSEHEN
+
+#Vorm Drucken nachfragen
+set print=yes
+#set print_command="a2ps --margin=25 -s 1 -E -M A4ky -r -1"
+#set print_command="a2ps -s 2 -Email -M A4ky -r -2 -A virtual --highlight-level=heavy"
+
+#HP-mono:
+set print_command="a2ps -s 1 -Email -M A4ky -r -1 -A virtual --highlight-level=heavy -Php-mono"
+#set print_command="a2ps -s 2 -Email -M A4ky -r -2 -A virtual --highlight-level=heavy -Php-mono"
+#HP-Color:
+#set print_command="a2ps -s 1 --margin=35 -Email -M A4 -r -1 -A virtual --highlight-level=heavy -Php-color"
+
+#Nach dem Verlassen externer Programme (z. B. lynx) nicht auf Tastendruck
+#warten (nur bei Fehler ist einer nötig)
+unset wait_key
+
+#Nicht zwischen Status New und Old-New unterscheiden (Old-New: neue Messages,
+#die nicht beim letzten Aufsuchen eines Folders gelesenen wurden)
+unset mark_old
+
+#Datumsformat (24h)
+set date_format="!%a, %b %d, %Y at %H:%M %Z"
+
+#Anzeigeformat im Index:
+#Normal in allen Foldern außer in Sent-Mail und Postponed, da wird
+#statt des Absenders der Empfänger angezeigt
+#set hdr_format="%4C %Z %{%b %d}  %-20.20n  %s"
+#folder-hook . 'set hdr_format="%4C %Z %{%b %d}  %-20.20n  %s"'
+#folder-hook sent-mail 'set hdr_format="%4C %Z %{%b %d}  %-20.20t  %s"'
+#folder-hook postponed-msgs 'set hdr_format="%4C %Z %{%b %d}  %-20.20t  %s"'
+
+set folder_format=" %N  (%8s)   %-42f   [%d]"
+set index_format="%4C %Z %{%b %d}  %-20.20n  %s"
+folder-hook . 'set index_format="%4C %Z %{%b %d}  %-20.20n  %s"'
+folder-hook sent-mail 'set index_format="%4C %Z %{%b %d}  %-20.20t  %s"'
+folder-hook postponed-msgs 'set index_format="%4C %Z %{%b %d}  %-20.20t  %s"'
+
+#set sort_browser=reverse-date
+
+
+#Anzeigeformat der Statuszeile im Pager
+set pager_format="-%S- %C/%m: %-20.20n %s"
+
+#Nicht abbrechen, wenn beim Verfassen der Mail kein Subject angegeben wurde
+unset abort_nosubject
+
+#Buzzer abschalten
+unset beep
+
+#Beim Anwenden von Kommandos auf eine Mail (z. B. Tag oder Flag) nicht zur
+#nächsten Mail springen
+#unset resolve
+set resolve
+
+#Wenn Mails markiert (tagged) sind, das nächste Kommando auf all diese anwenden
+set auto_tag
+
+#Keine 8bit-Mails versenden
+unset allow_8bit
+
+#Festlegen des Alias-Files (für e-Mail-Adressen)
+set alias_file=~/.mutt_alias
+
+#Beim Eintreffen neuer Mail beepen
+set beep_new
+
+#Aliases nicht sortieren
+set sort_alias=unsorted
+
+#Mailcheck-Intervall
+set timeout=10
+
+#Beim Senden 1 Sekunde warten und dann im Hintergrund weitersenden
+set sendmail_wait=1
+
+#Beim Forwarden MIME-Messages decodieren
+#(führt auch dazu, daß nicht gesamter Header geforwarded wird)
+unset forward_decode
+
+#Beim Forwarden MIME-Messages nicht als Attatchment schicken
+unset mime_forward
+
+#Wenn mime_forward gesetzt ist, MIME-Messages nicht decodieren
+unset mime_forward_decode
+
+set signature="~/Mail/.signature"
+# meine .sig:  "und die dashes sind auch schon drin ..."
+unset sig_dashes
+
+#mailboxes imap://sdettmer@mail.bln/INBOX
+
+#Mailboxen, die Mutt auf neue Mail prüft
+#mailboxes	! +div \
+#                +IN.isdn +IN.unix +IN.bsd \
+#                +IN.security +IN.eepro +IN.cvs \
+#                +muell
+#mailboxes	\
+#	/home/steffen/Mail-In/.main		\
+#	/home/steffen/Mail-In/TRASH		\
+#	/home/steffen/Mail-In/gw1-logs		\
+#	/home/steffen/Mail-In/isdn4linux	\
+#	/home/steffen/Mail-In/large		\
+#	/home/steffen/Mail-In/logs		\
+#	/home/steffen/Mail-In/modssl-users	\
+#	/home/steffen/Mail-In/openssl-users	
+
+#alle files unter Mail-In, außer .fromlog, Maildirs (mit "new" ...)
+#BACKUP selbst nur anzeigen 
+#dabei müssen maildirs selbst mit rein - könnten ja in subdirs
+#liegen (eine Ebene soll erlaubt sein)
+#mailboxes `find /home/steffen/Mail-In -type f -not -name \
+#.fromlog -not -path '*BACKUP*' -maxdepth 2 \
+#	-not -path '*/new/*' -not -path '*/cur/*' -not -path '*/tmp/*' \
+#	|xargs echo -n; \
+#find /home/steffen/Mail-In -type d -maxdepth 2 \
+#	-not -path '*/new' -not -path '*/cur' -not -path '*/tmp' \
+#	|xargs echo -n; \
+#	echo `
+mailboxes imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX \
+  imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX/cygwin \
+  imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX/nagios
+
+#Headerdarstellung im Pager
+#(welche werden angezeigt und in welcher Reihenfolge)
+ignore          *
+unignore        X-AntiVirus: X-Note: Date: Reply-To: To: CC: Newsgroups: Subject: From: X-Mailer: X-MimeOLE
+hdr_order       X-AntiVirus: X-Note: From: Reply-To: To: CC: Newsgroups: Subject: Date: X-Mailer: X-MimeOLE
+
+#Mailinglisten (wichtig für's List-Reply)
+lists           mutt-announce mutt-users \
+                suse-security bugtraq freebsd-security \
+		openssl-users modssl-users \
+                isdn4linux suse-isdn suse-linux suse-announce \
+                info-cvs ssh@clinet.fi selflinux@hh.schule.de \
+		linux-ipsec selflinux-admin \
+		cygwin@cygwin.com rxtx@qbang.org
+
+# # Hooks für compressed folder patch
+# open-hook     "Old-"        "gzip -cd %f > %t"
+# close-hook    "Old-"        "gzip -c %t > %f"
+# append-hook   "Old-"        "gzip -c %t >> %f"
+
+#Sortierung der Mailinglisten festlegen (Threads)
+folder-hook     "."                      set sort=threads
+folder-hook     ".main"                  set sort=date
+folder-hook     "postponed-mgs"          set sort=date
+folder-hook     "sent-mail"              set sort=mailbox-order
+folder-hook     "BACKUP/.*"              set sort=mailbox-order
+
+unset autoedit
+unset askcc
+unset askbcc
+
+send-hook	"."		my_hdr From: "Steffen DETTMER" <Steffen.DETTMER@ingenico.com> 
+
+#fcc-save-hook	"." +sent-mail
+fcc-save-hook	"netsaint" +admin
+fcc-save-hook	"td" +BEDI
+fcc-save-hook	"susi@atlas.tfh-berlin.de" +susi
+fcc-save-hook	"Gerhard.Sittig@gmx.net" +gerhard.sittig
+fcc-save-hook	"flashlight@swn.de" +Barry
+fcc-save-hook	"MGOLLNAU@jura.uni-wuerzburg.de" +Maria
+fcc-save-hook	"klingner@stud.uni-frankfurt.de" +Teffa
+fcc-save-hook	"cheesychics2@yahoo.com" +heather
+fcc-save-hook	"roser@uni-muenster.de" +Tina
+fcc-save-hook	"pitti@amendestr.in-berlin.de" +pitti
+
+fcc-save-hook	"styx@tfh-berlin.de" +styx
+fcc-save-hook	"s652204@tfh-berlin.de" +styx
+fcc-save-hook	"dmarkov@kpmg.com" +styx
+fcc-save-hook	"s.weissenberg@BBA.DE" +styx
+save-hook	"selflinux@hh.schule.de" /home/steffen/Mail-In/selflinux
+save-hook	"selflinux-admin@" /home/steffen/Mail-In/selflinux-admin
+
+# didn't work, used vimrc...
+# send-hook "~C n.woitziske@beratung-sk.de" "exec edit-to"
+# message-hook "~f n.woitziske@beratung-sk.de" "my_hdr To: <NadineWoitziske@aol.com>"
+
+#Key bindings
+bind editor     <up>            history-up
+bind editor     <down>          history-down
+bind editor	<delete>	delete-char
+bind pager	<up>		previous-line
+bind pager	<down>		next-line
+bind index	<pageup>        previous-page
+bind pager	<pageup>	previous-page
+bind index	<pagedown>      next-page
+bind pager      <pagedown>	next-page
+bind index      \ep	        print-message
+bind pager	\ep		print-message
+bind index	p		noop
+bind pager	p		noop
+bind pager	<left>		previous-entry
+bind pager	<right>		next-entry
+bind index      <left>          previous-entry
+bind index      <right>         next-entry
+bind index	\el		list-reply
+bind pager	\el		list-reply
+bind attach	\el		list-reply
+bind generic	<f10>		current-top
+bind generic	<f11>		current-middle
+bind generic	<f12>		current-bottom
+bind generic	"\Ca"		first-entry
+bind generic	"\Ce"		last-entry
+bind pager	"\Ca"		top
+bind pager	"\Ce"		bottom
+
+#Makros für den Wechsel in die Verzeichnisse, die Mailfolder enthalten
+macro index     'I'     c!\n
+macro pager     'I'     c!\n
+macro attach    'I'     c!\n
+#macro browser	'I'	+2\n\n
+
+bind  index     'p'    change-newsgroup
+macro index	'i'	c?\t
+
+macro attach	'c'	qc
+
+#Macros um alle Mails anzeigen (Rückgängigmachen von `l')
+macro pager	'L'	l~A\n
+macro index	'L'	l~A\n
+
+#Macros, um zu verhindern, daß beim Tag, Delete, Undelete,
+#Mark-as-New, Flag im Pager nicht zur nächsten Mail gesprungen wird
+#macro pager	't'	":unset resolve\n:bind pager \e% tag-message\n\e%:set resolve\n"
+#macro pager	'd'	":unset resolve\n:bind pager \e% delete-message\n\e%:set resolve\n"
+#macro pager	'u'	":unset resolve\n:bind pager \e% undelete-message\n\e%:set resolve\n"
+#macro pager	'N'	":unset resolve\n:bind pager \e% mark-as-new\n\e%:set resolve\n"
+#macro pager	'F'	":unset resolve\n:bind pager \e% flag-message\n\e%:set resolve\n"
+
+#Macros für's Forwarden:
+#Bei `f' werden nur ausgewählte Header in die Mail übernommen, bei `Alt-f' alle
+macro index	f	":set forward_decode\n:bind index \e% forward-message\n\e%"
+macro pager	f	":set forward_decode\n:bind pager \e% forward-message\n\e%"
+macro attach	f	":set forward_decode\n:bind attach \e% forward-message\n\e%"
+macro index	\ef	":unset forward_decode\n:bind index \e% forward-message\n\e%"
+macro pager	\ef	":unset forward_decode\n:bind pager \e% forward-message\n\e%"
+macro attach	\ef	":unset forward_decode\n:bind attach \e% forward-message\n\e%"
+
+#Macros, die zwischen den Editoren umschalten
+macro generic	\ej	":set editor='joe -nobackups -wordwrap -rmargin 65'\n"
+macro generic	\em	":set editor='mutt_edit 2>>~/log/mutt_edit_error'\n"
+
+#In Mailinglisten liegt auf `r' das List-Reply und auf `Alt-r' Reply an den Autor
+#In normalen Foldern liegt auf beiden Reply an den Autor
+#Reply: r: default (Author/list), ESC-r immer Authot, ESC-l immer
+#Liste
+folder-hook .			set reply_to=ask-yes
+folder-hook .			bind	attach	r	reply
+folder-hook .			bind	index	r	reply
+folder-hook .			bind	pager	r	reply
+folder-hook .			bind	attach	g	group-reply
+folder-hook .			bind	index	g	group-reply
+folder-hook .			bind	pager	g	group-reply
+folder-hook .			bind	attach	\er	reply
+folder-hook .			bind	index	\er	reply
+folder-hook .			bind	pager	\er	reply
+folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	set reply_to=ask-yes
+folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	bind	attach	r	list-reply
+folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	bind	index	r	list-reply
+folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	bind	pager	r	list-reply
+folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	bind	attach	\er	reply
+folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	bind	index	\er	reply
+folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	bind	pager	\er	reply
+
+#reply auf Logs gibts nicht (notfalls doch: ESC-r)
+folder-hook "(logs|status)"	bind	attach	r	noop
+folder-hook "(logs|status)"	bind	index	r	noop
+folder-hook "(logs|status)"	bind	pager	r	noop
+
+
+#NNTP: http://strcat.neessen.net/mutt/mutt.nntp.html
+#set news_server = news.de.ingenico.com
+#set ask_follow_up
+set catchup_newsgroup = ask-no
+set group_index_format = "%4C %M%N %5s  %-45.45f %d"
+set newsrc = "~/.mutt/nntp.d/.newsrc-%s"
+set news_cache_dir = ~/.mutt/nntp.d
+set nntp_load_description
+set nntp_poll = 60
+set post_moderated = ask-yes
+set show_new_news
+# up to 10k messages to be displayed
+set nntp_context="10000"
+unset show_only_unread
+#set save_unsubscribed
+unset mime_subject
+
+#"reply" auf news (followup-message)
+folder-hook "nntp://"          bind    attach  r followup-message
+folder-hook "nntp://"          bind    index   r followup-message
+folder-hook "nntp://"          bind    pager   r followup-message
+folder-hook "nntp://"          bind    attach  g followup-message
+folder-hook "nntp://"          bind    index   g followup-message
+folder-hook "nntp://"          bind    pager   g followup-message
+#bind pager 'r' followup-message
+
+auto_view text/html
+#auto_view text/html application/x-gunzip \
+#  application/postscript image/gif application/x-tar-gz
+
+#Farben
+color   attachment      magenta         default
+#Smileys u. a. am Anfang einer Zeile nicht als gequoteten Text verstehen
+color   body            white           default   "^ *[:]-?[)(\/].*$"
+color   bold            brightwhite     default
+color   body            brightwhite     default   "Assigned to: Steffen"
+color   error           red             default
+# color   header          brightyellow    default   "Date: |From: |To: |Subject: "
+color   header          brightyellow    default   "^Subject: "
+color   header          brightcyan      default   "^X-Note: "
+color   header          white    	default   "^To:"
+color   header          brightblack	default "^To:.*([Ss]teffen@|(sd|std)@bedinetz.de)"
+color   hdrdefault      yellow          default
+color   indicator       default           white
+color   markers         brightblue      default
+color   message         white           default
+color   normal          white           default
+color   quoted          yellow          default
+color   quoted1         green           default
+color   quoted2         cyan            default
+color   quoted3         red             default
+color   search          brightyellow    blue
+color   signature       brightblack     default
+color   status          brightyellow    blue
+color   tilde           brightblack     default
+color   tree            brightblack     default
+color   underline       brightred       default
+
+#und Specials: 
+color	header		brightcyan	default "Outlook"
+color	header		brightcyan	default "Exchange"
+color	body		brightblack	default "^.*[Ww]rote [Oo]n .* at .*:.?$"
+color	body		brightblack	default "^.*wrote:.?.?$"
+color	body		brightblack	default "^.*schrieb:.?$"
+color	body		brightblack	default "^.*Am.*schrieb.*:.?$"
+color	body		brightblack	default "^.*schrieb am.*:.?$"
+color	body		brightwhite	default "\(PM\)"
+color   body            magenta         default "^.*PGP SIGNED MESSAGE.*$"
+color   body            magenta         default "^.*-----[^-]+-----.*$"
+color   body            brightmagenta   default '[a-z0-9][-a-z_0-9/.%+]+@[-a-z_0-9.]+\.[-a-z]+'
+color   body            brightmagenta   default '((https?|ftp)://|www\.)[-a-z_0-9@#$%&+=:;\'~,./?]+[a-z_0-9/]'
+color	body		brightwhite	default "[Ss]teffen( [Dd]ettmer)?"
+color	body		brightwhite	default "( [Ww]ichtig|--> |!!+|oki,?|[Dd]ringend)"
+color	body		brightblack	default "Outlook"
+color   index		brightgreen     default "([Dd]ettmer|[Tt][Dd])"
+color   index		brightgreen     default "(JSC|schlegel)"
+color   index		green     	default "[Ss]ittig"
+color   index		green     	default "(Klingner|Gollnau|Messow)"
+color	index		brightyellow	default "(TODO|TO DO|todo|to do)"
+color	index		yellow		default "[Ss]teffen( [Dd]ettmer)?"
+color	index		brightblack	default "www@tfh-berlin"
+color	index		brightblack	default "Mail System"
+color	index		brightblack	default "(DAEMON|aemon)"
+color	index		white		default "[Cc]ron"
+color	index		red		default "SYSLOG"
+color   index		red     	default "(SMS:|CERT|ichtig|!!|ringend)"
+
+color   index           brightwhite     default   ~N
+color   index           brightblack     default   ~D
+
+# ----- E O F ---------------------------------------------------
