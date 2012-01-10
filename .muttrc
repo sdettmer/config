@@ -84,7 +84,8 @@ set quote_regexp="^([ \t]*([>|:]|-+>))+|^([ \t]*[A-Za-z._]{1,15}>)+|^([ \t]*\\+-
 #set quote_regexp="(^[ \t]*([>|:]|-+>))|(^[ \t]*[A-Za-z._]{1,15}>)|(^[ \t]*\\+-{3,})"
 
 #Regulärer Ausdruck für Reply-Erkennung
-set reply_regexp="^(re|aw|betr\.?|antw\.?|antwort|wg|fwd|)(.[0-9])?:[ \t]*"
+#  Also groups things like "[a32de-Bugs] SFR-xxxx".
+set reply_regexp="^((re|aw|betr\.?|antw\.?|antwort|wg|fwd|)(.[0-9])?:[ \t]*)|(\[\w+-\w+\] SFR-)"
 
 #Threads auch an gleichem Subject der Mails erkennen (dabei muß eine Antwort
 #mit dem Regexp reply_regexp anfangen, um als zum Thread gehörig erkannt zu
