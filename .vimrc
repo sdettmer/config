@@ -1443,3 +1443,7 @@ endif
 "   list. Extra goodie: third press iterates all matches (like
 "   vim default)
 set wildmode=longest,list,list:full
+
+" https://github.com/tpope/vim-pathogen:
+" call pathogen#infect()
+
