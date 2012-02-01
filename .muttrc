@@ -486,9 +486,10 @@ color   body            magenta         default "^.*PGP SIGNED MESSAGE.*$"
 color   body            magenta         default "^.*-----[^-]+-----.*$"
 color   body            brightmagenta   default '[a-z0-9][-a-z_0-9/.%+]+@[-a-z_0-9.]+\.[-a-z]+'
 color   body            brightmagenta   default '((https?|ftp)://|www\.)[-a-z_0-9@#$%&+=:;\'~,./?]+[a-z_0-9/]'
-color	body		brightwhite	default "[Ss]teffen( [Dd]ettmer)?"
+color	body		brightwhite	default "[Ss]teffen( [Dd]ettmer)?( DETTMER)?"
 color	body		brightwhite	default "( [Ww]ichtig|--> |!!+|oki,?|[Dd]ringend)"
 color	body		brightblack	default "Outlook"
+color   body            brightmagenta   default "The following comment has been added to this issue"
 color   index		brightgreen     default "([Dd]ettmer|[Tt][Dd])"
 color   index		brightgreen     default "(JSC|schlegel)"
 color   index		green     	default "[Ss]ittig"
