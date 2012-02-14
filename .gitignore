@@ -1,4 +1,6 @@
 *
+!.gdbinit
+!.gdbinit.py
 !.vimrc
 !.vim
 !.vim/*
