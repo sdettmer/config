@@ -1,0 +1,8 @@
+*
+!.vimrc
+!.vim
+!.vim/*
+!.vim/plugin
+!.vim/plugin/*
+!.vim/syntax
+!.vim/syntax/*

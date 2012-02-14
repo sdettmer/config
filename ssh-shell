@@ -1,0 +1,31 @@
+function wagent()
+{
+	if [ ! -z "$SSH_AGENT_PID" ] ; then
+		if kill -0 "$SSH_AGENT_PID"; then
+			echo "WARNING: This shell runs still an agent!"
+			return 1
+		fi
+	fi
+	echo "Waiting for agent to terminate..."
+	for n in 1 2 3 4 5 6 7 8 9 0; do
+	#for n in 1 2; do
+		if ps ax|grep -v grep|grep ssh-agent >/dev/null  ; then
+			echo -n ". "
+			sleep 1
+		else
+			return 0
+		fi 
+	done
+	return 1
+}
+
+echo "Titrax?"
+#ssh-agent /bin/bash --rcfile ~/.bashrc-ssh
+ssh-agent /home/users/steffen/.bash-ssh.sh
+echo "Agent session ended"
+if wagent ; then
+	echo "(No more running agents)"
+else
+	echo ""
+	echo "Warning: There are more running agents."
+fi

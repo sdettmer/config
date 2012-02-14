@@ -1,0 +1,7 @@
+#!/usr/bin/perl -Tw
+# This is AHEX -> BIN converter
+#   If no parameter is given, STDIN is read.
+my $ahex = $ARGV[0] || join('', <>);
+chomp $ahex;
+print pack("H*", $ahex);
+

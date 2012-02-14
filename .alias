@@ -1,0 +1,7 @@
+alias print2="a2ps -s 2 -E -Php-mono -r -2 -A sheet"
+alias print="a2ps --margin=25 -s 1 -E -Php-mono -r -1"
+alias doc2txt="lhalw --to_stdout"
+# less search line: less with search for --- or more -
+alias lsl="less +/-\{3,\}"
+alias ....='cd ../../../'
+alias .....='cd ../../../../'

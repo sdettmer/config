@@ -1,0 +1,9 @@
+#!/bin/bash
+T=~/work/times.txt
+logger -p warn -- "** XLOCK activated by script (menu)."
+echo "`date` ** XLOCK activated by script (menu)." >> $T
+ssh-add -D
+xlock -mode swarm
+logger -p warn -- "** XLOCK from script (menu) unlocked."
+echo "`date` ** XLOCK from script (menu) unlocked." >> $T
+ssh-add
