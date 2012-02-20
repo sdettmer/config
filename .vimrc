@@ -646,6 +646,8 @@ au BufNewFile,BufRead *.pl,*.rb,*.hs set ai et sw=4 ts=4
 au BufNewFile,BufRead .vimrc      set ai et sw=4 ts=4
 au BufNewFile,BufRead *.html      set ai et sw=2 ts=2
 au BufNewFile,BufRead *.shtml     set ai et sw=2 ts=2
+au BufNewFile,BufRead *.rb        set ai et sw=2 ts=2
+au BufNewFile,BufRead *.erb       set ai et sw=2 ts=2
 au BufNewFile,BufRead confspec.prepare  set tw=0 sts=0
 au BufNewFile,BufRead configure.{in,ac} set tw=0 sts=0
 au BufNewFile,BufRead Makefile*   set tw=0 noet ts=8 sts=0
@@ -655,6 +657,8 @@ au BufWrite *.[ch]      call Ktws()
 au BufWrite *.cc        call Ktws()
 au BufWrite *.java      call Ktws()
 au BufWrite *.idl       call Ktws()
+au BufWrite *.rb        call Ktws()
+au BufWrite *.erb       call Ktws()
 
 " au BufEnter *.java      set ai    sw=4 ts=4
 " au BufEnter */drafts/*  set tw=72
