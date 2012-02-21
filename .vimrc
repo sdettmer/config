@@ -22,8 +22,7 @@ version 5.3
 "       lose undo history because of accidentally page reload in other tab
 "       Note: Firefox edit-undo history is kept in first tab.
 if v:version >= 600
-  au BufNewFile,BufRead *      set autoread
-  au BufNewFile,BufRead *.utf8 setlocal noautoread
+  set autoread
 endif
 "
 "       autowrite: Automatically save modifications to files
@@ -623,6 +622,7 @@ endfun
 "
 " Remove ALL auto-commands.  This avoids having the
 " autocommands twice when the vimrc file is sourced again.
+"   (for search au! )
   autocmd!
 "
 " au Buf* are executed in order of definition in file, followed
@@ -657,6 +657,9 @@ au BufNewFile,BufRead confspec.prepare  set tw=0 sts=0
 au BufNewFile,BufRead configure.{in,ac} set tw=0 sts=0
 au BufNewFile,BufRead Makefile*   set tw=0 noet ts=8 sts=0
 au BufNewFile,BufRead *.utf8      set encoding=utf8
+if v:version >= 600
+  au BufNewFile,BufRead *.utf8    setlocal noautoread
+endif
 
 au BufWrite *.[ch]      call Ktws()
 au BufWrite *.cc        call Ktws()
