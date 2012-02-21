@@ -17,8 +17,13 @@ version 5.3
 "       autoread: When a file has been detected to have been changed
 "       outside of Vim and it has not been changed inside of Vim,
 "       automatically read it again.
+"       *.utf8 is an exception, because I only use this as Its All Text
+"       Firefox Plug-In interchange file and here I don't want to
+"       lose undo history because of accidentally page reload in other tab
+"       Note: Firefox edit-undo history is kept in first tab.
 if v:version >= 600
-  set autoread
+  au BufNewFile,BufRead *      set autoread
+  au BufNewFile,BufRead *.utf8 setlocal noautoread
 endif
 "
 "       autowrite: Automatically save modifications to files
