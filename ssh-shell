@@ -21,7 +21,7 @@ function wagent()
 
 echo "Titrax?"
 #ssh-agent /bin/bash --rcfile ~/.bashrc-ssh
-ssh-agent /home/users/steffen/.bash-ssh.sh
+ssh-agent ~/.bash-ssh.sh
 echo "Agent session ended"
 if wagent ; then
 	echo "(No more running agents)"
