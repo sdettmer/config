@@ -112,17 +112,18 @@ File.open "systems.lst" do | file |
     puts "** COUNTS TOTALS AFTER #{sysname}:" if $DEBUG
     pp counts if $DEBUG
     puts "** RESULT TOTALS FOR #{sysname}:"
-    systotals[sysname] = types.zip(counts).
-                         sort   { |a,b| b[1] <=> a[1] } .
-                         select { |e| e[1] > 99 } .
-                         map    { |e| { e[0] => e[1] } }
-    pp systotals[sysname]
+    # lines.select would be better than reject-not, but select
+    #                                         returns an array, not a hash!!
+    # pp "smcs", lines.reject { | scmname, val | not scms.include? scmname }
+    pp "scms.v.r", lines.reject { | scmname, val | not scms.include? scmname }.
+                   values.
+                   inject { |m, new| m.merge(new) { |k,o,n| o+n } } if $DEBUG
+    systotals[sysname] = lines.
+      reject { | scmname, val | not scms.include? scmname }.
+      values.
+      inject { |sums, new| sums.merge(new) { |k,o,n| o+n } }
   end
 
+  File.open("scms.yaml",    "w") { |f| YAML.dump(lines, f) }
   File.open("results.yaml", "w") { |f| YAML.dump(systotals, f) }
-  puts "\n\n=======================\n TOTALS\n=======================\n"
-  systotals.each do | name, lines_per_lang |
-    puts "System #{name}"
-    pp lines_per_lang[0,10]
-  end
 end
