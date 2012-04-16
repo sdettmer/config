@@ -238,8 +238,7 @@ class ShowStats
       # puts "; #{name} (#{system})"
       lines = @systotals[system]
       # no HTML etc
-      #pp "lines: ", lines.reject { |k,v| %w{html conf C cpp}.include? k }
-      src = lines.reject { |k,v| %w{html conf C cpp}.include? k }
+      src = lines.reject { |k,v| %w{html conf ini}.include? k }
       # extract list of remaining file types
       types = src.keys
       # pp "types:", types
