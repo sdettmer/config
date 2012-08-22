@@ -304,6 +304,7 @@ highlight Search term=standout ctermfg=0 ctermbg=3
 
   ab MYADDR "Steffen Dettmer" <steffen@dett.de>
   ab MYADDRI "Steffen Dettmer" <Steffen.DETTMER@ingenico.com>
+  ab MYADDRN "Steffen Dettmer" <steffen.dettmer@nomadrail.com>
   ab Yoki   oki,<CR><CR>Steffen
   
   ab Yline1 ------------------------------------------------------------------->8=======
