@@ -1,5 +1,5 @@
 alias +='pushd .'
-alias -='popd'
+alias -- -='popd'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias beep='echo -en "\007"'
