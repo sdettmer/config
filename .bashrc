@@ -5,6 +5,7 @@
 
 test -z "${LESS/*-R*/}" || LESS="$LESS -R"
 export LESS
+test -z "${LS_OPTIONS}" && export LS_OPTIONS='--color=auto'
 
 # We cannot set PROFILEREAD before, because then it SuSE
 # /etc/profile does not set all options (e.g. no PATH), we cannot
@@ -96,6 +97,7 @@ if test -z "$DISPLAY" -a "$TERM" = "xterm" -a -x /usr/bin/who ; then
 fi
 
 
+test -e ~/.alias_all && . ~/.alias_all
 test -e ~/.alias && . ~/.alias
 
 test -e ~/.git-completion.bash && . ~/.git-completion.bash
