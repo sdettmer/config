@@ -58,7 +58,7 @@ unset confirmappend
 set mbox_type=Maildir
 
 #Festlegen des Defaultverzeichnisses fuer Mailfolder
-set folder=/home/users/steffen/Mail/
+set folder=~/Mail/
 
 #Festlegen des Spoolfiles
 # gsi:  da wird vsm draus, wenn ich nichts anderes sage
@@ -66,7 +66,7 @@ set folder=/home/users/steffen/Mail/
 #set spoolfile=/home/steffen/Mail-In/!inbox!
 #set spoolfile=imap://sdettmer:steffen@mail.bln/INBOX
 #set spoolfile=imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX 
-set spoolfile=imap://steffen:steffen@raven/INBOX
+#set spoolfile=imap://steffen:steffen@raven/INBOX
 
 #Mutt laesst sich nicht mit Strg-Z stoppen
 set suspend
