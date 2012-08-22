@@ -32,7 +32,7 @@ export CVSROOT=:ext:${RANDYUSER}@${RANDY}:/home/repositories/systems
 #export XSRCCVSROOT=/home/extcvsrepos/packages/src
 
 export CECCMD=~steffen/work/download/flist
-export PATH=$PATH:/home/pub/bin
+export PATH=~/bin:$PATH:/home/pub/bin
 
 export ILOG_CONSOLE_COLOR=1
 
