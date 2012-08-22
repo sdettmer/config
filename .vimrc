@@ -1410,7 +1410,7 @@ if filereadable( templatefile )
   so/home/users/steffen/work/pds_sys/igdevtools/templates/template.vim
 endif
 
-:set makeprg=/home/users/steffen/work/pds_sys/igdevtools/mhmake
+":set makeprg=/home/users/steffen/work/pds_sys/igdevtools/mhmake
 
 " let mysyntaxfile = "~/.vim/mysyntax.vim"
 " so "~/.vim/doxyvim.vim"
