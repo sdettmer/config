@@ -21,7 +21,7 @@ unset save_address
 
 set attribution = "* %n wrote on %d:"
 
-#sendmail 8.8.x + kann DNS notifies zurücksenden.
+#sendmail 8.8.x + kann DNS notifies zuruecksenden.
 #set dsn_notify="failure,delay,success"
 #set dsn_notify="failure,delay"
 
@@ -34,14 +34,14 @@ set followup_to
 #Alias anzeigen, wenn vorhanden
 set reverse_alias
 
-#Mutt soll keinen Domainnamen an e-Mail-Adressen anfügen
+#Mutt soll keinen Domainnamen an e-Mail-Adressen anfuegen
 unset use_domain
 
-#Anzahl der Zeilen, die im Pager für die Index-Darstellung verwendet werden
+#Anzahl der Zeilen, die im Pager fuer die Index-Darstellung verwendet werden
 set pager_index_lines=10
 
 #Beim Threading wird im Thread nach Datum sortiert; Threads werden 
-#so sortiert, daß die mit neuen Mails ganz unten stehen
+#so sortiert, dass die mit neuen Mails ganz unten stehen
 #set sort_aux=subject
 
 #Wenn man beim Erstellen einer Mail nichts eingibt (als Body), wird man
@@ -57,7 +57,7 @@ unset confirmappend
 
 set mbox_type=Maildir
 
-#Festlegen des Defaultverzeichnisses für Mailfolder
+#Festlegen des Defaultverzeichnisses fuer Mailfolder
 set folder=/home/users/steffen/Mail/
 
 #Festlegen des Spoolfiles
@@ -68,28 +68,28 @@ set folder=/home/users/steffen/Mail/
 #set spoolfile=imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX 
 set spoolfile=imap://steffen:steffen@raven/INBOX
 
-#Mutt läßt sich nicht mit Strg-Z stoppen
+#Mutt laesst sich nicht mit Strg-Z stoppen
 set suspend
 
 #LDAP
 set query_command = "~/mutt_ldap_query3.pl '%s'"
 
-#Zeilenweises Scrollen, nicht den Ganzen Screen löschen und nächste Seite
+#Zeilenweises Scrollen, nicht den Ganzen Screen loeschen und naechste Seite
 #zeigen
 set menu_scroll
 
-#Regulärer Ausdruck für Quote-Erkennung
+#Regulaerer Ausdruck fuer Quote-Erkennung
 set quote_regexp="^([ \t]*[>|#:}])+"
 set quote_regexp="^([ \t]*([>|:]|-+>))+|^([ \t]*[A-Za-z._]{1,15}>)+|^([ \t]*\\+-{3,})+"
 #set quote_regexp="(^[ \t]*([>|:]|-+>))|(^[ \t]*[A-Za-z._]{1,15}>)|(^[ \t]*\\+-{3,})"
 
-#Regulärer Ausdruck für Reply-Erkennung
+#Regulaerer Ausdruck fuer Reply-Erkennung
 #  Also groups things like "[a32de-Bugs] SFR-xxxx", "JIRA Commented: "...
 set reply_regexp="^((re|aw|betr\.?|antw\.?|antwort|wg|fwd|)(.[0-9])?:[ \t]*)|(\[\w+-\w+\] SFR-)|(JIRA [a-zA-Z ]+: [(])|((New CB Comment on Issue|Updated CB Issue).\\[[A-Z]+-)"
 
-#Threads auch an gleichem Subject der Mails erkennen (dabei muß eine Antwort
-#mit dem Regexp reply_regexp anfangen, um als zum Thread gehörig erkannt zu
-#werden), falls das übliche Threading nicht funktioniert, weil die References-
+#Threads auch an gleichem Subject der Mails erkennen (dabei muss eine Antwort
+#mit dem Regexp reply_regexp anfangen, um als zum Thread gehoerig erkannt zu
+#werden), falls das uebliche Threading nicht funktioniert, weil die References-
 #Header fehlen
 unset strict_threads 
 set sort_re
@@ -103,17 +103,17 @@ my_hdr X-Editor: Vim http://www.vim.org/
 set alternates="(steffen@dett\.de|steffen@bedinetz\.de|steffen@tfh-berlin\.de)"
 
 
-#Anzeige der " +TCF"-Attribute im Index unterdrücken
+#Anzeige der " +TCF"-Attribute im Index unterdruecken
 # set to_chars="     "
 
-#Größe des History-Puffers (für Mutt-Editierfelder)
+#Groesse des History-Puffers (fuer Mutt-Editierfelder)
 set history=50
 
 #Editor zum verfassen der Mails
 # set editor='joe -nobackups -wordwrap -rmargin 65'
 # set editor='mutt_edit 2>>~/log/mutt_edit_error'
 
-#erste freie Zeilen suchen, "o" öffnet neue 
+#erste freie Zeilen suchen, "o" oeffnet neue 
 set editor='vim -c "/^$"'
 
 #Editor als Ersatz des internen Editors (???)
@@ -129,16 +129,16 @@ set fast_reply
 # nicht mehr das bescheuerte Subject beim forwarden
 set forward_format="%s (fwd)"
 
-#Beim seitenweisen Nach-Unten-Scrollen in Mails nicht zur nächste Mail springen
+#Beim seitenweisen Nach-Unten-Scrollen in Mails nicht zur naechste Mail springen
 set pager_stop
 
-#Folder für postponed messages
+#Folder fuer postponed messages
 set postponed=+postponed-msgs
 
-#Folder für versandte Messages
+#Folder fuer versandte Messages
 set record=+sent-mail
 
-#Standard-Folder für saved messages
+#Standard-Folder fuer saved messages
 #save-hook "root@speedy.gsinet" +log
 #save-hook "g.sittig@abo.freiepresse.de" +muell
 #save-hook "gmxred@gmx.net" +admin
@@ -157,7 +157,7 @@ set print_command="a2ps -s 1 -Email -M A4ky -r -1 -A virtual --highlight-level=h
 #set print_command="a2ps -s 1 --margin=35 -Email -M A4 -r -1 -A virtual --highlight-level=heavy -Php-color"
 
 #Nach dem Verlassen externer Programme (z. B. lynx) nicht auf Tastendruck
-#warten (nur bei Fehler ist einer nötig)
+#warten (nur bei Fehler ist einer noetig)
 unset wait_key
 
 #Nicht zwischen Status New und Old-New unterscheiden (Old-New: neue Messages,
@@ -168,8 +168,8 @@ unset mark_old
 set date_format="!%a, %b %d, %Y at %H:%M %Z"
 
 #Anzeigeformat im Index:
-#Normal in allen Foldern außer in Sent-Mail und Postponed, da wird
-#statt des Absenders der Empfänger angezeigt
+#Normal in allen Foldern ausser in Sent-Mail und Postponed, da wird
+#statt des Absenders der Empfaenger angezeigt
 #set hdr_format="%4C %Z %{%b %d}  %-20.20n  %s"
 #folder-hook . 'set hdr_format="%4C %Z %{%b %d}  %-20.20n  %s"'
 #folder-hook sent-mail 'set hdr_format="%4C %Z %{%b %d}  %-20.20t  %s"'
@@ -194,17 +194,17 @@ unset abort_nosubject
 unset beep
 
 #Beim Anwenden von Kommandos auf eine Mail (z. B. Tag oder Flag) nicht zur
-#nächsten Mail springen
+#naechsten Mail springen
 #unset resolve
 set resolve
 
-#Wenn Mails markiert (tagged) sind, das nächste Kommando auf all diese anwenden
+#Wenn Mails markiert (tagged) sind, das naechste Kommando auf all diese anwenden
 set auto_tag
 
 #Keine 8bit-Mails versenden
 unset allow_8bit
 
-#Festlegen des Alias-Files (für e-Mail-Adressen)
+#Festlegen des Alias-Files (fuer e-Mail-Adressen)
 set alias_file=~/.mutt_alias
 
 #Beim Eintreffen neuer Mail beepen
@@ -220,7 +220,7 @@ set timeout=10
 set sendmail_wait=1
 
 #Beim Forwarden MIME-Messages decodieren
-#(führt auch dazu, daß nicht gesamter Header geforwarded wird)
+#(fuehrt auch dazu, dass nicht gesamter Header geforwarded wird)
 unset forward_decode
 
 #Beim Forwarden MIME-Messages nicht als Attatchment schicken
@@ -235,7 +235,7 @@ unset sig_dashes
 
 #mailboxes imap://sdettmer@mail.bln/INBOX
 
-#Mailboxen, die Mutt auf neue Mail prüft
+#Mailboxen, die Mutt auf neue Mail prueft
 #mailboxes	! +div \
 #                +IN.isdn +IN.unix +IN.bsd \
 #                +IN.security +IN.eepro +IN.cvs \
@@ -250,9 +250,9 @@ unset sig_dashes
 #	/home/steffen/Mail-In/modssl-users	\
 #	/home/steffen/Mail-In/openssl-users	
 
-#alle files unter Mail-In, außer .fromlog, Maildirs (mit "new" ...)
+#alle files unter Mail-In, ausser .fromlog, Maildirs (mit "new" ...)
 #BACKUP selbst nur anzeigen 
-#dabei müssen maildirs selbst mit rein - könnten ja in subdirs
+#dabei muessen maildirs selbst mit rein - koennten ja in subdirs
 #liegen (eine Ebene soll erlaubt sein)
 #mailboxes `find /home/steffen/Mail-In -type f -not -name \
 #.fromlog -not -path '*BACKUP*' -maxdepth 2 \
@@ -272,7 +272,7 @@ ignore          *
 unignore        X-AntiVirus: X-Note: Date: Reply-To: To: CC: Newsgroups: Subject: From: X-Mailer: X-MimeOLE
 hdr_order       X-AntiVirus: X-Note: From: Reply-To: To: CC: Newsgroups: Subject: Date: X-Mailer: X-MimeOLE
 
-#Mailinglisten (wichtig für's List-Reply)
+#Mailinglisten (wichtig fuer's List-Reply)
 lists           mutt-announce mutt-users \
                 suse-security bugtraq freebsd-security \
 		openssl-users modssl-users \
@@ -281,7 +281,7 @@ lists           mutt-announce mutt-users \
 		linux-ipsec selflinux-admin \
 		cygwin@cygwin.com rxtx@qbang.org
 
-# # Hooks für compressed folder patch
+# # Hooks fuer compressed folder patch
 # open-hook     "Old-"        "gzip -cd %f > %t"
 # close-hook    "Old-"        "gzip -c %t > %f"
 # append-hook   "Old-"        "gzip -c %t >> %f"
@@ -351,7 +351,7 @@ bind generic	"\Ce"		last-entry
 bind pager	"\Ca"		top
 bind pager	"\Ce"		bottom
 
-#Makros für den Wechsel in die Verzeichnisse, die Mailfolder enthalten
+#Makros fuer den Wechsel in die Verzeichnisse, die Mailfolder enthalten
 macro index     'I'     c!\n
 macro pager     'I'     c!\n
 macro attach    'I'     c!\n
@@ -362,20 +362,20 @@ macro index	'i'	c?\t
 
 macro attach	'c'	qc
 
-#Macros um alle Mails anzeigen (Rückgängigmachen von `l')
+#Macros um alle Mails anzeigen (Rueckgaengigmachen von `l')
 macro pager	'L'	l~A\n
 macro index	'L'	l~A\n
 
-#Macros, um zu verhindern, daß beim Tag, Delete, Undelete,
-#Mark-as-New, Flag im Pager nicht zur nächsten Mail gesprungen wird
+#Macros, um zu verhindern, dass beim Tag, Delete, Undelete,
+#Mark-as-New, Flag im Pager nicht zur naechsten Mail gesprungen wird
 #macro pager	't'	":unset resolve\n:bind pager \e% tag-message\n\e%:set resolve\n"
 #macro pager	'd'	":unset resolve\n:bind pager \e% delete-message\n\e%:set resolve\n"
 #macro pager	'u'	":unset resolve\n:bind pager \e% undelete-message\n\e%:set resolve\n"
 #macro pager	'N'	":unset resolve\n:bind pager \e% mark-as-new\n\e%:set resolve\n"
 #macro pager	'F'	":unset resolve\n:bind pager \e% flag-message\n\e%:set resolve\n"
 
-#Macros für's Forwarden:
-#Bei `f' werden nur ausgewählte Header in die Mail übernommen, bei `Alt-f' alle
+#Macros fuer's Forwarden:
+#Bei `f' werden nur ausgewaehlte Header in die Mail uebernommen, bei `Alt-f' alle
 macro index	f	":set forward_decode\n:bind index \e% forward-message\n\e%"
 macro pager	f	":set forward_decode\n:bind pager \e% forward-message\n\e%"
 macro attach	f	":set forward_decode\n:bind attach \e% forward-message\n\e%"
