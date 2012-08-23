@@ -36,6 +36,9 @@ export PATH=~/bin:$PATH:/home/pub/bin
 
 export ILOG_CONSOLE_COLOR=1
 
+# Nomad Digital test port offset value for Steffen:
+export ND_PORT_OFFSET=7
+
 #
 # some people don't like fortune.  If you have humor, please enable it by
 # uncommenting the following lines.
