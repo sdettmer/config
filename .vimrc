@@ -1466,6 +1466,8 @@ function Toggle_overlength_hi()
         let b:overlengthhi = 1
     endif
 endfunction
+" By default, enable
+call Enable_overlengh_hi()
 
 " test 4
 " Automatically cd into the directory that the file is in
