@@ -1026,7 +1026,8 @@ autocmd BufNewFile,BufRead *.git/**
 "  map <F4>  :split<C-M>
 " toggle pasting
 "  map <F3>   :set paste!<c-m>:set paste?<c-m>:set list!<c-m>:set nolist?<c-m>
-  map <F3>   :set list!<c-m>:set nolist?<c-m>:set paste!<c-m>:set paste?<c-m>
+"  map <F3>   :set list!<c-m>:set nolist?<c-m>:set paste!<c-m>:set paste?<c-m>
+  map <F3>    :call Toggle_overlength_hi()<c-m>:set list!<c-m>:set paste!<c-m>:set paste?<c-m>
   map <F4>    :cn<C-M>
   map <S-F4>  :cp<C-M>
   map <F5>    :tn<C-M>
@@ -1436,15 +1437,35 @@ map ,ifs ^istatus = <ESC>Oif (status == CBASE_ERR_OK) {<ESC>j==o}<ESC><CR>
 " You can avoid loading this plugin by setting the loaded_matchparen variable:
 :let loaded_matchparen = 1
 
-" Feature F2
-
 " highlight long lines (>80 chars)
-"highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-if v:version >= 600
-highlight OverLength ctermbg=blue guibg=#592929
-"match OverLength /\%81v.*/
-match OverLength /.\%>81v/
-endif
+function Enable_overlengh_hi()
+    if v:version >= 703
+        " textwidth + 1 and col 79
+        :set colorcolumn=+1,79
+    elseif v:version >= 600
+        "highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+        highlight OverLength ctermbg=blue guibg=#592929
+        "match OverLength /\%81v.*/
+        match OverLength /.\%>81v/
+    endif
+endfunction
+function Disable_overlength_hi()
+    if v:version >= 703
+        :set colorcolumn=
+    elseif v:version >= 600
+        highlight clear OverLength
+    endif
+endfunction
+function Toggle_overlength_hi()
+    if exists("b:overlengthhi") && b:overlengthhi
+        call Disable_overlength_hi()
+        let b:overlengthhi = 0
+    else
+        call Enable_overlengh_hi()
+        let b:overlengthhi = 1
+    endif
+endfunction
+
 " test 4
 " Automatically cd into the directory that the file is in
 " autocmd BufEnter * execute "chdir ".escape(expand("%:p:h"), ' ')
