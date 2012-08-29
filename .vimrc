@@ -501,6 +501,12 @@ highlight Search term=standout ctermfg=0 ctermbg=3
   nmap ,Stws :%s/  *$/_/g<C-M>
   vmap ,Stws :%s/  *$/_/g<C-M>
 " kill trailing whitespace
+fun KtwsAuto()
+  if exists("b:nomad") && b:nomad
+  else
+    call Ktws()
+  endif
+endfun
 fun Ktws()
   let x=line(".")
   let y=col(".")
@@ -658,16 +664,20 @@ au BufNewFile,BufRead confspec.prepare  set tw=0 sts=0
 au BufNewFile,BufRead configure.{in,ac} set tw=0 sts=0
 au BufNewFile,BufRead Makefile*   set tw=0 noet ts=8 sts=0
 au BufNewFile,BufRead *.utf8      set encoding=utf8
+" I used .utf8 to communicate with Browser plugin
+"   (mozex, ItsAllText or similar) and do not want to lose my
+"   changes if browser behaves oddly, so no autoread here
 if v:version >= 600
   au BufNewFile,BufRead *.utf8    setlocal noautoread
 endif
+au BufNewFile,BufRead /nomad*src*     call NomadSrcMode()
 
-au BufWrite *.[ch]      call Ktws()
-au BufWrite *.cc        call Ktws()
-au BufWrite *.java      call Ktws()
-au BufWrite *.idl       call Ktws()
-au BufWrite *.rb        call Ktws()
-au BufWrite *.erb       call Ktws()
+au BufWrite *.[ch]      call KtwsAuto()
+au BufWrite *.cc        call KtwsAuto()
+au BufWrite *.java      call KtwsAuto()
+au BufWrite *.idl       call KtwsAuto()
+au BufWrite *.rb        call KtwsAuto()
+au BufWrite *.erb       call KtwsAuto()
 
 " au BufEnter *.java      set ai    sw=4 ts=4
 " au BufEnter */drafts/*  set tw=72
@@ -1446,17 +1456,27 @@ map ,ifs ^istatus = <ESC>Oif (status == CBASE_ERR_OK) {<ESC>j==o}<ESC><CR>
 function Enable_overlengh_hi()
     if v:version >= 703
         " textwidth + 1 and col 79
-        :set colorcolumn=+1,79
+        if exists("b:nomad") && b:nomad
+          " :set colorcolumn=120
+          echo b:nomad
+        else
+          :setl colorcolumn=+1,79
+        endif
     elseif v:version >= 600
         "highlight OverLength ctermbg=red ctermfg=white guibg=#592929
         highlight OverLength ctermbg=blue guibg=#592929
         "match OverLength /\%81v.*/
-        match OverLength /.\%>81v/
+        if exists("b:nomad") && b:nomad
+          " match OverLength /.\%>120/
+          echo b:nomad
+        else
+          match OverLength /.\%>81v/
+        endif
     endif
 endfunction
 function Disable_overlength_hi()
     if v:version >= 703
-        :set colorcolumn=
+        :setl colorcolumn=
     elseif v:version >= 600
         highlight clear OverLength
     endif
@@ -1473,6 +1493,18 @@ function Toggle_overlength_hi()
 endfunction
 " By default, enable
 call Enable_overlengh_hi()
+
+" To automatically reconfigure buffers
+function NomadSrcMode()
+  echo "Nomad mode"
+  let b:nomad = 1
+  " We already enabled it, ensure to have it off
+  call Disable_overlength_hi()
+  au! BufWrite *.[ch]
+  au! BufWrite *.rb
+  setl ai et sw=2 ts=2 tw=110
+endfun
+
 
 " test 4
 " Automatically cd into the directory that the file is in
