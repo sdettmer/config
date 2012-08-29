@@ -126,18 +126,18 @@ endif
 "       This tells Vim which characters to show for expanded TABs,
 "       trailing whitespace, and end-of-lines.  VERY useful!!
 " set   list
-" set   listchars=tab:>-,trail:Â·,eol:$
+" set   listchars=tab:>-,trail:·,eol:$
 "       The '$' at the end of lines is a bit too much, though.
 "       And I quite like the character that shows a dot in the middle:
-" set   listchars=tab:>Â·,trail:Â·
+" set   listchars=tab:>·,trail:·
 "       Some people might prefer a double right angle (>>)
 "       to show the start of expanded tabs, though:
-" set   listchars=tab:Â»Â·,trail:Â·
+" set   listchars=tab:»·,trail:·
 "       However, this all breaks up when viewing high-bit characters
 "       through some brain-dead telnet program (there are many).
 "set listchars=eol:$
 set list
-set listchars=trail:Â·,tab:Â»Â·
+set listchars=trail:·,tab:»·
 "
 "       magic:  Use 'magic' patterns  (extended regular expressions)
 "       in search patterns?  Certainly!  (I just *love* "\s\+"!)
@@ -519,17 +519,17 @@ endfun
 "
 " General Editing - Turning umlauts into ascii (for German keyboards)
 "
-" imap Ã¤ ae
-" imap Ã¶ oe
-" imap Ã¼ ue
-" imap ÃŸ ss
+" imap ä ae
+" imap ö oe
+" imap ü ue
+" imap ß ss
 "
-" &#196; -> Ã„  :%s/\&#196;/Ã„/gc  -> D
-" &#214; -> Ã–  :%s/\&#214;/Ã–/gc  -> V
-" &#220; -> Ãœ  :%s/\&#220;/Ãœ/gc  -> \
-" &#228; -> Ã¤  :%s/\&#228;/Ã¤/gc  -> d
-" &#246; -> Ã¶  :%s/\&#246;/Ã¶/gc  -> v
-" &#252; -> Ã¼  :%s/\&#252;/Ã¼/gc  -> |
+" &#196; -> Ä  :%s/\&#196;/Ä/gc  -> D
+" &#214; -> Ö  :%s/\&#214;/Ö/gc  -> V
+" &#220; -> Ü  :%s/\&#220;/Ü/gc  -> \
+" &#228; -> ä  :%s/\&#228;/ä/gc  -> d
+" &#246; -> ö  :%s/\&#246;/ö/gc  -> v
+" &#252; -> ü  :%s/\&#252;/ü/gc  -> |
 "
 " ===================================================================
 " Inserting Dates and Times / Updating Date+Time Stamps
@@ -1156,17 +1156,12 @@ autocmd BufNewFile,BufRead *.git/**
 " a given pattern, eg "*.c" or *".html".
 "
 " just load the main syntax file when Vim was compiled with "+syntax"
-" Note: I use xterm with black backgrounds (or reverse-video)
-"       but gvim.exe with white background (if at all)
-" May need TERM=xterm-256color (or vim -T xterm-256color)
   if has("syntax")
       " The following sources the main syntax file,
       " ie. "$VIM/syntax/syntax.vim", see ":help :syn-on":
       syntax on
       " Redefine the color for "Comment":
-      hi! Comment     term=bold    ctermfg=cyan  guifg=Blue
-      " Use a dark red as background
-      hi! ColorColumn term=reverse ctermbg=52    guibg=LightRed
+      hi! Comment  term=bold  ctermfg=cyan  guifg=Blue
   endif
 "
 " Definition of an alternative syntax file:
