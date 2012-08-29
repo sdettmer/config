@@ -1156,12 +1156,17 @@ autocmd BufNewFile,BufRead *.git/**
 " a given pattern, eg "*.c" or *".html".
 "
 " just load the main syntax file when Vim was compiled with "+syntax"
+" Note: I use xterm with black backgrounds (or reverse-video)
+"       but gvim.exe with white background (if at all)
+" May need TERM=xterm-256color (or vim -T xterm-256color)
   if has("syntax")
       " The following sources the main syntax file,
       " ie. "$VIM/syntax/syntax.vim", see ":help :syn-on":
       syntax on
       " Redefine the color for "Comment":
-      hi! Comment  term=bold  ctermfg=cyan  guifg=Blue
+      hi! Comment     term=bold    ctermfg=cyan  guifg=Blue
+      " Use a dark red as background
+      hi! ColorColumn term=reverse ctermbg=52    guibg=LightRed
   endif
 "
 " Definition of an alternative syntax file:
