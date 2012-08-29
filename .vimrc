@@ -1503,6 +1503,8 @@ function NomadSrcMode()
   au! BufWrite *.[ch]
   au! BufWrite *.rb
   setl ai et sw=2 ts=2 tw=110
+  " TODO, LASTER and MAYBE are well-defined (usually followed by colon)
+  match Todo /TODO:\?\|LATER:\?\|MAYBE:\?/
 endfun
 
 
