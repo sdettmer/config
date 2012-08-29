@@ -1456,6 +1456,7 @@ function Disable_overlength_hi()
         highlight clear OverLength
     endif
 endfunction
+" Used by F3
 function Toggle_overlength_hi()
     if exists("b:overlengthhi") && b:overlengthhi
         call Disable_overlength_hi()
