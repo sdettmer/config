@@ -118,6 +118,22 @@ endif
 "       laststatus:  show status line?  Yes, always!
 "       laststatus:  Even for only one buffer.
   set   laststatus=2
+" Status line
+"set statusline=%t      "tail of the filename
+set statusline=%f       "path, rel. or as typed
+set statusline+=\ %h      "help file flag
+set statusline+=%m      "modified flag
+set statusline+=%r      "read only flag
+set statusline+=%{Show_Status()} " my status stuff (paste, ",sc")
+set statusline+=\ [%{strlen(&fenc)?&fenc:'none'}, "file encoding
+"set statusline+=%-.2{&ff}] "file format
+set statusline+=%-.2{strpart(&ff,0,1)}] "file format first letter
+set statusline+=%y      "filetype
+set statusline+=%=      "left/right separator
+set statusline+=%c,     "cursor column
+set statusline+=%l/%L   "cursor line/total lines
+set statusline+=@b%n,    "buffer number
+set statusline+=\ %P    "percent through file
 "
 " [VIM5]lazyredraw:  do not update screen while executing macros
   set   lazyredraw
@@ -225,10 +241,15 @@ set listchars=trail:·,tab:»·
 "  endif
 "
 
-" colors
+" Change color defaults for dark-background xterm
 " Search is used in "copen". Default is Brightwhite-on-yellow?!
 "   Set black(0) on yellow (3)
 highlight Search term=standout ctermfg=0 ctermbg=3
+" Spell checking (hint: set spell spelllang=en, correct "z=")
+"   See also nmap ,sc
+hi SpellBad       term=reverse ctermbg=88 gui=undercurl guisp=Red
+hi SpellCap       term=reverse ctermbg=81 gui=undercurl guisp=Blue
+hi SpellRare      term=reverse ctermbg=225 gui=undercurl guisp=Magenta
 
 "       textmode:    no - I am using Vim on UNIX!
   set notextmode
@@ -262,7 +283,7 @@ highlight Search term=standout ctermfg=0 ctermbg=3
 "
 "       t_vb:  terminal's visual bell - turned off to make Vim quiet!
 "       Please use this as to not annoy cow-orkers in the same room.
-"       Thankyou!  :-)
+"       Thank you  :-)
 " set   t_vb=
 "
 "       whichwrap:
@@ -306,7 +327,7 @@ highlight Search term=standout ctermfg=0 ctermbg=3
   ab MYADDRI "Steffen Dettmer" <Steffen.DETTMER@ingenico.com>
   ab MYADDRN "Steffen Dettmer" <steffen.dettmer@nomadrail.com>
   ab Yoki   oki,<CR><CR>Steffen
-  
+
   ab Yline1 ------------------------------------------------------------------->8=======
   ab Yline2 =======8<-------------------------------------------------------------------
 "                                                                 O
@@ -315,7 +336,7 @@ highlight Search term=standout ctermfg=0 ctermbg=3
 "                                                              / \
 "                                                                 O
 
-  
+
 " Abbreviations - General Editing - Inserting Dates and Times
 " ===================================================================
 "
@@ -501,13 +522,13 @@ highlight Search term=standout ctermfg=0 ctermbg=3
   nmap ,Stws :%s/  *$/_/g<C-M>
   vmap ,Stws :%s/  *$/_/g<C-M>
 " kill trailing whitespace
-fun KtwsAuto()
-  if exists("b:nomad") && b:nomad
+fun! KtwsAuto()
+  if exists("b:std_nomad") && b:std_nomad
   else
     call Ktws()
   endif
 endfun
-fun Ktws()
+fun! Ktws()
   let x=line(".")
   let y=col(".")
   "silent %s/ \+$//eg
@@ -635,39 +656,39 @@ endfun
 " au Buf* are executed in order of definition in file, followed
 "   by file mode line. So file defaults first:
 au BufNewFile,BufRead *           call BufferDefaults()
-fun BufferDefaults()
-  set tw=65 noet ts=8 sts=0
-  call Enable_overlengh_hi()
+fun! BufferDefaults()
+  setl tw=65 noet ts=8 sts=0
+  call Enable_overlen_hi()
 endfun
 " Let Vim identify itself when editing emails with Mutt:
 " au! BufNewFile,BufRead mutt* let @"="X-Editor: Vim-".version." http://www.vim.org/\n"|exe 'norm 1G}""P'
 "au! BufNewFile,BufRead mutt* let @"="X-Editor: Vim-".version." http://www.vim.org/\n"|exe 'norm 1G}""P'
 "
 " set the textwidth to 65 characters for replies (email&usenet)
-  au BufNewFile,BufRead .letter,mutt*,nn.*,snd.* set tw=65
-  au BufNewFile,BufRead ,bash-fc-*,/tmp/cvs* set paste nolist
-  au BufNewFile,BufRead *.git/COMMIT_EDITMSG set paste nolist
-  fun NadineMod()
+  au BufNewFile,BufRead .letter,mutt*,nn.*,snd.* setl tw=65
+  au BufNewFile,BufRead ,bash-fc-*,/tmp/cvs* call Enable_paste()
+  au BufNewFile,BufRead *.git/COMMIT_EDITMSG call Enable_paste()
+  fun! NadineMod()
     %s/n.woitziske@beratung-sk.de/NadineWoitziske@aol.com/igce
   endfun
   au BufNewFile,BufRead  .letter,mutt*,nn.*,snd.* call NadineMod()
 "
 " Some more autocommand examples which set the values for
 " "autoindent", "expandtab", "shiftwidth", "tabstop", and "textwidth":
-au BufNewFile,BufRead *.[ch]      set ai et sw=3 ts=3
-au BufNewFile,BufRead *.cc        set ai et sw=4 ts=4
-au BufNewFile,BufRead *.java      set ai et sw=4 ts=4
-au BufNewFile,BufRead *.idl       set ai et sw=4 ts=4
-au BufNewFile,BufRead *.pl,*.rb,*.hs set ai et sw=4 ts=4
-au BufNewFile,BufRead .vimrc      set ai et sw=4 ts=4
-au BufNewFile,BufRead *.html      set ai et sw=2 ts=2
-au BufNewFile,BufRead *.shtml     set ai et sw=2 ts=2
-au BufNewFile,BufRead *.rb        set ai et sw=2 ts=2
-au BufNewFile,BufRead *.erb       set ai et sw=2 ts=2
-au BufNewFile,BufRead confspec.prepare  set tw=0 sts=0
-au BufNewFile,BufRead configure.{in,ac} set tw=0 sts=0
-au BufNewFile,BufRead Makefile*   set tw=0 noet ts=8 sts=0
-au BufNewFile,BufRead *.utf8      set encoding=utf8
+au BufNewFile,BufRead *.[ch]      setl ai et sw=3 ts=3
+au BufNewFile,BufRead *.cc        setl ai et sw=4 ts=4
+au BufNewFile,BufRead *.java      setl ai et sw=4 ts=4
+au BufNewFile,BufRead *.idl       setl ai et sw=4 ts=4
+au BufNewFile,BufRead *.pl,*.rb,*.hs setl ai et sw=4 ts=4
+au BufNewFile,BufRead .vimrc      setl ai et sw=4 ts=4
+au BufNewFile,BufRead *.html      setl ai et sw=2 ts=2
+au BufNewFile,BufRead *.shtml     setl ai et sw=2 ts=2
+au BufNewFile,BufRead *.rb        setl ai et sw=2 ts=2
+au BufNewFile,BufRead *.erb       setl ai et sw=2 ts=2
+au BufNewFile,BufRead confspec.prepare  setl tw=0 sts=0
+au BufNewFile,BufRead configure.{in,ac} setl tw=0 sts=0
+au BufNewFile,BufRead Makefile*   setl tw=0 noet ts=8 sts=0
+au BufNewFile,BufRead *.utf8      setl encoding=utf8
 " I used .utf8 to communicate with Browser plugin
 "   (mozex, ItsAllText or similar) and do not want to lose my
 "   changes if browser behaves oddly, so no autoread here
@@ -872,7 +893,7 @@ autocmd BufNewFile,BufRead *.git/**
 "     ,ha = "helloagain"  (indicates reply to reply)
   map ,ha 1G}oHello, again!<CR><ESC>
 "
-"     ,H = "Hello, Du!" 
+"     ,H = "Hello, Du!"
 " map ,H G/Quoting /e+1<CR>ye1G}oHallo, !<ESC>Po<ESC>
   map ,H G/^\* /e+1<CR>ye1G}oHello, !<ESC>Po<ESC>
 "
@@ -1032,7 +1053,7 @@ autocmd BufNewFile,BufRead *.git/**
 "
 "
 " ===================================================================
-" Mapping of special keys - arrow keys and 
+" Mapping of special keys - arrow keys and
 " ===================================================================
 " Buffer commands (split,move,delete) -
 " this makes a little more easy to deal with buffers.
@@ -1041,7 +1062,8 @@ autocmd BufNewFile,BufRead *.git/**
 " toggle pasting
 "  map <F3>   :set paste!<c-m>:set paste?<c-m>:set list!<c-m>:set nolist?<c-m>
 "  map <F3>   :set list!<c-m>:set nolist?<c-m>:set paste!<c-m>:set paste?<c-m>
-  map <F3>    :call Toggle_overlength_hi()<c-m>:set list!<c-m>:set paste!<c-m>:set paste?<c-m>
+  " map <F3>    :call Toggle_overlen_hi()<c-m>:set list!<c-m>:set paste!<c-m>:set paste?<c-m>
+  map <F3>    :call Toggle_paste()<CR>
   map <F4>    :cn<C-M>
   map <S-F4>  :cp<C-M>
   map <F5>    :tn<C-M>
@@ -1163,14 +1185,16 @@ autocmd BufNewFile,BufRead *.git/**
 " Note: I use xterm with black backgrounds (or reverse-video)
 "       but gvim.exe with white background (if at all)
 " May need TERM=xterm-256color (or vim -T xterm-256color)
+" test of wrong words and rihgt words Germany das
   if has("syntax")
       " The following sources the main syntax file,
       " ie. "$VIM/syntax/syntax.vim", see ":help :syn-on":
       syntax on
       " Redefine the color for "Comment":
-      hi! Comment     term=bold    ctermfg=cyan  guifg=Blue
-      " Use a dark red as background
+      highlight! Comment     term=bold    ctermfg=cyan  guifg=Blue
+      " Use a dark red as background for colorcolumn
       hi! ColorColumn term=reverse ctermbg=52    guibg=LightRed
+      hi SpellLocal     term=underline ctermbg=14 gui=undercurl guisp=DarkCyan
   endif
 "
 " Definition of an alternative syntax file:
@@ -1371,7 +1395,7 @@ autocmd BufNewFile,BufRead *.git/**
 "
 
 " giorgio
-"set iskeyword=a-z,A-Z,48-57,_,.,-,> 
+"set iskeyword=a-z,A-Z,48-57,_,.,-,>
 
 " Ctrl-Arrow movement
 " CTRL-<Right>
@@ -1438,12 +1462,12 @@ endif
 "so ~/.vim/doxygen.vim
 "so ~/.vim/mszlog.vim
 if !exists("log_command_loaded")
-    let log_command_loaded = 1
-    augroup log_read
-        autocmd!
-        autocmd BufReadPost *.log :so ~/.vim/mszlog.vim
-        autocmd BufReadPost *.log :set nowrap
-    augroup END
+  let log_command_loaded = 1
+  augroup log_read
+    autocmd!
+    autocmd BufReadPost *.log :so ~/.vim/mszlog.vim
+    autocmd BufReadPost *.log :setl nowrap
+  augroup END
 endif
 
 " make clogEnter and clogLeave around the current C function
@@ -1451,59 +1475,119 @@ map ,enter ?^{<CR>?(<CR>byw/^{<CR>ocbaseErrorId_t status = CBASE_ERR_OK;<CR>clog
 " add if (status == OK) block and prefix status = current line
 map ,ifs ^istatus = <ESC>Oif (status == CBASE_ERR_OK) {<ESC>j==o}<ESC><CR>
 
+" map <F3>    :call Toggle_paste()<CR>
+fun! Enable_paste()
+  setl paste
+  setl nolist
+  call Disable_overlen_hi()
+  let b:std_pastemode = 1
+endfun
+fun! Disable_paste()
+  setl nopaste
+  setl list
+  call Enable_overlen_hi()
+  let b:std_pastemode = 0
+endfun
+fun! Toggle_paste()
+  if exists("b:std_pastemode") && b:std_pastemode
+    call Disable_paste()
+  else
+    call Enable_paste()
+  endif
+  setl paste?
+endfun
+
+" for statusline, to return e.g. "[PASTE,SPELL]"
+fun! Show_Status()
+  let l:status = []
+  if exists("b:std_nomad") && b:std_nomad
+    call add(l:status, "nomad")
+  endif
+  if exists("b:std_pastemode") && b:std_pastemode
+    call add(l:status, "PASTE")
+  endif
+  if exists("b:std_spell") && b:std_spell
+    call add(l:status, "SPELL")
+  endif
+  if len(l:status) != 0
+    "return "[" + l:status + "]";
+    return "[" . join(l:status, ",") . "]"
+  else
+    return ""
+  endif
+endfun
+
+" Spell checking mode
+nmap ,sc :call Toggle_spell()<CR>
+fun! Toggle_spell()
+  if exists("b:std_spell") && b:std_spell
+    setl nospell spell?
+    let b:std_spell = 0
+    nunmap n
+    nunmap N
+    nunmap <C-P>
+  else
+    setl spell spelllang?
+    let b:std_spell = 1
+    nmap n ]s
+    nmap N [s
+    nmap <C-P> z=
+  endif
+endfun
 
 " Highlighting matching parens
 " You can avoid loading this plugin by setting the loaded_matchparen variable:
 :let loaded_matchparen = 1
 
 " highlight long lines (>80 chars)
-function Enable_overlengh_hi()
-    if v:version >= 703
-        " textwidth + 1 and col 79
-        if exists("b:nomad") && b:nomad
-          " :set colorcolumn=120
-          echo b:nomad
-        else
-          :setl colorcolumn=+1,79
-        endif
-    elseif v:version >= 600
-        "highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-        highlight OverLength ctermbg=blue guibg=#592929
-        "match OverLength /\%81v.*/
-        if exists("b:nomad") && b:nomad
-          " match OverLength /.\%>120/
-          echo b:nomad
-        else
-          match OverLength /.\%>81v/
-        endif
+fun! Enable_overlen_hi()
+  if v:version >= 703
+    " textwidth + 1 and col 79
+    if exists("b:std_nomad") && b:std_nomad
+      " :setl colorcolumn=120
+      "echo b:std_nomad
+      :setl colorcolumn=
+    else
+      :setl colorcolumn=+1,79
     endif
+  elseif v:version >= 600
+    "highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+    highlight OverLength ctermbg=blue guibg=#592929
+    "match OverLength /\%81v.*/
+    if exists("b:std_nomad") && b:std_nomad
+      " match OverLength /.\%>120/
+      "echo b:std_nomad
+    else
+      match OverLength /.\%>81v/
+    endif
+  endif
+  let b:std_overlen_hi = 1
 endfunction
-function Disable_overlength_hi()
-    if v:version >= 703
-        :setl colorcolumn=
-    elseif v:version >= 600
-        highlight clear OverLength
-    endif
+fun! Disable_overlen_hi()
+  if v:version >= 703
+    :setl colorcolumn=
+  elseif v:version >= 600
+    highlight clear OverLength
+  endif
+  let b:std_overlen_hi = 0
 endfunction
 " Used by F3
-function Toggle_overlength_hi()
-    if exists("b:overlengthhi") && b:overlengthhi
-        call Disable_overlength_hi()
-        let b:overlengthhi = 0
-    else
-        call Enable_overlengh_hi()
-        let b:overlengthhi = 1
-    endif
+fun! Toggle_overlen_hi()
+  if exists("b:std_overlen_hi") && b:std_overlen_hi
+    call Disable_overlen_hi()
+  else
+    call Enable_overlen_hi()
+  endif
 endfunction
 " By default, enable
-call Enable_overlengh_hi()
+call Enable_overlen_hi()
 
 " To automatically reconfigure buffers
-function NomadSrcMode()
-  echo "Nomad mode"
-  let b:nomad = 1
+fun! NomadSrcMode()
+  "echo "Nomad mode"
+  let b:std_nomad = 1
   " We already enabled it, ensure to have it off
-  call Disable_overlength_hi()
+  call Disable_overlen_hi()
   au! BufWrite *.[ch]
   au! BufWrite *.rb
   setl ai et sw=2 ts=2 tw=110
@@ -1527,3 +1611,4 @@ set wildmode=longest,list,list:full
 " https://github.com/tpope/vim-pathogen:
 " call pathogen#infect()
 
+" vim: et sw=2 tw=2 tw=75:
