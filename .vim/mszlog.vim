@@ -1,5 +1,14 @@
-syntax on
-syntax clear
+" Vim syntax file
+
+" Setup
+if version >= 600
+  if exists("b:current_syntax")
+    finish
+  endif
+else
+  syntax clear
+endif
+
 
 syntax match log_io     "> .*"
 
@@ -41,3 +50,5 @@ highlight log_finer         ctermfg=Blue
 highlight log_finest        ctermfg=DarkBlue
 
 highlight log_io            ctermfg=DarkGray
+
+let b:current_syntax = "mszlog"

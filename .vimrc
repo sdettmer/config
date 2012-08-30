@@ -696,7 +696,8 @@ if v:version >= 600
   au BufNewFile,BufRead *.utf8    setlocal noautoread
 endif
 au BufNewFile,BufRead /nomad*src*     call NomadSrcMode()
-au BufNewFile,BufRead /nomad*src*ini  setf nomadini
+au BufNewFile,BufRead /nomad*ini  setf nomadini
+au BufNewFile,BufRead /nomad*log  setf nomadlog
 
 au BufWrite *.[ch]      call KtwsAuto()
 au BufWrite *.cc        call KtwsAuto()
@@ -1469,7 +1470,8 @@ if !exists("log_command_loaded")
   let log_command_loaded = 1
   augroup log_read
     autocmd!
-    autocmd BufReadPost *.log :so ~/.vim/mszlog.vim
+    " autocmd BufReadPost *.log :so ~/.vim/mszlog.vim
+    autocmd BufReadPost *.log :setf mszlog
     autocmd BufReadPost *.log :setl nowrap
   augroup END
 endif
