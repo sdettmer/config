@@ -696,6 +696,7 @@ if v:version >= 600
   au BufNewFile,BufRead *.utf8    setlocal noautoread
 endif
 au BufNewFile,BufRead /nomad*src*     call NomadSrcMode()
+au BufNewFile,BufRead /nomad*src*ini  setf nomadini
 
 au BufWrite *.[ch]      call KtwsAuto()
 au BufWrite *.cc        call KtwsAuto()
@@ -720,6 +721,9 @@ autocmd BufNewFile,BufRead *.git/**
       \ if getline(1) =~ '^\x\{40\}\>\|^ref: ' |
       \   setf git |
       \ endif
+
+" automatically re-source saved vimrc
+autocmd BufWritePost ~/.vimrc   so ~/.vimrc
 
 " Examples used by talg@CS.Berkeley.edu - thanks!
 "
@@ -1617,4 +1621,4 @@ set wildmode=longest,list,list:full
 " https://github.com/tpope/vim-pathogen:
 " call pathogen#infect()
 
-" vim: et sw=2 tw=2 tw=75:
+" vim: et sw=2 ts=2 tw=2 tw=75:
