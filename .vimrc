@@ -132,7 +132,7 @@ set statusline+=%y      "filetype
 set statusline+=%=      "left/right separator
 set statusline+=%c,     "cursor column
 set statusline+=%l/%L   "cursor line/total lines
-set statusline+=@b%n,    "buffer number
+set statusline+=\ b%n,    "buffer number
 set statusline+=\ %P    "percent through file
 "
 " [VIM5]lazyredraw:  do not update screen while executing macros
@@ -1593,15 +1593,21 @@ fun! NomadSrcMode()
   setl ai et sw=2 ts=2 tw=110
   " TODO, LASTER and MAYBE are well-defined (usually followed by colon)
   match Todo /TODO:\?\|LATER:\?\|MAYBE:\?/
+  set path=.,,src/*/,wd-src/src/*/
 endfun
 
 
-" test 4
 " Automatically cd into the directory that the file is in
 " autocmd BufEnter * execute "chdir ".escape(expand("%:p:h"), ' ')
 " doesn't cripple command line:
 " autocmd BufEnter * silent! lcd %:p:h:gs/ /\\ /
 " only recent autochdir
+
+" '\e' edit in folder where the current file is in
+"  http://vim.wikia.com/wiki/Easy_edit_of_files_in_the_same_directory
+" But I usually like setting "path" and using ":find" more.
+nnoremap <Leader>e :e <C-R>=expand('%:p:h') . '/'<CR>
+
 " similar to bash shell completion:
 "   first TAB completes to longest unique match, second prints
 "   list. Extra goodie: third press iterates all matches (like
