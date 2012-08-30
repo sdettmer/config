@@ -1465,16 +1465,10 @@ endif
 " let mysyntaxfile = "~/.vim/mysyntax.vim"
 " so "~/.vim/doxyvim.vim"
 "so ~/.vim/doxygen.vim
+" mszlog now is a syntax file (automatically loaded via setf mszlog)
 "so ~/.vim/mszlog.vim
-if !exists("log_command_loaded")
-  let log_command_loaded = 1
-  augroup log_read
-    autocmd!
-    " autocmd BufReadPost *.log :so ~/.vim/mszlog.vim
-    autocmd BufReadPost *.log :setf mszlog
-    autocmd BufReadPost *.log :setl nowrap
-  augroup END
-endif
+autocmd BufReadPost *.log :setf mszlog
+autocmd BufReadPost *.log :setl nowrap
 
 " make clogEnter and clogLeave around the current C function
 map ,enter ?^{<CR>?(<CR>byw/^{<CR>ocbaseErrorId_t status = CBASE_ERR_OK;<CR>clogEnter(("<ESC>pA"));<CR><ESC>?^{<CR>%O<CR>clogLeave(("<ESC>pA"));<CR>return status;<ESC>
