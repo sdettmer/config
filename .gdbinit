@@ -11,6 +11,14 @@ define show_clog
 end
 set var $have_show_clog = 1
 set var $is_show_clog = 1
+
+# make and run (if it was not running, its not restarted,
+# actually a side effect that kill aborts the user command...
+define m
+   make -C ..
+   kill
+   run
+end
 # TODO add to tr command if avail. Make it adding just once
 #   by using some var
 # now some magic sets this:
