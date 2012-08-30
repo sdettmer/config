@@ -687,8 +687,6 @@ au BufNewFile,BufRead *.rb        setl ai et sw=2 ts=2
 au BufNewFile,BufRead *.erb       setl ai et sw=2 ts=2
 au BufNewFile,BufRead confspec.prepare  setl tw=0 sts=0
 au BufNewFile,BufRead configure.{in,ac} setl tw=0 sts=0
-au BufNewFile,BufRead Makefile*   setl tw=0 noet ts=8 sts=0
-au BufNewFile,BufRead *.utf8      setl encoding=utf8
 " I used .utf8 to communicate with Browser plugin
 "   (mozex, ItsAllText or similar) and do not want to lose my
 "   changes if browser behaves oddly, so no autoread here
@@ -698,6 +696,8 @@ endif
 au BufNewFile,BufRead /nomad*src*     call NomadSrcMode()
 au BufNewFile,BufRead /nomad*ini  setf nomadini
 au BufNewFile,BufRead /nomad*log  setf nomadlog
+au BufNewFile,BufRead Makefile*   setl tw=0 noet nolist ts=8 sts=0
+au BufNewFile,BufRead *.utf8      setl encoding=utf8
 
 au BufWrite *.[ch]      call KtwsAuto()
 au BufWrite *.cc        call KtwsAuto()
