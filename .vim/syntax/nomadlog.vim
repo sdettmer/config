@@ -9,9 +9,9 @@ else
   syntax clear
 endif
 
-echo "nomadlog apply"
+" echo "nomadlog apply"
 
-""DBG","ERR","WRN","NTC","INF","VRB","CRZ"
+" "DBG", "ERR", "WRN", "NTC", "INF", "VRB", "CRZ"
 syntax match nomadlogError    "^\d\{4\}-\d\{2\}-\d\{2\}-\d\{6\}-\d\{3\} ERR .*"
 syntax match nomadlogWarn     "^\d\{4\}-\d\{2\}-\d\{2\}-\d\{6\}-\d\{3\} WRN .*"
 syntax match nomadlogProgress "^\d\{4\}-\d\{2\}-\d\{2\}-\d\{6\}-\d\{3\} NTC .*"
