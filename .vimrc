@@ -634,7 +634,11 @@ endfun
 "
 " au Buf* are executed in order of definition in file, followed
 "   by file mode line. So file defaults first:
-au BufNewFile,BufRead *           set tw=65 noet ts=8 sts=0
+au BufNewFile,BufRead *           call BufferDefaults()
+fun BufferDefaults()
+  set tw=65 noet ts=8 sts=0
+  call Enable_overlengh_hi()
+endfun
 " Let Vim identify itself when editing emails with Mutt:
 " au! BufNewFile,BufRead mutt* let @"="X-Editor: Vim-".version." http://www.vim.org/\n"|exe 'norm 1G}""P'
 "au! BufNewFile,BufRead mutt* let @"="X-Editor: Vim-".version." http://www.vim.org/\n"|exe 'norm 1G}""P'
