@@ -1468,7 +1468,8 @@ endif
 " mszlog now is a syntax file (automatically loaded via setf mszlog)
 "so ~/.vim/mszlog.vim
 autocmd BufReadPost *.log :setf mszlog
-autocmd BufReadPost *.log :setl nowrap
+"autocmd BufReadPost *.log :setl nowrap
+autocmd BufReadPost *.log :setl wrap
 
 " make clogEnter and clogLeave around the current C function
 map ,enter ?^{<CR>?(<CR>byw/^{<CR>ocbaseErrorId_t status = CBASE_ERR_OK;<CR>clogEnter(("<ESC>pA"));<CR><ESC>?^{<CR>%O<CR>clogLeave(("<ESC>pA"));<CR>return status;<ESC>
