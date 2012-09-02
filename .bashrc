@@ -3,8 +3,7 @@
 # shells. We just let ~/.profile also read ~/.bashrc and put everything in
 # ~/.bashrc.
 
-test -z "${LESS/*-R*/}" || LESS="$LESS -R"
-export LESS
+test -z "${LESS/*-R*/}" || export LESS="$LESS -R"
 test -z "${LS_OPTIONS}" && export LS_OPTIONS='--color=auto'
 
 # We cannot set PROFILEREAD before, because then it SuSE
@@ -68,7 +67,11 @@ else
 	#echo "autoprompt set"
 	PS1=$SSH_AUTOPROMPT
 fi
+export PS1 PS2
 
+#alias hilbert='finger @hilbert.suse.de'
+#export EDITOR=/usr/bin/pico
+#export NNTPSERVER=news.suse.de
 
 # commands common to all logins
 
@@ -86,21 +89,24 @@ fi
 #
 # try to set DISPLAY smart (from Hans) :)
 #
-if test -z "$DISPLAY" -a "$TERM" = "xterm" -a -x /usr/bin/who ; then
-    WHOAMI="`/usr/bin/who am i`"
-    _DISPLAY="`expr "$WHOAMI" : '.*(\([^\.][^\.]*\).*)'`:0.0"
-    if [ "${_DISPLAY}" != ":0:0.0" -a "${_DISPLAY}" != " :0.0" \
-         -a "${_DISPLAY}" != ":0.0" ]; then
-        export DISPLAY="${_DISPLAY}";
-    fi
-    unset WHOAMI _DISPLAY
-fi
+# Update: really bad idea when not having open DISPLAY
+#    (e.g. when using putty)
+#if test -z "$DISPLAY" -a "$TERM" = "xterm" -a -x /usr/bin/who ; then
+#    WHOAMI="`/usr/bin/who am i`"
+#    _DISPLAY="`expr "$WHOAMI" : '.*(\([^\.][^\.]*\).*)'`:0.0"
+#    if [ "${_DISPLAY}" != ":0:0.0" -a "${_DISPLAY}" != " :0.0" \
+#         -a "${_DISPLAY}" != ":0.0" ]; then
+#        export DISPLAY="${_DISPLAY}";
+#    fi
+#    unset WHOAMI _DISPLAY
+#fi
 
+# Unfortunately I forgot what this was for:
+# [[ -f "/home/steffen/.config/autopackage/paths-bash" ]] && . "/home/steffen/.config/autopackage/paths-bash"
 
 test -e ~/.alias_all && . ~/.alias_all
 test -e ~/.alias && . ~/.alias
 
 test -e ~/.git-completion.bash && . ~/.git-completion.bash
 
-export DISPLAY PS1 PS2
 umask 022
