@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# (based on steffen@link:xterminal-workspace.sh)
+
 #used: xwinfo
 
 #COLOR="-bg #000020 -fg white"
@@ -11,11 +13,12 @@ OPTS="-sb"
 
 #xterm $COLOR -geometry 82x59+2+4 -fn 9x15 &
 
-if [ -x `which Eterm` ] ; then
+if [ -x "`which Eterm`" ] ; then
 	#the sleeps are to force the correct stack order
 	FNT="8x9"
 	FNT="misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso8859-15"
-	OPTS="--trans --cmod=48 --scrollbar=0"
+	#OPTS="--trans --cmod=48 --scrollbar=0"
+	OPTS="--trans --cmod=64 --scrollbar=0"
 	xmessage -center "Please wait ..." &
 	xmpid=$!
 	Eterm $OPTS --geometry 80x24-7-0 --font $FNT &
@@ -29,14 +32,21 @@ if [ -x `which Eterm` ] ; then
 	kill $xmpid
 	sleep 1;
 	xmessage -timeout 3 -center "*** Workspace ready. ***" &
-elif [ -x `which gnome-terminal` ] ; then
+elif [ -x "`which gnome-terminal`" ] ; then
 	FNT="8x9"
 	FNT="misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso8859-15"
 	OPTS="--transparent --shaded"
-	gnome-terminal $OPTS --geometry 82x59+2+4 --font 9x15 &
-	gnome-terminal $OPTS --geometry 80x24-510+15 --font $FNT &
-	gnome-terminal $OPTS --geometry 80x24-510+342 --font $FNT &
-	gnome-terminal $OPTS --geometry 80x24-510-340 --font $FNT &
+	#gnome-terminal $OPTS --geometry 82x59+2+4 --font 9x15 &
+	#gnome-terminal $OPTS --geometry 80x24-510+15 --font $FNT &
+	#gnome-terminal $OPTS --geometry 80x24-510+342 --font $FNT &
+	#gnome-terminal $OPTS --geometry 80x24-510-340 --font $FNT &
+	gnome-terminal $OPTS --geometry 80x24-7-7 --window-with-profile std &
+	#sleep 1;
+	gnome-terminal $OPTS --geometry 80x24-7+346 --window-with-profile std &
+	#sleep 1;
+	gnome-terminal $OPTS --geometry 80x24-7+18 --window-with-profile std &
+	#sleep 1;
+	gnome-terminal $OPTS --geometry 83x56+2+20 --window-with-profile std-large &
 else
 	xterm $COLOR -geometry 82x59+2+4 -fn 9x15 &
 	xterm $COLOR -geometry 80x24-7+2 &
