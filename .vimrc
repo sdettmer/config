@@ -327,6 +327,13 @@ hi SpellRare      term=reverse ctermbg=225 gui=undercurl guisp=Magenta
   ab MYADDRI "Steffen Dettmer" <Steffen.DETTMER@ingenico.com>
   ab MYADDRN "Steffen Dettmer" <steffen.dettmer@nomadrail.com>
   ab Yoki   oki,<CR><CR>Steffen
+  ab Schönes Wochenende! Schönes Wochenende!
+
+"  ab Ywitzederwoche Bcc: Steffen Dettmer <sdettmer@ingenico.de>, susi, <CR>	Tanja Wehrmann <tanjawehrmann@gmx.de>,<CR>	Daddy <comp-dettmer@t-online.de>, <CR>	Frank Schwemer <face@face-works.de>, <CR>	gordok_t, <CR>	Gordon Lange <gordon_lange@yahoo.de>, <CR>	Elke und Fritz Richter <E.F.Richter@t-online.de>, <CR>	Mark Ruth <MarkRuth@web.de>, <CR>	Rayk Papenbrock <raykpapenbrock@gmx.de>, manfred
+
+  "Witze der Woche
+  "Formats the mail completly. "\r" is CR (unix LF)
+"  map ,wdw majd/-------<CR>jjd4djd/3. Neue Witze<CR>d5d/Sie können diese Witze bewerten<CR>d/----- End forwarded message<CR>dd:1/^Bcc: <CR>CYwitzederwoche<ESC>?^Bcc:<CR>J/^Subject:<CR>/------<CR>jjjgq/^oki,<CR>kmb'ajCYline2<ESC>jj^CYline1<ESC>jj:,'bs/^$/\r--------------------------------------------------------->8======\r/g<CR>'a
 
   ab Yline1 ------------------------------------------------------------------->8=======
   ab Yline2 =======8<-------------------------------------------------------------------
@@ -606,6 +613,9 @@ endfun
 " The following do not work as "\s" is not a character
 " and thus cannot be part of a "character set".
 "  map ,cqel  :g/^[>\s]\+$/d
+
+" Figlet playing
+  vmap ,fig !figlet -k -d /usr/lib/figlet22/fonts -f mini
 "
 " Some people have strange habits within their writing.
 " But if you cannot educate them - rewrite their text!  ;-)
@@ -664,8 +674,13 @@ endfun
 " au! BufNewFile,BufRead mutt* let @"="X-Editor: Vim-".version." http://www.vim.org/\n"|exe 'norm 1G}""P'
 "au! BufNewFile,BufRead mutt* let @"="X-Editor: Vim-".version." http://www.vim.org/\n"|exe 'norm 1G}""P'
 "
+" reply address setting
+map ,rpl :%!~/work/ID-Mail/hashmail/set_reply.pl<CR>
+map ,rplc :if confirm("set auto reply?", "&yes\n&no", 2) == 1<CR>:normal ,rpl<CR>:endif<CR>
+
 " set the textwidth to 65 characters for replies (email&usenet)
   au BufNewFile,BufRead .letter,mutt*,nn.*,snd.* setl tw=65
+"  au BufNewFile,BufRead .letter,mutt*,nn.*,snd.* :normal ,rplc
   au BufNewFile,BufRead ,bash-fc-*,/tmp/cvs* call Enable_paste()
   au BufNewFile,BufRead *.git/COMMIT_EDITMSG call Enable_paste()
   fun! NadineMod()
@@ -698,6 +713,9 @@ au BufNewFile,BufRead /nomad*ini  setf nomadini
 au BufNewFile,BufRead /nomad*log  setf nomadlog
 au BufNewFile,BufRead Makefile*   setl tw=0 noet nolist ts=8 sts=0
 au BufNewFile,BufRead *.utf8      setl encoding=utf8
+augroup filetypedetect
+  au! BufRead,BufNewFile *.sce setfiletype scilab
+augroup END
 
 au BufWrite *.[ch]      call KtwsAuto()
 au BufWrite *.cc        call KtwsAuto()
@@ -901,6 +919,8 @@ autocmd BufWritePost ~/.vimrc   so ~/.vimrc
 "     ,H = "Hello, Du!"
 " map ,H G/Quoting /e+1<CR>ye1G}oHallo, !<ESC>Po<ESC>
   map ,H G/^\* /e+1<CR>ye1G}oHello, !<ESC>Po<ESC>
+  map ,hi G/^\* /e+1<CR>ye1G}oHi ,<ESC>Po<ESC>
+  map ,Hi G/^\* /e+1<CR>ye1G}oHi !<ESC>Po<ESC>
 "
 "
 " Part 6  - Inserting Special or Standard Text
@@ -916,10 +936,14 @@ autocmd BufWritePost ~/.vimrc   so ~/.vimrc
 " map ,kqs G?^> *-- $<CR>dG
 "     ,kqs = kill quoted sig unto start of own signature:
  map ,kqs G?^> *-- $<CR>d/^-- $/<C-M>
+
+" k2e: kill to end
+  map ,k2e d/^oki,$<CR>
+
 "
 "      ,aq = "add quote"
 "            Reads in a quote from my favourite quotations:
-  nmap ,aq :r!agrep -d "^-- $" ~/.P/quotes/collection<ESC>b
+" nmap ,aq :r!agrep -d "^-- $" ~/.P/quotes/collection<ESC>b
 " see http://www.math.fu-berlin.de/~guckes/quotes/collection
 "
 "      ,s = "sign" -
@@ -935,7 +959,7 @@ autocmd BufWritePost ~/.vimrc   so ~/.vimrc
 "
 "      ,at = "add text" -
 "            read in text file (requires manual completion):
-  nmap ,at :r ~/.P/txt/
+"  nmap ,at :r ~/.P/txt/
 "
 " MUTT: Auto-kill signatures for replies
 " map ,kqs G?^> *-- $<C-M>dG
@@ -1459,6 +1483,26 @@ let templatefile="/home/users/steffen/work/pds_sys/igdevtools/templates/template
 if filereadable( templatefile )
   so/home/users/steffen/work/pds_sys/igdevtools/templates/template.vim
 endif
+
+
+function! Html_maps()
+    map! ä &auml;
+    map! ö &ouml;
+    map! ö &ouml;
+    map! ü &uuml;
+    map! Ä &Auml;
+    map! Ö &Ouml;
+    map! Ü &Uuml;
+    map! ß &szlig;
+    set cindent shiftwidth=4 softtabstop=4
+endfunction
+"
+"if has("autocmd")
+"       autocmd BufEnter *.html,*.htm,*.shtml call html_maps()
+"endif
+
+"not needed anymore on most systems:
+":filetype plugin on
 
 ":set makeprg=/home/users/steffen/work/pds_sys/igdevtools/mhmake
 
