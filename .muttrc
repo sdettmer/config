@@ -67,6 +67,8 @@ set folder=~/Mail/
 #set spoolfile=imap://sdettmer:steffen@mail.bln/INBOX
 #set spoolfile=imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX 
 #set spoolfile=imap://steffen:steffen@raven/INBOX
+#link:
+#set spoolfile=~/Mail-In/!inbox!
 
 #Mutt laesst sich nicht mit Strg-Z stoppen
 set suspend
@@ -94,10 +96,11 @@ set reply_regexp="^((re|aw|betr\.?|antw\.?|antwort|wg|fwd|)(.[0-9])?:[ \t]*)|(\[
 unset strict_threads 
 set sort_re
 
-my_hdr From: "Steffen DETTMER" <Steffen.DETTMER@ingenico.com>
+my_hdr From: "Steffen DETTMER" <steffen@dett.de>
 #my_hdr Reply-To: "Steffen Dettmer" <steffen@dett.de>
 #my_hdr Reply-To: "Steffen Dettmer" <steffen@dett.de>
 my_hdr X-Editor: Vim http://www.vim.org/
+my_hdr X-Mailer: Mutt http://www.mutt.org/
 
 #Eigene e-Mail-Aressen (als Regexp)
 set alternates="(steffen@dett\.de|steffen@bedinetz\.de|steffen@tfh-berlin\.de)"
@@ -147,11 +150,12 @@ set record=+sent-mail
 
 #Vorm Drucken nachfragen
 set print=yes
+set print_command="a2ps -s 1 -Email -M A4 -r -1 -A virtual --highlight-level=heavy"
 #set print_command="a2ps --margin=25 -s 1 -E -M A4ky -r -1"
 #set print_command="a2ps -s 2 -Email -M A4ky -r -2 -A virtual --highlight-level=heavy"
 
 #HP-mono:
-set print_command="a2ps -s 1 -Email -M A4ky -r -1 -A virtual --highlight-level=heavy -Php-mono"
+#set print_command="a2ps -s 1 -Email -M A4ky -r -1 -A virtual --highlight-level=heavy -Php-mono"
 #set print_command="a2ps -s 2 -Email -M A4ky -r -2 -A virtual --highlight-level=heavy -Php-mono"
 #HP-Color:
 #set print_command="a2ps -s 1 --margin=35 -Email -M A4 -r -1 -A virtual --highlight-level=heavy -Php-color"
@@ -178,6 +182,7 @@ set date_format="!%a, %b %d, %Y at %H:%M %Z"
 set folder_format=" %N  (%8s)   %-42f   [%d]"
 set index_format="%4C %Z %{%b %d}  %-20.20n  %s"
 folder-hook . 'set index_format="%4C %Z %{%b %d}  %-20.20n  %s"'
+#folder-hook . 'set pager_index_lines=10 index_format="%4C %Z %{%b %d}  %-20.20n %-42.42s"'
 folder-hook sent-mail 'set index_format="%4C %Z %{%b %d}  %-20.20t  %s"'
 folder-hook postponed-msgs 'set index_format="%4C %Z %{%b %d}  %-20.20t  %s"'
 
@@ -214,14 +219,19 @@ set beep_new
 set sort_alias=unsorted
 
 #Mailcheck-Intervall
-set timeout=10
+set timeout=60
 
 #Beim Senden 1 Sekunde warten und dann im Hintergrund weitersenden
-set sendmail_wait=1
+set sendmail_wait=5
 
 #Beim Forwarden MIME-Messages decodieren
 #(fuehrt auch dazu, dass nicht gesamter Header geforwarded wird)
-unset forward_decode
+# on link: "set forward_decode"
+# unset forward_decode
+set forward_decode
+
+#Header kuerzen
+#set weed
 
 #Beim Forwarden MIME-Messages nicht als Attatchment schicken
 unset mime_forward
@@ -240,37 +250,27 @@ unset sig_dashes
 #                +IN.isdn +IN.unix +IN.bsd \
 #                +IN.security +IN.eepro +IN.cvs \
 #                +muell
-#mailboxes	\
-#	/home/steffen/Mail-In/.main		\
-#	/home/steffen/Mail-In/TRASH		\
-#	/home/steffen/Mail-In/gw1-logs		\
-#	/home/steffen/Mail-In/isdn4linux	\
-#	/home/steffen/Mail-In/large		\
-#	/home/steffen/Mail-In/logs		\
-#	/home/steffen/Mail-In/modssl-users	\
-#	/home/steffen/Mail-In/openssl-users	
 
-#alle files unter Mail-In, ausser .fromlog, Maildirs (mit "new" ...)
-#BACKUP selbst nur anzeigen 
-#dabei muessen maildirs selbst mit rein - koennten ja in subdirs
-#liegen (eine Ebene soll erlaubt sein)
-#mailboxes `find /home/steffen/Mail-In -type f -not -name \
-#.fromlog -not -path '*BACKUP*' -maxdepth 2 \
-#	-not -path '*/new/*' -not -path '*/cur/*' -not -path '*/tmp/*' \
-#	|xargs echo -n; \
-#find /home/steffen/Mail-In -type d -maxdepth 2 \
-#	-not -path '*/new' -not -path '*/cur' -not -path '*/tmp' \
-#	|xargs echo -n; \
-#	echo `
-mailboxes imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX \
-  imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX/cygwin \
-  imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX/nagios
+# mailboxes imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX \
+#  imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX/cygwin \
+#  imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX/nagios
+mailboxes `find /home/steffen/Mail-In -type f -not -name \
+.fromlog -not -path '*BACKUP*' -not -path '*archive-mail.pl' \
+	-mindepth 1 -maxdepth 2 \
+	-not -path '*/new/*' -not -path '*/cur/*' -not -path '*/tmp/*' \
+	| xargs echo -n; \
+	echo -n " " ; \
+find /home/steffen/Mail-In -type d \
+	-mindepth 1 -maxdepth 2 \
+	-not -path '*/new' -not -path '*/cur' -not -path '*/tmp' \
+	| xargs echo -n; \
+	echo `
 
 #Headerdarstellung im Pager
 #(welche werden angezeigt und in welcher Reihenfolge)
 ignore          *
-unignore        X-AntiVirus: X-Note: Date: Reply-To: To: CC: Newsgroups: Subject: From: X-Mailer: X-MimeOLE
-hdr_order       X-AntiVirus: X-Note: From: Reply-To: To: CC: Newsgroups: Subject: Date: X-Mailer: X-MimeOLE
+unignore        X-AntiVirus: X-Note: Date: Reply-To: To: CC: Newsgroups: Subject: From: X-Mailer: X-MimeOLE X-Spam-Score: X-Privileged: X-Gate1:
+hdr_order       X-AntiVirus: X-Note: From: Reply-To: To: CC: Newsgroups: Subject: Date: X-Mailer: X-MimeOLE X-Spam-Score: X-Gate1:
 
 #Mailinglisten (wichtig fuer's List-Reply)
 lists           mutt-announce mutt-users \
@@ -297,26 +297,11 @@ unset autoedit
 unset askcc
 unset askbcc
 
-send-hook	"."		my_hdr From: "Steffen DETTMER" <Steffen.DETTMER@ingenico.com> 
 
+# TODO send-hook's fcc-save-hooks save-hooks here
+#
 #fcc-save-hook	"." +sent-mail
 fcc-save-hook	"netsaint" +admin
-fcc-save-hook	"td" +BEDI
-fcc-save-hook	"susi@atlas.tfh-berlin.de" +susi
-fcc-save-hook	"Gerhard.Sittig@gmx.net" +gerhard.sittig
-fcc-save-hook	"flashlight@swn.de" +Barry
-fcc-save-hook	"MGOLLNAU@jura.uni-wuerzburg.de" +Maria
-fcc-save-hook	"klingner@stud.uni-frankfurt.de" +Teffa
-fcc-save-hook	"cheesychics2@yahoo.com" +heather
-fcc-save-hook	"roser@uni-muenster.de" +Tina
-fcc-save-hook	"pitti@amendestr.in-berlin.de" +pitti
-
-fcc-save-hook	"styx@tfh-berlin.de" +styx
-fcc-save-hook	"s652204@tfh-berlin.de" +styx
-fcc-save-hook	"dmarkov@kpmg.com" +styx
-fcc-save-hook	"s.weissenberg@BBA.DE" +styx
-save-hook	"selflinux@hh.schule.de" /home/steffen/Mail-In/selflinux
-save-hook	"selflinux-admin@" /home/steffen/Mail-In/selflinux-admin
 
 # didn't work, used vimrc...
 # send-hook "~C n.woitziske@beratung-sk.de" "exec edit-to"
@@ -376,12 +361,19 @@ macro index	'L'	l~A\n
 
 #Macros fuer's Forwarden:
 #Bei `f' werden nur ausgewaehlte Header in die Mail uebernommen, bei `Alt-f' alle
-macro index	f	":set forward_decode\n:bind index \e% forward-message\n\e%"
-macro pager	f	":set forward_decode\n:bind pager \e% forward-message\n\e%"
-macro attach	f	":set forward_decode\n:bind attach \e% forward-message\n\e%"
-macro index	\ef	":unset forward_decode\n:bind index \e% forward-message\n\e%"
-macro pager	\ef	":unset forward_decode\n:bind pager \e% forward-message\n\e%"
-macro attach	\ef	":unset forward_decode\n:bind attach \e% forward-message\n\e%"
+#macro index	f	":set forward_decode\n:bind index \e% forward-message\n\e%"
+#macro pager	f	":set forward_decode\n:bind pager \e% forward-message\n\e%"
+#macro attach	f	":set forward_decode\n:bind attach \e% forward-message\n\e%"
+#macro index	\ef	":unset forward_decode\n:bind index \e% forward-message\n\e%"
+#macro pager	\ef	":unset forward_decode\n:bind pager \e% forward-message\n\e%"
+#macro attach	\ef	":unset forward_decode\n:bind attach \e% forward-message\n\e%"
+#newer mutts want ":bind index \\e% forward-message\n\e%" !!
+macro index	f	":unset mime_forward\n:set weed\n:bind index \e% forward-message\n\e%"
+macro pager	f	":unset mime_forward\n:set weed\n:bind pager \e% forward-message\n\e%"
+macro attach	f	":unset mime_forward\n:set weed\n:bind attach \e% forward-message\n\e%"
+macro index	\ef	":set mime_forward\n:bind index \e% forward-message\n\e%"
+macro pager	\ef	":set mime_forward\n:bind pager \e% forward-message\n\e%"
+macro attach	\ef	":set mime_forward\n:bind attach \e% forward-message\n\e%"
 
 #Macros, die zwischen den Editoren umschalten
 macro generic	\ej	":set editor='joe -nobackups -wordwrap -rmargin 65'\n"
@@ -401,6 +393,7 @@ folder-hook .			bind	pager	g	group-reply
 folder-hook .			bind	attach	\er	reply
 folder-hook .			bind	index	\er	reply
 folder-hook .			bind	pager	\er	reply
+# TODO folder-hooks here
 folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	set reply_to=ask-yes
 folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	bind	attach	r	list-reply
 folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	bind	index	r	list-reply
@@ -414,6 +407,7 @@ folder-hook "(logs|status)"	bind	attach	r	noop
 folder-hook "(logs|status)"	bind	index	r	noop
 folder-hook "(logs|status)"	bind	pager	r	noop
 
+# folder-hook "(logs|status)"	set pager_index_lines=0
 
 #NNTP: http://strcat.neessen.net/mutt/mutt.nntp.html
 #set news_server = news.de.ingenico.com
@@ -454,10 +448,17 @@ color   body            brightwhite     default   "Assigned to: Steffen"
 color   error           red             default
 # color   header          brightyellow    default   "Date: |From: |To: |Subject: "
 color   header          brightyellow    default   "^Subject: "
+color   header          brightyellow    default   "^X-Privileged: "
+color   header          brightyellow    default   "^X-Gate1:"
 color   header          brightcyan      default   "^X-Note: "
+color   header          brightgreen     default   "^X-Spam"
+color   header          yellow          default   "^X-Spam[^+]*[-]{1,}"
+color   header          brightyellow    default   "^X-Spam[^+]*\\+{4,}"
+color   header          brightred       default   "^X-Spam[^+]*\\+{8,}"
 color   header          white    	default   "^To:"
 color   header          brightblack	default "^To:.*([Ss]teffen@|(sd|std)@bedinetz.de)"
 color   hdrdefault      yellow          default
+# color   indicator       black           white
 color   indicator       default           white
 color   markers         brightblue      default
 color   message         white           default
@@ -484,6 +485,7 @@ color	body		brightblack	default "^.*schrieb am.*:.?$"
 color	body		brightwhite	default "\(PM\)"
 color   body            magenta         default "^.*PGP SIGNED MESSAGE.*$"
 color   body            magenta         default "^.*-----[^-]+-----.*$"
+color	body		green		default "Good signature from user"
 color   body            brightmagenta   default '[a-z0-9][-a-z_0-9/.%+]+@[-a-z_0-9.]+\.[-a-z]+'
 color   body            brightmagenta   default '((https?|ftp)://|www\.)[-a-z_0-9@#$%&+=:;\'~,./?]+[a-z_0-9/]'
 color	body		brightwhite	default "[Ss]teffen( [Dd]ettmer)?( DETTMER)?"
@@ -499,11 +501,41 @@ color	index		yellow		default "[Ss]teffen( [Dd]ettmer)?"
 color	index		brightblack	default "www@tfh-berlin"
 color	index		brightblack	default "Mail System"
 color	index		brightblack	default "(DAEMON|aemon)"
-color	index		white		default "[Cc]ron"
 color	index		red		default "SYSLOG"
+color	index		white		default "[Cc]ron"
+color   index          	brightblack     default  "~h ^X-Note:.*.\*\*.SPAM.\*\*"
+
+#syslog
+color	body		brightblack	default "snort\[[0-9]+\]: spp_portscan.*"
+color	body		brightblack	default "snort\[[0-9]+\]: .* WEB-IIS .*"
+#named[460]: Err/TO getting serial#
+#named-xfer[10799]: [193.178.163.195] not authoritative for
+color	body		brightblack	default "named\[[0-9]+\]: Err/TO getting serial.*"
+color	body		brightblack	default "named-xfer\[[0-9]+\]: .* not authoritative for.*"
+color	body		green		default "netsaint: HOST .*;UP;"
+color	body		green		default "netsaint: SERVICE .*;OK;"
+color	body		yellow		default "netsaint: SERVICE .*;WARNING;"
+color	body		yellow		default "netsaint: HOST .*;UNREACHABLE;"
+color	body		brightred	default "netsaint: HOST .*;DOWN;"
+color	body		brightred	default "netsaint: SERVICE .*;CRITICAL;"
 color   index		red     	default "(SMS:|CERT|ichtig|!!|ringend)"
 
-color   index           brightwhite     default   ~N
+#Flags haben Vorrang:
+color   index          	brightcyan      default      "~h ^X-Privileged: "
+color   index          	brightcyan      default      "~h ^X-Gate1:.SIG_OK"
+#color   index           brightwhite    default   ~N
+color   index          	brightwhite     default   ~N
+color   index          	brightblack     default "~N ~h ^X-Note:.*.\*\*.SPAM.\*\*"
+color   index          	brightblack     default "~N ~h ^X-Gate1:.SIG_FAIL"
+color   index          	brightcyan      brightblack  "~N ~h ^X-Privileged: "
+color   index          	brightcyan      brightblack  "~N ~h ^X-Gate1:.SIG_OK"
+color   index           brightcyan    	brightblack   ~F
+
+#außer bei Sonderregeln:
+#color	index		red		brightblack "(~N (Susi|Susanne|Messow|Nomilex))"
+#color	index		red		brightblack "(Princess|Susi|Susanne|Messow|Nomilex)"
+
+#gelöschte:
 color   index           brightblack     default   ~D
 
 # ----- E O F ---------------------------------------------------
