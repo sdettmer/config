@@ -52,7 +52,7 @@ xterm.eightBitInput:	true
 xterm*multiScroll:	on
 xterm*jumpScroll:	on
 !xterm*font:	-adobe-courier-bold-r-normal--14-140-75-75-m-90-iso8859-1
-xterm*font:	-*-*-*-*-*-*-*-*-*-*-*-*-iso8859-15
+!xterm*font:	-*-*-*-*-*-*-*-*-*-*-*-*-iso8859-15
 xterm*ScrollBar: on
 xterm*SaveLines: 10000
 ! xterm*VisualBell: true
