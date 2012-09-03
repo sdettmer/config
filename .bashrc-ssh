@@ -8,7 +8,7 @@ test -z "$PROFILEREAD" && . /etc/profile
 if kill -0 "$SSH_AGENT_PID" ; then
 	echo "SSH-Agent ready."
 	PS1="ssh \u@\h:\w # "
-        # ssh-add ~/.ssh/id_dsa && PS1="SSH \u@\h:\w # "
+	# ssh-add ~/.ssh/id_dsa && PS1="SSH \u@\h:\w # "
 	ssh-add && PS1="SSH \u@\h:\w # "
 else
 	echo "WARNING, no agent!"
