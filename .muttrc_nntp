@@ -1,0 +1,31 @@
+# NNTP: http://strcat.neessen.net/mutt/mutt.nntp.html
+# To be sourced via ~/.muttrc_site ("source ~/.muttrc_nntp")
+
+# set news_server = news.de.ingenico.com
+# set ask_follow_up
+set catchup_newsgroup = ask-no
+set group_index_format = "%4C %M%N %5s  %-45.45f %d"
+set newsrc = "~/.mutt/nntp.d/.newsrc-%s"
+set news_cache_dir = ~/.mutt/nntp.d
+set nntp_load_description
+set nntp_poll = 60
+set post_moderated = ask-yes
+set show_new_news
+# up to 10k messages to be displayed
+set nntp_context="10000"
+unset show_only_unread
+# set save_unsubscribed
+unset mime_subject
+
+# "reply" to news (followup-message)
+folder-hook "nntp://"          bind    attach  r followup-message
+folder-hook "nntp://"          bind    index   r followup-message
+folder-hook "nntp://"          bind    pager   r followup-message
+folder-hook "nntp://"          bind    attach  g followup-message
+folder-hook "nntp://"          bind    index   g followup-message
+folder-hook "nntp://"          bind    pager   g followup-message
+# bind pager 'r' followup-message
+
+bind  index     'p'    change-newsgroup
+
+# vim: et sw=2 ts=2 tw=2 tw=0:

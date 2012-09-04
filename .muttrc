@@ -6,9 +6,6 @@
 # alt (ich nutze keinerlei Umlaute und sehr viel kuerzere Zeilen)
 # und nicht beim "Umschalten" mitgefuehrt
 
-#GPG:
-source /usr/share/doc/packages/mutt/gpg.rc
-
 #Einlesen des Alias-Files
 source ~/.mutt_alias
 
@@ -26,7 +23,14 @@ set attribution = "* %n wrote on %d:"
 #set dsn_notify="failure,delay"
 
 #PGP Passphrase nicht cachen
-set pgp_timeout=0
+#  ...na gut, eine Sekunde wegen mehrfach signaturen
+set pgp_timeout=1
+
+#GPG:
+#source /usr/share/doc/packages/mutt/pgp2.rc
+#source /usr/share/doc/packages/mutt/pgp5.rc
+source /usr/share/doc/packages/mutt/gpg.rc
+#source /usr/share/doc/packages/mutt/gpg-compat.rc
 
 #Follow Up anzeigen
 set followup_to
@@ -38,9 +42,10 @@ set reverse_alias
 unset use_domain
 
 #Anzahl der Zeilen, die im Pager fuer die Index-Darstellung verwendet werden
-set pager_index_lines=10
+# (now done by folder hook)
+#set pager_index_lines=10
 
-#Beim Threading wird im Thread nach Datum sortiert; Threads werden 
+#Beim Threading wird im Thread nach Datum sortiert; Threads werden
 #so sortiert, dass die mit neuen Mails ganz unten stehen
 #set sort_aux=subject
 
@@ -61,14 +66,10 @@ set mbox_type=Maildir
 set folder=~/Mail/
 
 #Festlegen des Spoolfiles
+#  (now in .muttrc_private:)
 # gsi:  da wird vsm draus, wenn ich nichts anderes sage
 # set spoolfile=+Inbox
-#set spoolfile=/home/steffen/Mail-In/!inbox!
-#set spoolfile=imap://sdettmer:steffen@mail.bln/INBOX
-#set spoolfile=imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX 
-#set spoolfile=imap://steffen:steffen@raven/INBOX
-#link:
-#set spoolfile=~/Mail-In/!inbox!
+#set spoolfile=imap://sdettmer:pass@mail.bln/INBOX
 
 #Mutt laesst sich nicht mit Strg-Z stoppen
 set suspend
@@ -96,15 +97,14 @@ set reply_regexp="^((re|aw|betr\.?|antw\.?|antwort|wg|fwd|)(.[0-9])?:[ \t]*)|(\[
 unset strict_threads 
 set sort_re
 
-my_hdr From: "Steffen DETTMER" <steffen@dett.de>
-#my_hdr Reply-To: "Steffen Dettmer" <steffen@dett.de>
-#my_hdr Reply-To: "Steffen Dettmer" <steffen@dett.de>
+# now in .muttrc_private:
+#my_hdr From: "Steffen DETTMER" <steffen@dett.de>
 my_hdr X-Editor: Vim http://www.vim.org/
 my_hdr X-Mailer: Mutt http://www.mutt.org/
 
 #Eigene e-Mail-Aressen (als Regexp)
-set alternates="(steffen@dett\.de|steffen@bedinetz\.de|steffen@tfh-berlin\.de)"
-
+# now in .muttrc_private:
+# set alternates="(steffen@dett\.de|std@bedinetz\.de|steffen@tfh-berlin\.de)"
 
 #Anzeige der " +TCF"-Attribute im Index unterdruecken
 # set to_chars="     "
@@ -141,24 +141,13 @@ set postponed=+postponed-msgs
 #Folder fuer versandte Messages
 set record=+sent-mail
 
-#Standard-Folder fuer saved messages
-#save-hook "root@speedy.gsinet" +log
-#save-hook "g.sittig@abo.freiepresse.de" +muell
-#save-hook "gmxred@gmx.net" +admin
-#save-hook . +@alias
-#save-hook . +ANSEHEN
-
 #Vorm Drucken nachfragen
 set print=yes
 set print_command="a2ps -s 1 -Email -M A4 -r -1 -A virtual --highlight-level=heavy"
-#set print_command="a2ps --margin=25 -s 1 -E -M A4ky -r -1"
-#set print_command="a2ps -s 2 -Email -M A4ky -r -2 -A virtual --highlight-level=heavy"
-
-#HP-mono:
-#set print_command="a2ps -s 1 -Email -M A4ky -r -1 -A virtual --highlight-level=heavy -Php-mono"
-#set print_command="a2ps -s 2 -Email -M A4ky -r -2 -A virtual --highlight-level=heavy -Php-mono"
-#HP-Color:
-#set print_command="a2ps -s 1 --margin=35 -Email -M A4 -r -1 -A virtual --highlight-level=heavy -Php-color"
+# interesting a2ps options:
+#   smaller printable range (an old kyrocera): "--margin=25 -M A4ky"
+#   two-on-one pages: "-s 2 -2"
+#   alternative printer: "-margin=35 -Php-color"
 
 #Nach dem Verlassen externer Programme (z. B. lynx) nicht auf Tastendruck
 #warten (nur bei Fehler ist einer noetig)
@@ -181,8 +170,8 @@ set date_format="!%a, %b %d, %Y at %H:%M %Z"
 
 set folder_format=" %N  (%8s)   %-42f   [%d]"
 set index_format="%4C %Z %{%b %d}  %-20.20n  %s"
-folder-hook . 'set index_format="%4C %Z %{%b %d}  %-20.20n  %s"'
-#folder-hook . 'set pager_index_lines=10 index_format="%4C %Z %{%b %d}  %-20.20n %-42.42s"'
+#folder-hook . 'set index_format="%4C %Z %{%b %d}  %-20.20n  %s"'
+folder-hook . 'set pager_index_lines=10 index_format="%4C %Z %{%b %d}  %-20.20n %-42.42s"'
 folder-hook sent-mail 'set index_format="%4C %Z %{%b %d}  %-20.20t  %s"'
 folder-hook postponed-msgs 'set index_format="%4C %Z %{%b %d}  %-20.20t  %s"'
 
@@ -243,17 +232,10 @@ set signature="~/Mail/.signature"
 # meine .sig:  "und die dashes sind auch schon drin ..."
 unset sig_dashes
 
-#mailboxes imap://sdettmer@mail.bln/INBOX
+#Mailboxen, die Mutt auf neue Mail prueft:
+# mailboxes imap://sdettmer@mail.bln/INBOX +!inbox! ~/Mail-In/!inbox!
 
-#Mailboxen, die Mutt auf neue Mail prueft
-#mailboxes	! +div \
-#                +IN.isdn +IN.unix +IN.bsd \
-#                +IN.security +IN.eepro +IN.cvs \
-#                +muell
-
-# mailboxes imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX \
-#  imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX/cygwin \
-#  imap://sdettmer@desnprexc.usr.ingenico.loc/INBOX/nagios
+# automatically get all from `Mail-In' at startup
 mailboxes `find /home/steffen/Mail-In -type f -not -name \
 .fromlog -not -path '*BACKUP*' -not -path '*archive-mail.pl' \
 	-mindepth 1 -maxdepth 2 \
@@ -273,13 +255,7 @@ unignore        X-AntiVirus: X-Note: Date: Reply-To: To: CC: Newsgroups: Subject
 hdr_order       X-AntiVirus: X-Note: From: Reply-To: To: CC: Newsgroups: Subject: Date: X-Mailer: X-MimeOLE X-Spam-Score: X-Gate1:
 
 #Mailinglisten (wichtig fuer's List-Reply)
-lists           mutt-announce mutt-users \
-                suse-security bugtraq freebsd-security \
-		openssl-users modssl-users \
-                isdn4linux suse-isdn suse-linux suse-announce \
-                info-cvs ssh@clinet.fi selflinux@hh.schule.de \
-		linux-ipsec selflinux-admin \
-		cygwin@cygwin.com rxtx@qbang.org
+lists           mutt-announce mutt-users
 
 # # Hooks fuer compressed folder patch
 # open-hook     "Old-"        "gzip -cd %f > %t"
@@ -298,14 +274,11 @@ unset askcc
 unset askbcc
 
 
-# TODO send-hook's fcc-save-hooks save-hooks here
+# now in .muttrc_private:
+# send-hook's fcc-save-hooks save-hooks
 #
-#fcc-save-hook	"." +sent-mail
-fcc-save-hook	"netsaint" +admin
-
-# didn't work, used vimrc...
-# send-hook "~C n.woitziske@beratung-sk.de" "exec edit-to"
-# message-hook "~f n.woitziske@beratung-sk.de" "my_hdr To: <NadineWoitziske@aol.com>"
+# fcc-save-hook "." +sent-mail
+# fcc-save-hook "netsaint" +admin
 
 #Key bindings
 bind editor     <up>            history-up
@@ -342,7 +315,6 @@ macro pager     'I'     c!\n
 macro attach    'I'     c!\n
 #macro browser	'I'	+2\n\n
 
-bind  index     'p'    change-newsgroup
 macro index	'i'	c?\t
 
 macro attach	'c'	qc
@@ -350,14 +322,6 @@ macro attach	'c'	qc
 #Macros um alle Mails anzeigen (Rueckgaengigmachen von `l')
 macro pager	'L'	l~A\n
 macro index	'L'	l~A\n
-
-#Macros, um zu verhindern, dass beim Tag, Delete, Undelete,
-#Mark-as-New, Flag im Pager nicht zur naechsten Mail gesprungen wird
-#macro pager	't'	":unset resolve\n:bind pager \e% tag-message\n\e%:set resolve\n"
-#macro pager	'd'	":unset resolve\n:bind pager \e% delete-message\n\e%:set resolve\n"
-#macro pager	'u'	":unset resolve\n:bind pager \e% undelete-message\n\e%:set resolve\n"
-#macro pager	'N'	":unset resolve\n:bind pager \e% mark-as-new\n\e%:set resolve\n"
-#macro pager	'F'	":unset resolve\n:bind pager \e% flag-message\n\e%:set resolve\n"
 
 #Macros fuer's Forwarden:
 #Bei `f' werden nur ausgewaehlte Header in die Mail uebernommen, bei `Alt-f' alle
@@ -394,46 +358,20 @@ folder-hook .			bind	attach	\er	reply
 folder-hook .			bind	index	\er	reply
 folder-hook .			bind	pager	\er	reply
 # TODO folder-hooks here
-folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	set reply_to=ask-yes
-folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	bind	attach	r	list-reply
-folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	bind	index	r	list-reply
-folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	bind	pager	r	list-reply
-folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	bind	attach	\er	reply
-folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	bind	index	\er	reply
-folder-hook "(suse-|-users|isdn4linux|selflinux|ipsec)"	bind	pager	\er	reply
+folder-hook "(mutt-|-users)"	set reply_to=ask-yes
+folder-hook "(mutt-|-users)"	bind	attach	r	list-reply
+folder-hook "(mutt-|-users)"	bind	index	r	list-reply
+folder-hook "(mutt-|-users)"	bind	pager	r	list-reply
+folder-hook "(mutt-|-users)"	bind	attach	\er	reply
+folder-hook "(mutt-|-users)"	bind	index	\er	reply
+folder-hook "(mutt-|-users)"	bind	pager	\er	reply
 
 #reply auf Logs gibts nicht (notfalls doch: ESC-r)
 folder-hook "(logs|status)"	bind	attach	r	noop
 folder-hook "(logs|status)"	bind	index	r	noop
 folder-hook "(logs|status)"	bind	pager	r	noop
 
-# folder-hook "(logs|status)"	set pager_index_lines=0
-
-#NNTP: http://strcat.neessen.net/mutt/mutt.nntp.html
-#set news_server = news.de.ingenico.com
-#set ask_follow_up
-set catchup_newsgroup = ask-no
-set group_index_format = "%4C %M%N %5s  %-45.45f %d"
-set newsrc = "~/.mutt/nntp.d/.newsrc-%s"
-set news_cache_dir = ~/.mutt/nntp.d
-set nntp_load_description
-set nntp_poll = 60
-set post_moderated = ask-yes
-set show_new_news
-# up to 10k messages to be displayed
-set nntp_context="10000"
-unset show_only_unread
-#set save_unsubscribed
-unset mime_subject
-
-#"reply" auf news (followup-message)
-folder-hook "nntp://"          bind    attach  r followup-message
-folder-hook "nntp://"          bind    index   r followup-message
-folder-hook "nntp://"          bind    pager   r followup-message
-folder-hook "nntp://"          bind    attach  g followup-message
-folder-hook "nntp://"          bind    index   g followup-message
-folder-hook "nntp://"          bind    pager   g followup-message
-#bind pager 'r' followup-message
+folder-hook "(logs|status)"	set pager_index_lines=0
 
 auto_view text/html
 #auto_view text/html application/x-gunzip \
@@ -492,6 +430,7 @@ color	body		brightwhite	default "[Ss]teffen( [Dd]ettmer)?( DETTMER)?"
 color	body		brightwhite	default "( [Ww]ichtig|--> |!!+|oki,?|[Dd]ringend)"
 color	body		brightblack	default "Outlook"
 color   body            brightmagenta   default "The following comment has been added to this issue"
+# Those should go to ~/.muttrc_private, but order matters...
 color   index		brightgreen     default "([Dd]ettmer|[Tt][Dd])"
 color   index		brightgreen     default "(JSC|schlegel)"
 color   index		green     	default "[Ss]ittig"
@@ -520,22 +459,27 @@ color	body		brightred	default "netsaint: HOST .*;DOWN;"
 color	body		brightred	default "netsaint: SERVICE .*;CRITICAL;"
 color   index		red     	default "(SMS:|CERT|ichtig|!!|ringend)"
 
-#Flags haben Vorrang:
-color   index          	brightcyan      default      "~h ^X-Privileged: "
-color   index          	brightcyan      default      "~h ^X-Gate1:.SIG_OK"
-#color   index           brightwhite    default   ~N
-color   index          	brightwhite     default   ~N
-color   index          	brightblack     default "~N ~h ^X-Note:.*.\*\*.SPAM.\*\*"
-color   index          	brightblack     default "~N ~h ^X-Gate1:.SIG_FAIL"
-color   index          	brightcyan      brightblack  "~N ~h ^X-Privileged: "
-color   index          	brightcyan      brightblack  "~N ~h ^X-Gate1:.SIG_OK"
-color   index           brightcyan    	brightblack   ~F
+# flags have precedence
+color index      cyan         default "~h ^X-Privileged: "
+color index      cyan         default "~h ^X-Gate1:.SIG_OK"
+color index      brightwhite  default "~N"
+color index      brightblack  default "~N ~h ^X-Note:.*.\*\*.SPAM.\*\*"
+color index      brightblack  default "~N ~h ^X-Gate1:.SIG_FAIL"
+color index      brightcyan   default "~N ~h ^X-Privileged: "
+color index      brightcyan   default "~N ~h ^X-Gate1:.SIG_OK"
+color index      brightcyan   default "~F"
 
-#außer bei Sonderregeln:
-#color	index		red		brightblack "(~N (Susi|Susanne|Messow|Nomilex))"
-#color	index		red		brightblack "(Princess|Susi|Susanne|Messow|Nomilex)"
+# deleted
+color index      brightblack  default "~D"
 
-#gelöschte:
-color   index           brightblack     default   ~D
+# site specifics (by default, just have an empty file here)
+#   For NNTP: http://strcat.neessen.net/mutt/mutt.nntp.html, it
+#   should include "source ~/.muttrc_nntp". Could also be used
+#   for specific GPG configs etc
+source ~/.muttrc_site
 
+# private things
+source ~/.muttrc_private
+
+# vim: et sw=2 ts=2 tw=2 tw=0:
 # ----- E O F ---------------------------------------------------
