@@ -1678,4 +1678,4 @@ set wildmode=longest,list,list:full
 " https://github.com/tpope/vim-pathogen:
 " call pathogen#infect()
 
-" vim: et sw=2 ts=2 tw=2 tw=75 fenc=latin1:
+" vim: et sw=2 ts=2 tw=2 tw=75 :
