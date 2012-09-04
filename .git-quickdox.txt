@@ -10,3 +10,10 @@ git config --global user.email "Steffen Dettmer <steffen.dettmer@gmail.com>"
 git config user.name "Steffen Dettmer"
 git config user.email "Steffen Dettmer <steffen@dett.de>"
 git config --global color.ui auto
+
+
+# Repos
+# url = ssh://git@bitbucket.org/sdettmer/config
+# url = git://github.com/sdettmer/config.git
+# Merge messages
+# git log --pretty=format:'%s (%ad)%n%b' --date=local ORIG_HEAD..MERGE_HEAD
