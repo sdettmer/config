@@ -1,6 +1,8 @@
 version 5.3
 " This should be "version 5.4" now - but some people source my vimrc
 " here and they'd get errors if I upgraded my vimrc to that.  :-/
+" Oldest version I currently have to test is 6.1, but I don't see a
+" difference when setting the version here
 " ==================================================================
 " File:         $HOME/.vimrc.forall  (sourced by ~USER/.vimrc)
 " Last update:  Thu Jul 01 20:00:00 MET DST 1999
@@ -10,10 +12,10 @@ version 5.3
   set noexpandtab
 
 "       autoindent:  "off" as I usually do not write code.
-"  set noautoindent
-    set autoindent
-    set smartindent
-    set nocindent
+" set noautoindent
+  set autoindent
+  set smartindent
+  set nocindent
 "       autoread: When a file has been detected to have been changed
 "       outside of Vim and it has not been changed inside of Vim,
 "       automatically read it again.
@@ -153,6 +155,7 @@ set statusline+=\ %P    "percent through file
 "       through some brain-dead telnet program (there are many).
 "set listchars=eol:$
 set list
+"set listchars=trail:·,tab:»·
 set listchars=trail:·,tab:»·
 "
 "       magic:  Use 'magic' patterns  (extended regular expressions)
@@ -247,9 +250,11 @@ set listchars=trail:·,tab:»·
 highlight Search term=standout ctermfg=0 ctermbg=3
 " Spell checking (hint: set spell spelllang=en, correct "z=")
 "   See also nmap ,sc
+if v:version >= 700
 hi SpellBad       term=reverse ctermbg=88 gui=undercurl guisp=Red
 hi SpellCap       term=reverse ctermbg=81 gui=undercurl guisp=Blue
 hi SpellRare      term=reverse ctermbg=225 gui=undercurl guisp=Magenta
+endif
 
 "       textmode:    no - I am using Vim on UNIX!
   set notextmode
@@ -1223,7 +1228,11 @@ autocmd BufWritePost ~/.vimrc   so ~/.vimrc
       highlight! Comment     term=bold    ctermfg=cyan  guifg=Blue
       " Use a dark red as background for colorcolumn
       hi! ColorColumn term=reverse ctermbg=52    guibg=LightRed
-      hi SpellLocal     term=underline ctermbg=14 gui=undercurl guisp=DarkCyan
+      if v:version < 700
+        "No spell check in versions before 7.0, sorry
+      else
+        hi SpellLocal term=underline ctermbg=14 gui=undercurl guisp=DarkCyan
+      endif
   endif
 "
 " Definition of an alternative syntax file:
@@ -1544,6 +1553,9 @@ endfun
 
 " for statusline, to return e.g. "[PASTE,SPELL]"
 fun! Show_Status()
+  if v:version < 700
+    return "[ver<7]"
+  endif
   let l:status = []
   if exists("b:std_nomad") && b:std_nomad
     call add(l:status, "nomad")
@@ -1565,6 +1577,10 @@ endfun
 " Spell checking mode
 nmap ,sc :call Toggle_spell()<CR>
 fun! Toggle_spell()
+  if v:version < 700
+    echo "No spell check in versions before 7.0, sorry"
+    return
+  endif
   if exists("b:std_spell") && b:std_spell
     setl nospell spell?
     let b:std_spell = 0
