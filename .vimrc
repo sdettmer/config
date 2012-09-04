@@ -712,7 +712,7 @@ au BufNewFile,BufRead /nomad*src*     call NomadSrcMode()
 au BufNewFile,BufRead /nomad*ini  setf nomadini
 au BufNewFile,BufRead /nomad*log  setf nomadlog
 au BufNewFile,BufRead Makefile*   setl tw=0 noet nolist ts=8 sts=0
-au BufNewFile,BufRead *.utf8      setl encoding=utf8
+au BufNewFile,BufRead *.utf8      setl fileencoding=utf8
 augroup filetypedetect
   au! BufRead,BufNewFile *.sce setfiletype scilab
 augroup END
@@ -1662,4 +1662,4 @@ set wildmode=longest,list,list:full
 " https://github.com/tpope/vim-pathogen:
 " call pathogen#infect()
 
-" vim: et sw=2 ts=2 tw=2 tw=75:
+" vim: et sw=2 ts=2 tw=2 tw=75 fenc=latin1:
