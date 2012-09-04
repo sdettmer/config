@@ -21,3 +21,6 @@ alias rehash='hash -r'
 alias unmount='echo "Error: Try the command: umount" 1>&2; false'
 alias which='type -p'
 alias you='yast2 online_update'
+# http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
+#   Currency sign: "¤"
+# vim: et sw=4 ts=4 tw=4 tw=0:

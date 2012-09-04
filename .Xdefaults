@@ -206,3 +206,6 @@ XTerm*cursorOnTime:		200
 !        <Key>BackSpace: string("[3~") \n\
 !        <Key>End:       string("[4~")
 
+! http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
+!   Currency sign: "¤"
+! vim: noet sw=4 ts=4 tw=4 tw=0:

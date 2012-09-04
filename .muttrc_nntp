@@ -28,4 +28,6 @@ folder-hook "nntp://"          bind    pager   g followup-message
 
 bind  index     'p'    change-newsgroup
 
+# http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
+#   Currency sign: "¤"
 # vim: et sw=2 ts=2 tw=2 tw=0:

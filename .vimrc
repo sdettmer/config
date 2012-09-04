@@ -1678,4 +1678,6 @@ set wildmode=longest,list,list:full
 " https://github.com/tpope/vim-pathogen:
 " call pathogen#infect()
 
+" http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
+"   Currency sign: "¤"
 " vim: et sw=2 ts=2 tw=2 tw=75 :

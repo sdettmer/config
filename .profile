@@ -49,3 +49,6 @@ export ND_PORT_OFFSET=7
 #    /usr/bin/fortune
 #    echo
 #fi
+# http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
+#   Currency sign: "¤"
+# vim: et sw=4 ts=4 tw=4 tw=0:

@@ -481,5 +481,7 @@ source ~/.muttrc_site
 # private things
 source ~/.muttrc_private
 
+# http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
+#   Currency sign: "¤"
 # vim: et sw=2 ts=2 tw=2 tw=0:
 # ----- E O F ---------------------------------------------------

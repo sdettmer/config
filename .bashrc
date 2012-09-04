@@ -110,3 +110,6 @@ test -e ~/.alias && . ~/.alias
 test -e ~/.git-completion.bash && . ~/.git-completion.bash
 
 umask 022
+# http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
+#   Currency sign: "¤"
+# vim: et sw=4 ts=4 tw=4 tw=0:
