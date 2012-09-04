@@ -94,7 +94,7 @@ set reply_regexp="^((re|aw|betr\.?|antw\.?|antwort|wg|fwd|)(.[0-9])?:[ \t]*)|(\[
 #mit dem Regexp reply_regexp anfangen, um als zum Thread gehoerig erkannt zu
 #werden), falls das uebliche Threading nicht funktioniert, weil die References-
 #Header fehlen
-unset strict_threads 
+unset strict_threads
 set sort_re
 
 # now in .muttrc_private:
@@ -116,7 +116,7 @@ set history=50
 # set editor='joe -nobackups -wordwrap -rmargin 65'
 # set editor='mutt_edit 2>>~/log/mutt_edit_error'
 
-#erste freie Zeilen suchen, "o" oeffnet neue 
+#erste freie Zeilen suchen, "o" oeffnet neue
 set editor='vim -c "/^$"'
 
 #Editor als Ersatz des internen Editors (???)
@@ -412,7 +412,7 @@ color   tilde           brightblack     default
 color   tree            brightblack     default
 color   underline       brightred       default
 
-#und Specials: 
+#und Specials:
 color	header		brightcyan	default "Outlook"
 color	header		brightcyan	default "Exchange"
 color	body		brightblack	default "^.*[Ww]rote [Oo]n .* at .*:.?$"
@@ -483,5 +483,5 @@ source ~/.muttrc_private
 
 # http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
 #   Currency sign: "¤"
-# vim: et sw=2 ts=2 tw=2 tw=0:
+# vim: et sw=2 ts=8 tw=2 tw=0:
 # ----- E O F ---------------------------------------------------

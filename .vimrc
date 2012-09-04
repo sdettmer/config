@@ -320,8 +320,8 @@ endif
 " Often used filenames - only needed these on the command line:
 " see also:  http://www.math.fu-berlin.de/~guckes/setup/
 "
-  cab Vrc	~/.vimrc
-  cab SIGS 	~/Mail/signatures
+  cab Vrc  ~/.vimrc
+  cab SIGS ~/Mail/signatures
 "
 " A list of filenames that are needed to shorten some autocommands:
 " cab MAILNEWSFILES .article,.followup,.letter,mutt*[0-9],/postpone/*
@@ -334,7 +334,7 @@ endif
   ab Yoki   oki,<CR><CR>Steffen
   ab Schönes Wochenende! Schönes Wochenende!
 
-"  ab Ywitzederwoche Bcc: Steffen Dettmer <sdettmer@ingenico.de>, susi, <CR>	Tanja Wehrmann <tanjawehrmann@gmx.de>,<CR>	Daddy <comp-dettmer@t-online.de>, <CR>	Frank Schwemer <face@face-works.de>, <CR>	gordok_t, <CR>	Gordon Lange <gordon_lange@yahoo.de>, <CR>	Elke und Fritz Richter <E.F.Richter@t-online.de>, <CR>	Mark Ruth <MarkRuth@web.de>, <CR>	Rayk Papenbrock <raykpapenbrock@gmx.de>, manfred
+"  ab Ywitzederwoche Bcc: Steffen Dettmer <sdettmer@ingenico.de>, susi, <CR>        Tanja Wehrmann <tanjawehrmann@gmx.de>,<CR>        Daddy <comp-dettmer@t-online.de>, <CR>        Frank Schwemer <face@face-works.de>, <CR>        gordok_t, <CR>        Gordon Lange <gordon_lange@yahoo.de>, <CR>        Elke und Fritz Richter <E.F.Richter@t-online.de>, <CR>        Mark Ruth <MarkRuth@web.de>, <CR>        Rayk Papenbrock <raykpapenbrock@gmx.de>, manfred
 
   "Witze der Woche
   "Formats the mail completly. "\r" is CR (unix LF)

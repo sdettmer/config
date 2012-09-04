@@ -19,53 +19,53 @@ test -z "$PROFILEREAD" && test -z "$PROFILEONCE" &&
 
 function xterm_title()
 {
-	echo -n "]2;$@]1;$*"
+    echo -n "]2;$@]1;$*"
 }
 
 #SSH_AUTOPROMPT flags if already set
 function ssh_autoprompt()
 {
-	additional_string=$1
-	ssh-add -l | grep "The agent has no identities" > /dev/null
-	if [ "$?" = "0" ] ; then
-		#no identities:
-		echo "The agent has no identities."
-		sshstate="ssh${additional_string}"
-	else
-		#list and print all identities:
-		ssh-add -l|perl -ne \
-			'm/\d+ (\d+ \d+|[\w:]+) (.*)$/ && print "SSH-ID: $2\n"'
-		sshstate="SSH${additional_string}"
-	fi
-	xterm_title "${sshstate}`whoami`@`hostname -f`";
-	PS1="${sshstate}\u@\h:\w # "
-	export SSH_AUTOPROMPT=$PS1
+    additional_string=$1
+    ssh-add -l | grep "The agent has no identities" > /dev/null
+    if [ "$?" = "0" ] ; then
+        #no identities:
+        echo "The agent has no identities."
+        sshstate="ssh${additional_string}"
+    else
+        #list and print all identities:
+        ssh-add -l|perl -ne \
+            'm/\d+ (\d+ \d+|[\w:]+) (.*)$/ && print "SSH-ID: $2\n"'
+        sshstate="SSH${additional_string}"
+    fi
+    xterm_title "${sshstate}`whoami`@`hostname -f`";
+    PS1="${sshstate}\u@\h:\w # "
+    export SSH_AUTOPROMPT=$PS1
 }
 
 #CVS+SSH hack:
 SSH_AUTOPROMPT="\u@\h:\w # "
 
 if [ "$SSH_AUTOPROMPT" = "" ] ; then
-	#default prompt:
-	PS1="\u@\h:\w # "
+    #default prompt:
+    PS1="\u@\h:\w # "
 
-	if [ ! -z "$SSH_AGENT_PID" ] ; then 
-		#agent pid set: check it
-		if kill -0 "$SSH_AGENT_PID" 2>/dev/null ; then
-			ssh_autoprompt " "
-		else
-			echo "FATAL: Agent [$SSH_AGENT_PID] died!"
-		fi	
-	else
-		#no agent PID, but maybe SSH_AUTH_SOCK
-		if [ ! -z "$SSH_AUTH_SOCK" -a -S "$SSH_AUTH_SOCK" ] ; then
-			ssh_autoprompt "|"
-		fi
+    if [ ! -z "$SSH_AGENT_PID" ] ; then
+        #agent pid set: check it
+        if kill -0 "$SSH_AGENT_PID" 2>/dev/null ; then
+            ssh_autoprompt " "
+        else
+            echo "FATAL: Agent [$SSH_AGENT_PID] died!"
+        fi
+    else
+        #no agent PID, but maybe SSH_AUTH_SOCK
+        if [ ! -z "$SSH_AUTH_SOCK" -a -S "$SSH_AUTH_SOCK" ] ; then
+            ssh_autoprompt "|"
+        fi
 
-	fi
+    fi
 else
-	#echo "autoprompt set"
-	PS1=$SSH_AUTOPROMPT
+    #echo "autoprompt set"
+    PS1=$SSH_AUTOPROMPT
 fi
 export PS1 PS2
 

@@ -13,7 +13,7 @@ test -z "$PROFILEREAD" && test -z "$PROFILEONCE" &&
 #export PATH=$PATH:/home/pub/bin:/home/pub/sbin
 
 if test -f ~/.bashrc; then
-	. ~/.bashrc
+    . ~/.bashrc
 fi
 
 #alias print2="a2ps -s 2 -E -M Executive -r -2 -A virtual"
