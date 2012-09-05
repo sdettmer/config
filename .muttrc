@@ -332,12 +332,12 @@ macro index	'L'	l~A\n
 #macro pager	\ef	":unset forward_decode\n:bind pager \e% forward-message\n\e%"
 #macro attach	\ef	":unset forward_decode\n:bind attach \e% forward-message\n\e%"
 #newer mutts want ":bind index \\e% forward-message\n\e%" !!
-macro index	f	":unset mime_forward\n:set weed\n:bind index \e% forward-message\n\e%"
-macro pager	f	":unset mime_forward\n:set weed\n:bind pager \e% forward-message\n\e%"
-macro attach	f	":unset mime_forward\n:set weed\n:bind attach \e% forward-message\n\e%"
-macro index	\ef	":set mime_forward\n:bind index \e% forward-message\n\e%"
-macro pager	\ef	":set mime_forward\n:bind pager \e% forward-message\n\e%"
-macro attach	\ef	":set mime_forward\n:bind attach \e% forward-message\n\e%"
+#macro index	f	":unset mime_forward\n:set weed\n:bind index \e% forward-message\n\e%"
+#macro pager	f	":unset mime_forward\n:set weed\n:bind pager \e% forward-message\n\e%"
+#macro attach	f	":unset mime_forward\n:set weed\n:bind attach \e% forward-message\n\e%"
+#macro index	\ef	":set mime_forward\n:bind index \e% forward-message\n\e%"
+#macro pager	\ef	":set mime_forward\n:bind pager \e% forward-message\n\e%"
+#macro attach	\ef	":set mime_forward\n:bind attach \e% forward-message\n\e%"
 
 #Macros, die zwischen den Editoren umschalten
 macro generic	\ej	":set editor='joe -nobackups -wordwrap -rmargin 65'\n"
