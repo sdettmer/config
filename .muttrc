@@ -10,7 +10,13 @@
 source ~/.mutt_alias
 
 #Apr-2009
-#set imap_pass =
+# set imap_pass =
+# set imap_passive = yes
+# 1.5.12+:
+#   set message_cachedir = ~/.mutt_mcache/
+# keep a cache of headers for faster loading (1.5.9+?), needs --enable-hcache
+#   (For using both ... can be safely set to the same value)
+#   set header_cache = ~/.mutt_mcache/
 
 set read_inc = 10
 set write_inc = 10
@@ -104,7 +110,9 @@ my_hdr X-Mailer: Mutt http://www.mutt.org/
 
 #Eigene e-Mail-Aressen (als Regexp)
 # now in .muttrc_private:
-# set alternates="(steffen@dett\.de|std@bedinetz\.de|steffen@tfh-berlin\.de)"
+#   set alternates="(steffen@dett\.de|std@bedinetz\.de)"
+# newer mutt versions instead use alternates as command instead:
+#   alternates "(steffen@dett\.de|std@bedinetz\.de|steffen@tfh-berlin\.de)"
 
 #Anzeige der " +TCF"-Attribute im Index unterdruecken
 # set to_chars="     "

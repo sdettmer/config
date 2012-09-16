@@ -242,7 +242,13 @@ set listchars=trail:·,tab:»·
 "  set t_AB=[%?%p1%{8}%<%t%p1%{40}%+%e%p1%{92}%+%;%dm
 "  set t_AF=[%?%p1%{8}%<%t%p1%{30}%+%e%p1%{82}%+%;%dm
 "  endif
-"
+
+" If ALL our xterms have 256 colors, we can enable them.
+" This actually is a workaround, because xterms and putty have 256 colors,
+"   but do not set "TERM=xterm-256color" (which does not work with mutt)
+if &term=="xterm"
+  set t_Co=256
+endif
 
 " Change color defaults for dark-background xterm
 " Search is used in "copen". Default is Brightwhite-on-yellow?!
@@ -1218,7 +1224,8 @@ autocmd BufWritePost ~/.vimrc   so ~/.vimrc
 " just load the main syntax file when Vim was compiled with "+syntax"
 " Note: I use xterm with black backgrounds (or reverse-video)
 "       but gvim.exe with white background (if at all)
-" May need TERM=xterm-256color (or vim -T xterm-256color)
+" May need set t_Co=256 or TERM=xterm-256color (or vim -T xterm-256color),
+"   but mutt doesn't work well with xter-256color
 " test of wrong words and rihgt words Germany das
   if has("syntax")
       " The following sources the main syntax file,

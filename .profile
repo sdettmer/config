@@ -43,7 +43,8 @@ export ND_PORT_OFFSET=7
 #   I hope I'll get a better idea how to workaround this one day...
 #export LC_ALL=C.UTF-8
 
-test "$TERM" = "xterm" && export TERM=xterm-256color
+# breaks mutt, so don't use xterm-256color
+#   test "$TERM" = "xterm" && export TERM=xterm-256color
 
 #
 # some people don't like fortune.  If you have humor, please enable it by
