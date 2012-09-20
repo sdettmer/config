@@ -4,6 +4,7 @@
 !.vimrc
 !.vim
 !.vim/*
+!.vim/*/*
 .vim/.netrwhist
 !.vim/plugin
 !.vim/plugin/*
