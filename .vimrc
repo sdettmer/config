@@ -1689,6 +1689,9 @@ set wildmode=longest,list,list:full
 " https://github.com/tpope/vim-pathogen:
 " call pathogen#infect()
 
+" Allow .vim/ftplugin (e.g. ".vim/ftplugin/rst/riv.vim").
+filetype plugin indent on
+
 " Set a nicer foldtext function
 " http://vim.wikia.com/wiki/Customize_text_for_closed_folds
 
