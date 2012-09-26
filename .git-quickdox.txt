@@ -17,3 +17,7 @@ git config --global color.ui auto
 # url = git://github.com/sdettmer/config.git
 # Merge messages
 # git log --pretty=format:'%s (%ad)%n%b' --date=local ORIG_HEAD..MERGE_HEAD
+
+
+# push a new branch upstream:
+git push -u origin mybranch
