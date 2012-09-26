@@ -43,6 +43,12 @@ export ND_PORT_OFFSET=7
 
 # I don't use this anymore, see file to read why.
 # . ~/.ssh-autoprompt.sh
+PS1="\u@\h:\w $ "
+
+# color version:
+if test "$TERM" = "xterm" ; then
+    PS1='\[\e]0;\w\a\]\n\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\] $ '
+fi
 
 #alias hilbert='finger @hilbert.suse.de'
 #export EDITOR=/usr/bin/pico
