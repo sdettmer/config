@@ -2,72 +2,47 @@
 # ~/.bashrc is read for interactive shells and ~/.profile is read for login
 # shells. We just let ~/.profile also read ~/.bashrc and put everything in
 # ~/.bashrc.
+# Note: Bash attempts to determine when it is being run with its standard
+#   input connected to a a network connection, as if by the remote shell
+#   daemon, usually rshd, or the secure shell daemon sshd. If bash
+#   determines it is being run in this fashion, it reads and executes
+#   commands from ~/.bashrc, if that file exists and is readable. It will
+#   not do this if invoked as sh.
 
+# We also need /etc/profile. It seems on some systems we have to source it
+# explicitely (older SuSE), but on others it seems to be sourced
+# automatically (MSYS Git Shell), so we have to spend some effort to ensure
+# it is ready once (and only once). SuSE sets PROFILEREAD=1 in /etc/profile.
+# We cannot set PROFILEREAD before sourcing, because then SuSE's
+# /etc/profile does not set all options (e.g. no PATH; has this been done
+# to avoid creating long PATH when profile is executed several times?)
+# Also, we cannot set PROFILEREAD after sourcing, because MSYS Git
+# /etc/profile sources ~/.bashrc (!) and thus and endless recursion
+# would happen...
+# So we use two variables to guard sourcing.
+# Note: if only MSYS has /etc/profile source ~/.bashrc, maybe a MSYS
+# specific exception could be better.
+test -z "$PROFILEREAD" && test -z "$PROFILEONCE" &&
+    { export PROFILEONCE=true ; . /etc/profile ; }
+
+# standard environment
 test -z "${LESS/*-R*/}" || export LESS="$LESS -R"
 test -z "${LS_OPTIONS}" && export LS_OPTIONS='--color=auto'
 
-# We cannot set PROFILEREAD before, because then it SuSE
-# /etc/profile does not set all options (e.g. no PATH), we cannot
-# set PROFILEREAD after sourcing, then on cywgwin /etc/profile
-# and endless recursion happens... So we use a second variable
-test -z "$PROFILEREAD" && test -z "$PROFILEONCE" &&
-    { export PROFILEONCE=true ; . /etc/profile ; }
+export EDITOR=vim
+export CVS_RSH=`which ssh`
+export RSYNC_RSH=`which ssh`
+export PATH=~/bin:$PATH:/home/pub/bin
 
 # git-unlock-pack wasn't found
 # test -z "${PATH/*local*/}" || PATH="$PATH:/usr/local/bin/"
 # export PATH
 
-function xterm_title()
-{
-    echo -n "]2;$@]1;$*"
-}
+# Nomad Digital test port offset value for Steffen:
+export ND_PORT_OFFSET=7
 
-#SSH_AUTOPROMPT flags if already set
-function ssh_autoprompt()
-{
-    additional_string=$1
-    ssh-add -l | grep "The agent has no identities" > /dev/null
-    if [ "$?" = "0" ] ; then
-        #no identities:
-        echo "The agent has no identities."
-        sshstate="ssh${additional_string}"
-    else
-        #list and print all identities:
-        ssh-add -l|perl -ne \
-            'm/\d+ (\d+ \d+|[\w:]+) (.*)$/ && print "SSH-ID: $2\n"'
-        sshstate="SSH${additional_string}"
-    fi
-    xterm_title "${sshstate}`whoami`@`hostname -f`";
-    PS1="${sshstate}\u@\h:\w # "
-    export SSH_AUTOPROMPT=$PS1
-}
-
-#CVS+SSH hack:
-SSH_AUTOPROMPT="\u@\h:\w # "
-
-if [ "$SSH_AUTOPROMPT" = "" ] ; then
-    #default prompt:
-    PS1="\u@\h:\w # "
-
-    if [ ! -z "$SSH_AGENT_PID" ] ; then
-        #agent pid set: check it
-        if kill -0 "$SSH_AGENT_PID" 2>/dev/null ; then
-            ssh_autoprompt " "
-        else
-            echo "FATAL: Agent [$SSH_AGENT_PID] died!"
-        fi
-    else
-        #no agent PID, but maybe SSH_AUTH_SOCK
-        if [ ! -z "$SSH_AUTH_SOCK" -a -S "$SSH_AUTH_SOCK" ] ; then
-            ssh_autoprompt "|"
-        fi
-
-    fi
-else
-    #echo "autoprompt set"
-    PS1=$SSH_AUTOPROMPT
-fi
-export PS1 PS2
+# I don't use this anymore, see file to read why.
+# . ~/.ssh-autoprompt.sh
 
 #alias hilbert='finger @hilbert.suse.de'
 #export EDITOR=/usr/bin/pico
@@ -112,4 +87,4 @@ test -e ~/.git-completion.bash && . ~/.git-completion.bash
 umask 022
 # http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
 #   Currency sign: "¤"
-# vim: et sw=4 ts=4 tw=4 tw=0:
+# vim: et sw=4 ts=4 tw=75:
