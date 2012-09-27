@@ -179,6 +179,10 @@ set listchars=trail:·,tab:»·
 " set   path=.,,~/.P/vim,~/.P/mutt/,~/.P/elm,~/.P/slrn/,~/.P/nn
 "
   set path+=*/src,build/$HOSTNAME/*/src
+
+" Tags (use default)
+"   generate with e.g. "ctags -eR --c-kinds=+px .".
+
 "       report: show a report when N lines were changed.
 "               report=0 thus means "show all changes"!
   set   report=0
