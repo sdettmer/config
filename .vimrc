@@ -5,7 +5,7 @@ version 5.3
 " difference when setting the version here
 " ==================================================================
 " File:         $HOME/.vimrc.forall  (sourced by ~USER/.vimrc)
-" Last update:  Thu Jul 01 20:00:00 MET DST 1999
+" Last update from Sven:  Thu Jul 01 20:00:00 MET DST 1999
 "
 " (Windows branch)
 
