@@ -43,6 +43,22 @@ export PATH=~/bin:$PATH:/home/pub/bin
 # test -z "${PATH/*local*/}" || PATH="$PATH:/usr/local/bin/"
 # export PATH
 
+# GIT hacking (just left as comment, but not needed with MSYS or cygwin)
+#export GIT_SSH='c:\bin32\plink.exe'
+
+#export MSVCROOT="/cygdrive/c/Programme/Microsoft Visual Studio//VC98/Bin/"
+#"$MSVCROOT"/VCVARS32.BAT
+#export PATH=$PATH:"$MSVCROOT":"/cygdrive/c/Programme/Microsoft Visual Studio/Common/MSDev98/Bin"
+#evaluates to:
+export INCLUDE="C:\PROGRA~1\MICROS~3\VC98\ATL\INCLUDE;C:\PROGRA~1\MICROS~3\VC98\INCLUDE;C:\PROGRA~1\MICROS~3\VC98\MFC\INCLUDE;"
+export LIB="C:\PROGRA~1\MICROS~3\VC98\LIB;C:\PROGRA~1\MICROS~3\VC98\MFC\LIB;"
+export PATH="$PATH:/cygdrive/c/Programme/Microsoft Visual Studio/VC98/Bin/:/cygdrive/c/Programme/Microsoft Visual Studio/Common/MSDev98/Bin"
+
+export A32DE_DFS_DIR="/cygdrive/c/Programme/Ingedev503/CommonFiles/~d~e0200_a32de/"
+export PATH=~/bin:$PATH:/home/pub/bin:/c/MinGW/bin:/c/cygwin/bin
+export KEYFILEPATH="c:/Programme/INGEDEV408/Key/"
+#export JAVA_HOME=/cygdrive/c/Programme/Java/jre1.5.0_06/
+
 # Nomad Digital test port offset value for Steffen:
 export ND_PORT_OFFSET=7
 
@@ -62,6 +78,17 @@ PS1='\u@\h:\w $(__git_ps1 "(%s)") $ '
 if test "$TERM" = "xterm" ; then
     PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h:\[\e[33m\]\w\[\e[32m\] $(__git_ps1 "(%s)")\[\e[0m\] $ '
 fi
+
+# https://github.com/cuviper/ssh-pageant
+#   ssh-pageant is an SSH authentication agent for Cygwin that
+#   links OpenSSH to PuTTY's Pageant.  It acts very much like
+#   ssh-agent, except it leaves the key storage to Pageant.
+#   TODO we might need to kill agent somewhen and maybe just use
+#   one for all
+if [ -z "$SSH_AUTH_SOCK" -a -x /usr/bin/ssh-pageant ]; then
+  eval $(/usr/bin/ssh-pageant -q)
+fi
+#trap logout HUP
 
 #alias hilbert='finger @hilbert.suse.de'
 #export EDITOR=/usr/bin/pico

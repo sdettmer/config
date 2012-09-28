@@ -52,7 +52,6 @@ export ILOG_CONSOLE_COLOR=1
 #    echo
 #fi
 
-
 # http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
 #   Currency sign: "¤"
 # vim: et sw=4 ts=4 tw=75:
