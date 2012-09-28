@@ -1,5 +1,10 @@
+.profile eol=lf
+.bashrc eol=lf
+.bashrc-ssh eol=lf
+.alias* eol=lf
 .vimrc eol=lf
 .vim/* eol=lf
 .vim/*/* eol=lf
 .vim/*/*/* eol=lf
 *.vim eol=lf
+bin/git-merge-ff eol=lf

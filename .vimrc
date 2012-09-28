@@ -6,8 +6,8 @@ version 5.3
 " ==================================================================
 " File:         $HOME/.vimrc.forall  (sourced by ~USER/.vimrc)
 " Last update:  Thu Jul 01 20:00:00 MET DST 1999
-" master branch
-" Linux version
+"
+" (Windows branch)
 
   set noexpandtab
 
@@ -1504,7 +1504,6 @@ if filereadable( templatefile )
   so/home/users/steffen/work/pds_sys/igdevtools/templates/template.vim
 endif
 
-
 function! Html_maps()
     map! ä &auml;
     map! ö &ouml;
@@ -1685,6 +1684,8 @@ nnoremap <Leader>e :e <C-R>=expand('%:p:h') . '/'<CR>
 "   list. Extra goodie: third press iterates all matches (like
 "   vim default)
 set wildmode=longest,list,list:full
+" on windows, prepend "~/.vim/"
+set runtimepath^=~/.vim/
 
 " https://github.com/tpope/vim-pathogen:
 " call pathogen#infect()
