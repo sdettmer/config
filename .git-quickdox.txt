@@ -30,31 +30,43 @@ git push -u origin mybranch
 COOKBOOK
 
 
-I moved notes.txt from another GIT repo. I did not want to keep                
-"the history", because this included many empty commits (done                  
-with other files in the original repository), but I wanted only                
-changes of notes.txt. So I created patches:                                    
-                                                                               
-  $ git format-patch eb2bba11e2b -o tmpdir2                                    
-                                                                               
-the selected only the patchs for notes.txt:                                    
-                                                                               
-  $ mkdir tmpdir2 ; cd tmpdir2                                                 
-  $ cp -a `grep -l '^--- a/notes.txt' ../tmpdir1/*` .                          
-                                                                               
-checked that no other files were included in the patches:                      
-                                                                               
-  $ grep "^--- " *|grep -v notes.txt                                           
-                                                                               
-and grouped this to one patch                                                  
-                                                                               
-  $ cat * > all                                                                
-                                                                               
-to be applied in the other repository:                                         
-                                                                               
-  $ git am <path>/all                                                          
-                                                                               
-(before, I checked in empty notes.txt and had to apply the first               
-patch by hand (patch < .git/rebase-apply/patch) and continue with               
-the commands "git add notes.txt" and "git am --resolved")                      
+I moved notes.txt from another GIT repo. I did not want to keep
+"the history", because this included many empty commits (done
+with other files in the original repository), but I wanted only
+changes of notes.txt. So I created patches:
 
+  $ git format-patch eb2bba11e2b -o tmpdir2
+
+the selected only the patchs for notes.txt:
+
+  $ mkdir tmpdir2 ; cd tmpdir2
+  $ cp -a `grep -l '^--- a/notes.txt' ../tmpdir1/*` .
+
+checked that no other files were included in the patches:
+
+  $ grep "^--- " *|grep -v notes.txt
+
+and grouped this to one patch
+
+  $ cat * > all
+
+to be applied in the other repository:
+
+  $ git am <path>/all
+
+(before, I checked in empty notes.txt and had to apply the first
+patch by hand (patch < .git/rebase-apply/patch) and continue with
+the commands "git add notes.txt" and "git am --resolved")
+
+
+
+=======8<-------------------------------------------------------------------
+
+master remotes
+[remote "origin"]
+	fetch = +refs/heads/*:refs/remotes/origin/*
+	; url = https://sdettmer@bitbucket.org/sdettmer/config
+	url = ssh://git@bitbucket.org/sdettmer/config
+[remote "github"]
+	fetch = +refs/heads/*:refs/remotes/origin/*
+	url = ssh://git@github.com/sdettmer/config.git
