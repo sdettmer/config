@@ -25,6 +25,11 @@
 test -z "$PROFILEREAD" && test -z "$PROFILEONCE" &&
     { export PROFILEONCE=true ; . /etc/profile ; }
 
+# Source helpers
+test -e ~/.alias_all && . ~/.alias_all
+test -e ~/.alias && . ~/.alias
+test -e ~/.git-completion.bash && . ~/.git-completion.bash
+
 # standard environment
 test -z "${LESS/*-R*/}" || export LESS="$LESS -R"
 test -z "${LS_OPTIONS}" && export LS_OPTIONS='--color=auto'
@@ -41,13 +46,21 @@ export PATH=~/bin:$PATH:/home/pub/bin
 # Nomad Digital test port offset value for Steffen:
 export ND_PORT_OFFSET=7
 
+# see ~/.git-completion.bash
+GIT_PS1_SHOWDIRTYSTATE=1            # "*" when dirty
+GIT_PS1_SHOWSTASHSTATE=1            # "$" when stashed
+#GIT_PS1_SHOWUNTRACKEDFILES=1       # "%" untracked files
+GIT_PS1_SHOWUPSTREAM="auto verbose" # also: legacy, git, svn
+
 # I don't use this anymore, see file to read why.
 # . ~/.ssh-autoprompt.sh
-PS1="\u@\h:\w $ "
+
+# standard Prompt
+PS1='\u@\h:\w $(__git_ps1 "(%s)") $ '
 
 # color version:
 if test "$TERM" = "xterm" ; then
-    PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h:\[\e[33m\]\w\[\e[0m\] $ '
+    PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h:\[\e[33m\]\w\[\e[32m\] $(__git_ps1 "(%s)")\[\e[0m\] $ '
 fi
 
 #alias hilbert='finger @hilbert.suse.de'
@@ -85,10 +98,11 @@ fi
 # Unfortunately I forgot what this was for:
 # [[ -f "/home/steffen/.config/autopackage/paths-bash" ]] && . "/home/steffen/.config/autopackage/paths-bash"
 
-test -e ~/.alias_all && . ~/.alias_all
-test -e ~/.alias && . ~/.alias
-
-test -e ~/.git-completion.bash && . ~/.git-completion.bash
+# Safety: when there is no GIT, don't use it in prompt
+if [ ! -x "`which git`" ] ; then
+    echo "no"
+    __git_ps1() { fmt=$1 || "%s" ; printf $fmt "no git"; }
+fi
 
 umask 022
 # http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
