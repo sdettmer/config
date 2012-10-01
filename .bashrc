@@ -56,11 +56,11 @@ GIT_PS1_SHOWUPSTREAM="auto verbose" # also: legacy, git, svn
 # . ~/.ssh-autoprompt.sh
 
 # standard Prompt
-PS1='\u@\h:\w $(__git_ps1 "(%s)") $ '
+PS1='\u@\h:\w$(__git_ps1 " (%s)") $ '
 
 # color version:
 if test "$TERM" = "xterm" ; then
-    PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h:\[\e[33m\]\w\[\e[32m\] $(__git_ps1 "(%s)")\[\e[0m\] $ '
+    PS1='\[\e]0;\w\a\]\[\e[32m\]\u@\h:\[\e[33m\]\w\[\e[32m\]$(__git_ps1 " (%s)")\[\e[0m\] $ '
 fi
 
 #alias hilbert='finger @hilbert.suse.de'
