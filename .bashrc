@@ -56,6 +56,7 @@ GIT_PS1_SHOWUPSTREAM="auto verbose" # also: legacy, git, svn
 # . ~/.ssh-autoprompt.sh
 
 # standard Prompt
+test -z "$PS1_org" && export PS1_org="$PS1"
 PS1='\u@\h:\w$(__git_ps1 " (%s)") $ '
 
 # color version:
@@ -100,8 +101,12 @@ fi
 
 # Safety: when there is no GIT, don't use it in prompt
 if [ ! -x "`which git`" ] ; then
-    echo "no"
     __git_ps1() { fmt=$1 || "%s" ; printf $fmt "no git"; }
+fi
+# in MSYS, shell moans about non-implemented pipe subst or so
+if [ "$MSYSTEM" = "MINGW32" ] ; then
+    __git_ps1() { fmt=$1 || "%s" ; printf $fmt "[MSYS]"; }
+    test -n "$PS1_org" && export PS1=$PS1_org
 fi
 
 umask 022
