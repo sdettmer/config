@@ -6,9 +6,9 @@ cp config/.git ~/
 # - steffen_win_master - Windows customizations
 # - steffen_at_link    - customizations for steffen@link (private)
 git config --global user.name "Steffen Dettmer"
-git config --global user.email "Steffen Dettmer <steffen.dettmer@gmail.com>"
+git config --global user.email "steffen.dettmer@gmail.com"
 git config user.name "Steffen Dettmer"
-git config user.email "Steffen Dettmer <steffen@dett.de>"
+git config user.email "steffen@dett.de"
 git config --global color.ui auto
 
 
@@ -63,6 +63,9 @@ the commands "git add notes.txt" and "git am --resolved")
 =======8<-------------------------------------------------------------------
 
 master remotes
+Note: when working in different branches, direct sync works
+without upstream (otherwise, refused to overwrite checked out
+branch because would make work tree and index dirty)
 [remote "origin"]
 	fetch = +refs/heads/*:refs/remotes/origin/*
 	; url = https://sdettmer@bitbucket.org/sdettmer/config
