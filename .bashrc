@@ -93,8 +93,8 @@ fi
 #   ssh-agent, except it leaves the key storage to Pageant.
 #   TODO we might need to kill agent somewhen and maybe just use
 #   one for all
-if [ -z "$SSH_AUTH_SOCK" -a -x /usr/bin/ssh-pageant ]; then
-  eval $(/usr/bin/ssh-pageant -q)
+if [ -z "$SSH_AUTH_SOCK" ] && type ssh-pageant >/dev/null 2>&1 ; then
+  eval $(ssh-pageant -q)
 fi
 #trap logout HUP
 
