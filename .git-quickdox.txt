@@ -23,6 +23,10 @@ git config --global color.ui auto
 git push -u origin mybranch
 
 
+# Windows Putty Agent with Cygwin SSH:
+http://cuviper.github.com/ssh-pageant/
+# (copy .exe to a folder that is in PATH,
+# e.g. C:\cygwin\usr\local\bin)
 
 
 
