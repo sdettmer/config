@@ -1784,7 +1784,7 @@ function! GetProtoLine()
       let closingline = getline(".")
     endif
     " go to the opening brace
-    normal! %
+    keepjumps normal! %
     " if the start position is between the two braces
     if line(".") <= line_save
       if istypedef
@@ -1802,8 +1802,8 @@ function! GetProtoLine()
       "let ret .= ":" . line_save - line(".")
     endif
   endif
+  exe "keepjumps normal! " . top . "Gz\<CR>"
   " restore position and screen line
-  exe "normal! " . top . "Gz\<CR>"
   call cursor(line_save, col_save)
   " needed for diff mode (scroll fixing)
   let line_diff = winline() - window_line
@@ -1818,6 +1818,10 @@ endfunction
 
 " http://vim.wikia.com/wiki/VimTip1454
 function! WhatFunction()
+  " allow to quickly disable it (:let b:noWhatFunction=1)
+  if exists("b:noWhatFunction") && b:noWhatFunction
+    return ""
+  endif
   if &ft != "c" && &ft != "cpp"
     return ""
   endif
@@ -1827,7 +1831,7 @@ function! WhatFunction()
   endif
   let line_info = matchstr(proto, ':\d\+\/\d\+')
   if stridx(proto, '(') > 0
-    let ret = matchstr(proto, '\w\+(\@=')
+    let ret = matchstr(proto, '\~\?\w\+(\@=')
   elseif proto =~# '\<struct\>'
     let ret = matchstr(proto, 'struct\s\+\w\+')
   elseif proto =~# '\<class\>'
