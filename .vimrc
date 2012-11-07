@@ -131,6 +131,9 @@ set statusline+=\ [%{strlen(&fenc)?&fenc:'none'}, "file encoding
 "set statusline+=%-.2{&ff}] "file format
 set statusline+=%-.2{strpart(&ff,0,1)}] "file format first letter
 set statusline+=%y      "filetype
+" Show in which C function we are
+"   http://vim.wikia.com/wiki/VimTip1454
+set statusline+=\ %{WhatFunction()}
 set statusline+=%=      "left/right separator
 set statusline+=%c,     "cursor column
 set statusline+=%l/%L   "cursor line/total lines
@@ -1763,6 +1766,78 @@ if has("folding")
   endfunction
 endif
 
+" http://vim.wikia.com/wiki/VimTip1454
+function! GetProtoLine()
+  let ret       = ""
+  let line_save = line(".")
+  let col_save  = col(".")
+  let window_line = winline()
+  let top       = line_save - winline() + 1
+  let so_save = &so
+  let &so = 0
+  let istypedef = 0
+  " find closing brace
+  let closing_lnum = search('^}','cW')
+  if closing_lnum > 0
+    if getline(line(".")) =~ '\w\s*;\s*$'
+      let istypedef = 1
+      let closingline = getline(".")
+    endif
+    " go to the opening brace
+    normal! %
+    " if the start position is between the two braces
+    if line(".") <= line_save
+      if istypedef
+        let ret = matchstr(closingline, '\w\+\s*;')
+      else
+        " find a line contains function name
+        let lnum = search('^\w','bcnW')
+        if lnum > 0
+          let ret = getline(lnum)
+        endif
+      endif
+      let lines = closing_lnum - line(".")
+      let line_rel = line_save - line(".")
+      let ret = ret . ':' . line_rel . '/' . lines
+      "let ret .= ":" . line_save - line(".")
+    endif
+  endif
+  " restore position and screen line
+  exe "normal! " . top . "Gz\<CR>"
+  call cursor(line_save, col_save)
+  " needed for diff mode (scroll fixing)
+  let line_diff = winline() - window_line
+  if line_diff > 0
+    exe 'normal ' . line_diff . '^E'
+  elseif line_diff < 0
+    exe 'normal ' . -line_diff . '^Y'
+  endif
+  let &so = so_save
+  return ret
+endfunction
+
+" http://vim.wikia.com/wiki/VimTip1454
+function! WhatFunction()
+  if &ft != "c" && &ft != "cpp"
+    return ""
+  endif
+  let proto = GetProtoLine()
+  if proto == ""
+    return "?"
+  endif
+  let line_info = matchstr(proto, ':\d\+\/\d\+')
+  if stridx(proto, '(') > 0
+    let ret = matchstr(proto, '\w\+(\@=')
+  elseif proto =~# '\<struct\>'
+    let ret = matchstr(proto, 'struct\s\+\w\+')
+  elseif proto =~# '\<class\>'
+    let ret = matchstr(proto, 'class\s\+\w\+')
+  else
+    let ret = strpart(proto, 0, 15) . "..."
+  endif
+  let ret .= line_info
+  return ret
+endfunction
 
 " http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
 "   Currency sign: "¤"
