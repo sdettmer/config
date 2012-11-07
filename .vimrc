@@ -1799,19 +1799,20 @@ function! GetProtoLine()
       let lines = closing_lnum - line(".")
       let line_rel = line_save - line(".")
       let ret = ret . ':' . line_rel . '/' . lines
-      "let ret .= ":" . line_save - line(".")
     endif
   endif
-  exe "keepjumps normal! " . top . "Gz\<CR>"
+  "exe "keepjumps normal! " . top . "Gz\<CR>"
   " restore position and screen line
   call cursor(line_save, col_save)
   " needed for diff mode (scroll fixing)
   let line_diff = winline() - window_line
   if line_diff > 0
-    exe 'normal ' . line_diff . '^E'
+    exe 'normal ' . line_diff . "\<c-e>"
   elseif line_diff < 0
-    exe 'normal ' . -line_diff . '^Y'
+    exe 'normal ' . -line_diff . "\<c-y>"
   endif
+  " sometimes cursor position is wrong after scroll fix, why? Workaround:
+  call cursor(line_save, col_save)
   let &so = so_save
   return ret
 endfunction
