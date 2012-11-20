@@ -1819,7 +1819,14 @@ endfunction
 
 " http://vim.wikia.com/wiki/VimTip1454
 function! WhatFunction()
+  " simply does not work well enough... Causes problems even while
+  "   copy&pasting and navigating sometimes breaks (window viewpoint jumps
+  "   for example)
+  return ""
   " allow to quickly disable it (:let b:noWhatFunction=1)
+  if exists("b:nofunc") && b:nofunc
+    return ""
+  endif
   if exists("b:noWhatFunction") && b:noWhatFunction
     return ""
   endif
