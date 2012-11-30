@@ -38,6 +38,8 @@ export EDITOR=vim
 export CVS_RSH=`which ssh`
 export RSYNC_RSH=`which ssh`
 export PATH=~/bin:$PATH:/home/pub/bin
+export PERL5LIB=~/usr/lib/perl5:~/usr/lib/perl5/site_perl
+export LD_LIBRARY_PATH=~/usr/lib
 
 # git-unlock-pack wasn't found
 # test -z "${PATH/*local*/}" || PATH="$PATH:/usr/local/bin/"
