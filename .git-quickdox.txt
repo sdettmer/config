@@ -11,6 +11,11 @@ git config user.name "Steffen Dettmer"
 git config user.email "steffen@dett.de"
 git config --global color.ui auto
 
+# to avoid "git reset --hard HEAD^" after unwanted merge
+# ? git config --global alias.pl 'pull --ff-only'
+# ? git config --global branch.autosetup.merge false
+# or just get used to use git fetch or get used to type "git pull --ff-only"
+
 
 # Repos
 # url = ssh://git@bitbucket.org/sdettmer/config
