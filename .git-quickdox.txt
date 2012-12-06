@@ -34,6 +34,8 @@ http://cuviper.github.com/ssh-pageant/
 # e.g. C:\cygwin\usr\local\bin)
 
 
+# see branch topology
+#   git log --graph --oneline --branches --decorate --simplify-by-decoration
 
 ------------------------------------------------------------------->8=======
 COOKBOOK
