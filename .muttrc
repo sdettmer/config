@@ -382,6 +382,12 @@ folder-hook "(logs|status)"	bind	pager	r	noop
 folder-hook "(logs|status)"	set pager_index_lines=0
 
 auto_view text/html
+# mailcap: text/html; lynx -dump %s; copiousoutput; nametemplate=%s.html
+# Volker Grabsch <vog@notjusthosting.com> proposed for mailcap:
+# text/html; x-www-browser %s; nametemplate=%s.html
+# text/html; w3m $(grep -qi 'content-type.*charset' %s \
+#    || echo '-I ISO-8859-1') -dump %s; nametemplate=%s.html; copiousoutput
+#
 #auto_view text/html application/x-gunzip \
 #  application/postscript image/gif application/x-tar-gz
 
