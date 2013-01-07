@@ -135,7 +135,7 @@ set statusline+=%y      "filetype
 "   http://vim.wikia.com/wiki/VimTip1454
 set statusline+=\ %{WhatFunction()}
 set statusline+=%=      "left/right separator
-set statusline+=%c,     "cursor column
+set statusline+=%v,     "virtual cursor column (%c: char count, 1 for tab)
 set statusline+=%l/%L   "cursor line/total lines
 set statusline+=\ b%n,    "buffer number
 set statusline+=\ %P    "percent through file
