@@ -46,7 +46,7 @@ export LD_LIBRARY_PATH=~/usr/lib
 # export PATH
 
 # Nomad Digital test port offset value for Steffen:
-export ND_PORT_OFFSET=7
+export ND_PORT_OFFSET=9
 
 # see ~/.git-completion.bash
 GIT_PS1_SHOWDIRTYSTATE=1            # "*" when dirty

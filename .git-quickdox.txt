@@ -37,6 +37,9 @@ http://cuviper.github.com/ssh-pageant/
 # see branch topology
 #   git log --graph --oneline --branches --decorate --simplify-by-decoration
 
+# ignore untracked
+# git config status.showuntrackedfiles no
+
 ------------------------------------------------------------------->8=======
 COOKBOOK
 
@@ -68,6 +71,19 @@ to be applied in the other repository:
 (before, I checked in empty notes.txt and had to apply the first
 patch by hand (patch < .git/rebase-apply/patch) and continue with
 the commands "git add notes.txt" and "git am --resolved")
+
+=======8<-------------------------------------------------------------------
+
+Creating an upstream
+
+  $ cd ~/work/repos
+  $ mkdir myproj.git
+  $ cd myproj.git
+  $ git init --bare
+  $ cd ~/work/myproj
+  $ git remote add origin ~/work/repos/wd-src.git
+  $ git push -u origin --all   # don't use --mirror, it pushes remotes!
+  $ git push origin --tags
 
 
 
