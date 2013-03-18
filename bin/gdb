@@ -1,5 +1,5 @@
 #!/bin/bash
-PATH=/usr/local/build/gdb-7.2/linux/gdb:/usr/local/build/gdb-7.1.90/linux/gdb:/usr/local/build/gdb-6.8:/usr/local/bin:/usr/bin:$PATH ;
+PATH=~steffen/usr/bin:/usr/local/build/gdb-7.2/linux/gdb:/usr/local/build/gdb-7.1.90/linux/gdb:/usr/local/build/gdb-6.8:/usr/local/bin:/usr/bin:$PATH ;
 if [ -e ./ingenico ] ; then
    f=`file ./ingenico`;
    # "${f/*ARM*}" matches on .*ARM.* and deletes the match, i.e.
