@@ -78,14 +78,46 @@ Creating an upstream
 
   $ cd ~/work/repos
   $ mkdir myproj.git
+  $ chmod g+ws myproj.git
   $ cd myproj.git
-  $ git init --bare
+  $ git init --bare --shared
   $ cd ~/work/myproj
   $ git remote add origin ~/work/repos/wd-src.git
-  $ git push -u origin --all   # don't use --mirror, it pushes remotes!
+  $ git push -u origin --all
+  # don't use --mirror, it pushes remotes and may delete remote things!
   $ git push origin --tags
 
+------------------------------------------------------------------->8=======
 
+Remote tags by default
+
+Usually pushing tags by default isn't a good idea, it makes them
+`global' and breaks things (simple example: two people using the
+same tag name). For branches, someone has to manually map them on
+remotes; the same could be considered for tags, but when having
+this as a manual operation anyway, there is no point of fetching
+them automatically.
+However, for small repository structures or when using "private
+upstreams" to synchronize things, sometimes it could be useful to
+push tags and fetch tags automatically.
+
+  [remote "origin"]
+  push = +refs/tags/*:refs/tags/*    # add this line to proper section
+
+  $ git config remote.origin.tagopt --tags
+
+For notes it is more complicated. Althrough having notes in a
+shared repository is hard to maintain (for example, no merge
+support and complex manual work needed), it might be suited for
+"private upstreams" as well. To automate the manual way:
+
+ $ git push origin refs/notes/*
+ $ git fetch origin refs/notes/*:refs/notes/*
+
+Someone could use:
+
+ [remote "origin"]
+   fetch = +refs/notes/*:refs/notes/*   # add this line in proper section
 
 =======8<-------------------------------------------------------------------
 
