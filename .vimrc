@@ -36,6 +36,12 @@ endif
 "
 "       backspace:  '2' is much smarter. -> "help backspace"
   set   backspace=2
+
+"       clipboard: Should Vim use the X-Server clipboard ("*) automatically?
+"                  No, let's allow middle mouse an independent buffer,
+"                  but accessible via "* register
+" set clipboard=autoselect,exclude:cons\|linux
+  set clipboard=exclude:cons\|linux
 "
 "       background:  Are we using a "light" or "dark" background?
 " set   background=dark
