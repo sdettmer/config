@@ -732,9 +732,14 @@ au BufNewFile,BufRead configure.{in,ac} setl tw=0 sts=0
 if v:version >= 600
   au BufNewFile,BufRead *.utf8    setlocal noautoread
 endif
+" old nd-style
 au BufNewFile,BufRead /nomad*src*     call NomadSrcMode()
 au BufNewFile,BufRead /nomad*ini  setf nomadini
 au BufNewFile,BufRead /nomad*log  setf nomadlog
+" new nd-style
+au BufNewFile,BufRead *nomad/*src*     call NomadSrcMode()
+au BufNewFile,BufRead *nomad/*ini  setf nomadini
+au BufNewFile,BufRead *nomad/*log  setf nomadlog
 au BufNewFile,BufRead Makefile*   setl tw=0 noet nolist ts=8 sts=0
 au BufNewFile,BufRead *.utf8      setl fileencoding=utf8
 augroup filetypedetect
@@ -1674,7 +1679,7 @@ fun! NomadSrcMode()
   setl ai et sw=2 ts=2 tw=110
   " TODO, LASTER and MAYBE are well-defined (usually followed by colon)
   match Todo /TODO:\?\|LATER:\?\|MAYBE:\?/
-  set path=.,,src/*/,wd-src/src/*/
+  set path=.,,src/*/,wd-src/src/*/,wd-nomad/src/*/
 endfun
 
 
