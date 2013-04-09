@@ -9,6 +9,14 @@ version 5.3
 " master branch
 " Linux version
 
+" http://stackoverflow.com/questions/5477565/how-to-setup-vim-properly-for-editing-in-utf-8
+if has("multi_byte")
+  if &termencoding == ""
+    let &termencoding = &encoding
+  endif
+  set encoding=utf-8
+endif
+
   set noexpandtab
 
 "       autoindent:  "off" as I usually do not write code.
