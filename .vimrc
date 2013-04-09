@@ -17,6 +17,16 @@ if has("multi_byte")
   set encoding=utf-8
 endif
 
+" Set a better gvim GUI console font.
+" http://stackoverflow.com/questions/3316244/set-gvim-font-in-vimrc-file
+if has("gui_running")
+  if has("gui_gtk2")
+    " set guifont=Monospace\ 10,DejaVu\ Sans\ Mono\ h10,Liberation\ Mono\ 11
+  elseif has("gui_win32")
+    set guifont=Consolas:h9,Lucida\ Sans\ Typewriter:h9
+  endif
+endif
+
   set noexpandtab
 
 "       autoindent:  "off" as I usually do not write code.
