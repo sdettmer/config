@@ -1782,6 +1782,33 @@ if has("folding")
   endfunction
 endif
 
+" Inspired by http://vim.wikia.com/wiki/Change_font_size_quickly, but a
+"   poor simple version but for that working on Win32, too :)
+function! AdjustFontSize(amount)
+  let l:minfontsize = 6
+  let l:maxfontsize = 16
+  if (has("gui_win32") || has("gui_gtk2")) && has("gui_running")
+    let l:newsize=matchstr(&guifont, '\(\d\+\)') + a:amount
+    if (l:newsize >= l:minfontsize) && (l:newsize <= l:maxfontsize)
+      let newfont = substitute(&guifont, '\(\d\+\)', l:newsize, '')
+      let &guifont = newfont
+    endif
+  else
+    echoerr "You need to run a GUI version of Vim to use this function."
+  endif
+endfunction
+
+function! LargerFont()
+  call AdjustFontSize(1)
+endfunction
+command! LargerFont call LargerFont()
+
+function! SmallerFont()
+  call AdjustFontSize(-1)
+endfunction
+command! SmallerFont call SmallerFont()
+
+
 
 " http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
 "   Currency sign: "¤"
