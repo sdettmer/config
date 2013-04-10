@@ -21,7 +21,7 @@ endif
 " http://stackoverflow.com/questions/3316244/set-gvim-font-in-vimrc-file
 if has("gui_running")
   if has("gui_gtk2")
-    " set guifont=Monospace\ 10,DejaVu\ Sans\ Mono\ h10,Liberation\ Mono\ 11
+    set guifont=Monospace\ 10,DejaVu\ Sans\ Mono\ h10,Liberation\ Mono\ 10
   elseif has("gui_win32")
     set guifont=Consolas:h9,Lucida\ Sans\ Typewriter:h9
   endif
@@ -1888,7 +1888,7 @@ function! AdjustFontSize(amount)
   if (has("gui_win32") || has("gui_gtk2")) && has("gui_running")
     let l:newsize=matchstr(&guifont, '\(\d\+\)') + a:amount
     if (l:newsize >= l:minfontsize) && (l:newsize <= l:maxfontsize)
-      let newfont = substitute(&guifont, '\(\d\+\)', l:newsize, '')
+      let newfont = substitute(&guifont, '\(\d\+\)', l:newsize, 'g')
       let &guifont = newfont
     endif
   else
