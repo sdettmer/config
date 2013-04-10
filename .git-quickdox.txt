@@ -11,6 +11,11 @@ git config user.name "Steffen Dettmer"
 git config user.email "steffen@dett.de"
 git config --global color.ui auto
 
+# to avoid "git reset --hard HEAD^" after unwanted merge
+# ? git config --global alias.pl 'pull --ff-only'
+# ? git config --global branch.autosetup.merge false
+# or just get used to use git fetch or get used to type "git pull --ff-only"
+
 
 # Repos
 # url = ssh://git@bitbucket.org/sdettmer/config
@@ -29,6 +34,11 @@ http://cuviper.github.com/ssh-pageant/
 # e.g. C:\cygwin\usr\local\bin)
 
 
+# see branch topology
+#   git log --graph --oneline --branches --decorate --simplify-by-decoration
+
+# ignore untracked
+# git config status.showuntrackedfiles no
 
 ------------------------------------------------------------------->8=======
 COOKBOOK
@@ -62,7 +72,52 @@ to be applied in the other repository:
 patch by hand (patch < .git/rebase-apply/patch) and continue with
 the commands "git add notes.txt" and "git am --resolved")
 
+=======8<-------------------------------------------------------------------
 
+Creating an upstream
+
+  $ cd ~/work/repos
+  $ mkdir myproj.git
+  $ chmod g+ws myproj.git
+  $ cd myproj.git
+  $ git init --bare --shared
+  $ cd ~/work/myproj
+  $ git remote add origin ~/work/repos/wd-src.git
+  $ git push -u origin --all
+  # don't use --mirror, it pushes remotes and may delete remote things!
+  $ git push origin --tags
+
+------------------------------------------------------------------->8=======
+
+Remote tags by default
+
+Usually pushing tags by default isn't a good idea, it makes them
+`global' and breaks things (simple example: two people using the
+same tag name). For branches, someone has to manually map them on
+remotes; the same could be considered for tags, but when having
+this as a manual operation anyway, there is no point of fetching
+them automatically.
+However, for small repository structures or when using "private
+upstreams" to synchronize things, sometimes it could be useful to
+push tags and fetch tags automatically.
+
+  [remote "origin"]
+  push = +refs/tags/*:refs/tags/*    # add this line to proper section
+
+  $ git config remote.origin.tagopt --tags
+
+For notes it is more complicated. Althrough having notes in a
+shared repository is hard to maintain (for example, no merge
+support and complex manual work needed), it might be suited for
+"private upstreams" as well. To automate the manual way:
+
+ $ git push origin refs/notes/*
+ $ git fetch origin refs/notes/*:refs/notes/*
+
+Someone could use:
+
+ [remote "origin"]
+   fetch = +refs/notes/*:refs/notes/*   # add this line in proper section
 
 =======8<-------------------------------------------------------------------
 

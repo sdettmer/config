@@ -3,8 +3,27 @@
 # So read .bashrc also from .profile and make all changes to .bashrc.
 # Then you should always have your correct setup.
 
-if test -f ~/.bashrc; then
+if test -f ~/.bashrc ; then
+  if test -z "${BASH_VERSION}" ; then
+    if test -n "${SHOW_ERROR}" ; then
+      echo "Login standard shell is not bash?!"
+      # Could be e.g. "/bin/sh /etc/gdm3/Xsession default" (Debian 6).
+      # This Xsession script has shebang /bin/sh and sources ~/.profile,
+      #   thus .profile is invoked with wrong shell, which even is not an
+      #   interactive shell! IMHO this is really sick, no clue why they did it.
+      #   Also there sis /bin/sh -> /bin/dash, but SHELL=/bin/bash in Xsession!
+      ps -o command -p $$
+      env
+    fi
+    # Maybe we can at least configure some very important variables
+    export PATH=~/bin:$PATH:/home/pub/bin
+    export PERL5LIB=~/usr/lib/perl5:~/usr/lib/perl5/site_perl
+    export LD_LIBRARY_PATH=~/usr/lib
+    export ND_PORT_OFFSET=9
+    umask 022
+  else
     . ~/.bashrc
+  fi
 fi
 
 # We cannot set PROFILEREAD before, because then it SuSE

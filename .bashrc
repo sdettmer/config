@@ -35,9 +35,11 @@ test -z "${LESS/*-R*/}" || export LESS="$LESS -R"
 test -z "${LS_OPTIONS}" && export LS_OPTIONS='--color=auto'
 
 export EDITOR=vim
-export CVS_RSH=`which ssh`
-export RSYNC_RSH=`which ssh`
+export CVS_RSH="`which ssh`"
+export RSYNC_RSH="`which ssh`"
 export PATH=~/bin:$PATH:/home/pub/bin
+export PERL5LIB=~/usr/lib/perl5:~/usr/lib/perl5/site_perl
+export LD_LIBRARY_PATH=~/usr/lib
 
 # git-unlock-pack wasn't found
 # test -z "${PATH/*local*/}" || PATH="$PATH:/usr/local/bin/"
@@ -60,7 +62,7 @@ export KEYFILEPATH="c:/Programme/INGEDEV408/Key/"
 #export JAVA_HOME=/cygdrive/c/Programme/Java/jre1.5.0_06/
 
 # Nomad Digital test port offset value for Steffen:
-export ND_PORT_OFFSET=7
+export ND_PORT_OFFSET=9
 
 # see ~/.git-completion.bash
 GIT_PS1_SHOWDIRTYSTATE=1            # "*" when dirty

@@ -54,6 +54,12 @@ endif
 "
 "       backspace:  '2' is much smarter. -> "help backspace"
   set   backspace=2
+
+"       clipboard: Should Vim use the X-Server clipboard ("*) automatically?
+"                  No, let's allow middle mouse an independent buffer,
+"                  but accessible via "* register
+" set clipboard=autoselect,exclude:cons\|linux
+  set clipboard=exclude:cons\|linux
 "
 "       background:  Are we using a "light" or "dark" background?
 " set   background=dark
@@ -149,8 +155,11 @@ set statusline+=\ [%{strlen(&fenc)?&fenc:'none'}, "file encoding
 "set statusline+=%-.2{&ff}] "file format
 set statusline+=%-.2{strpart(&ff,0,1)}] "file format first letter
 set statusline+=%y      "filetype
+" Show in which C function we are
+"   http://vim.wikia.com/wiki/VimTip1454
+set statusline+=\ %{WhatFunction()}
 set statusline+=%=      "left/right separator
-set statusline+=%c,     "cursor column
+set statusline+=%v,     "virtual cursor column (%c: char count, 1 for tab)
 set statusline+=%l/%L   "cursor line/total lines
 set statusline+=\ b%n,    "buffer number
 set statusline+=\ %P    "percent through file
@@ -741,9 +750,14 @@ au BufNewFile,BufRead configure.{in,ac} setl tw=0 sts=0
 if v:version >= 600
   au BufNewFile,BufRead *.utf8    setlocal noautoread
 endif
+" old nd-style
 au BufNewFile,BufRead /nomad*src*     call NomadSrcMode()
 au BufNewFile,BufRead /nomad*ini  setf nomadini
 au BufNewFile,BufRead /nomad*log  setf nomadlog
+" new nd-style
+au BufNewFile,BufRead *nomad/*src*     call NomadSrcMode()
+au BufNewFile,BufRead *nomad/*ini  setf nomadini
+au BufNewFile,BufRead *nomad/*log  setf nomadlog
 au BufNewFile,BufRead Makefile*   setl tw=0 noet nolist ts=8 sts=0
 au BufNewFile,BufRead *.utf8      setl fileencoding=utf8
 augroup filetypedetect
@@ -1682,7 +1696,7 @@ fun! NomadSrcMode()
   setl ai et sw=2 ts=2 tw=110
   " TODO, LASTER and MAYBE are well-defined (usually followed by colon)
   match Todo /TODO:\?\|LATER:\?\|MAYBE:\?/
-  set path=.,,src/*/,wd-src/src/*/
+  set path=.,,src/*/,wd-src/src/*/,wd-nomad/src/*/
 endfun
 
 
@@ -1782,7 +1796,92 @@ if has("folding")
   endfunction
 endif
 
-" Inspired by http://vim.wikia.com/wiki/Change_font_size_quickly, but a
+" http://vim.wikia.com/wiki/VimTip1454
+function! GetProtoLine()
+  let ret       = ""
+  let line_save = line(".")
+  let col_save  = col(".")
+  let window_line = winline()
+  let top       = line_save - winline() + 1
+  let so_save = &so
+  let &so = 0
+  let istypedef = 0
+  " find closing brace
+  let closing_lnum = search('^}','cW')
+  if closing_lnum > 0
+    if getline(line(".")) =~ '\w\s*;\s*$'
+      let istypedef = 1
+      let closingline = getline(".")
+    endif
+    " go to the opening brace
+    keepjumps normal! %
+    " if the start position is between the two braces
+    if line(".") <= line_save
+      if istypedef
+        let ret = matchstr(closingline, '\w\+\s*;')
+      else
+        " find a line contains function name
+        let lnum = search('^\w','bcnW')
+        if lnum > 0
+          let ret = getline(lnum)
+        endif
+      endif
+      let lines = closing_lnum - line(".")
+      let line_rel = line_save - line(".")
+      let ret = ret . ':' . line_rel . '/' . lines
+    endif
+  endif
+  "exe "keepjumps normal! " . top . "Gz\<CR>"
+  " restore position and screen line
+  call cursor(line_save, col_save)
+  " needed for diff mode (scroll fixing)
+  let line_diff = winline() - window_line
+  if line_diff > 0
+    exe 'normal ' . line_diff . "\<c-e>"
+  elseif line_diff < 0
+    exe 'normal ' . -line_diff . "\<c-y>"
+  endif
+  " sometimes cursor position is wrong after scroll fix, why? Workaround:
+  call cursor(line_save, col_save)
+  let &so = so_save
+  return ret
+endfunction
+
+" http://vim.wikia.com/wiki/VimTip1454
+function! WhatFunction()
+  " simply does not work well enough... Causes problems even while
+  "   copy&pasting and navigating sometimes breaks (window viewpoint jumps
+  "   for example)
+  return ""
+  " allow to quickly disable it (:let b:noWhatFunction=1)
+  if exists("b:nofunc") && b:nofunc
+    return ""
+  endif
+  if exists("b:noWhatFunction") && b:noWhatFunction
+    return ""
+  endif
+  if &ft != "c" && &ft != "cpp"
+    return ""
+  endif
+  let proto = GetProtoLine()
+  if proto == ""
+    return "?"
+  endif
+  let line_info = matchstr(proto, ':\d\+\/\d\+')
+  if stridx(proto, '(') > 0
+    let ret = matchstr(proto, '\~\?\w\+(\@=')
+  elseif proto =~# '\<struct\>'
+    let ret = matchstr(proto, 'struct\s\+\w\+')
+  elseif proto =~# '\<class\>'
+    let ret = matchstr(proto, 'class\s\+\w\+')
+  else
+    let ret = strpart(proto, 0, 15) . "..."
+  endif
+  let ret .= line_info
+  return ret
+endfunction
+
+" Inspired by http://vim.wikia.com/wiki/Change_font_size_quickly, but a    
 "   poor simple version but for that working on Win32, too :)
 function! AdjustFontSize(amount)
   let l:minfontsize = 6
@@ -1790,11 +1889,11 @@ function! AdjustFontSize(amount)
   if (has("gui_win32") || has("gui_gtk2")) && has("gui_running")
     let l:newsize=matchstr(&guifont, '\(\d\+\)') + a:amount
     if (l:newsize >= l:minfontsize) && (l:newsize <= l:maxfontsize)
-      let newfont = substitute(&guifont, '\(\d\+\)', l:newsize, '')
+      let newfont = substitute(&guifont, '\(\d\+\)', l:newsize, 'g')
       let &guifont = newfont
     endif
   else
-    echoerr "You need to run a GUI version of Vim to use this function."
+    echoerr "You need to run a GUI version of Vim to use this function."   
   endif
 endfunction
 
@@ -1807,7 +1906,6 @@ function! SmallerFont()
   call AdjustFontSize(-1)
 endfunction
 command! SmallerFont call SmallerFont()
-
 
 
 " http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
