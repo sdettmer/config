@@ -1638,6 +1638,8 @@ fun! Toggle_spell()
     nmap <C-P> z=
   endif
 endfun
+nmap ,+ :call LargerFont()<CR>
+nmap ,- :call SmallerFont()<CR>
 
 " Highlighting matching parens
 " You can avoid loading this plugin by setting the loaded_matchparen variable:
@@ -1645,7 +1647,10 @@ endfun
 
 " highlight long lines (>80 chars)
 fun! Enable_overlen_hi()
-  if v:version >= 703
+  " colorcolumn seems not to work fully correctly (VIM-7.3), when switching
+  "   buffers or I'm using it wrongly, so better disable it for now, maybe
+  "   future VIMs handle it better.
+  if v:version >= 704
     " textwidth + 1 and col 79
     if exists("b:std_nomad") && b:std_nomad
       " :setl colorcolumn=120
@@ -1656,10 +1661,11 @@ fun! Enable_overlen_hi()
     endif
   elseif v:version >= 600
     "highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-    highlight OverLength ctermbg=blue guibg=#592929
+    highlight OverLength ctermbg=blue guibg=#f0f0f0
     "match OverLength /\%81v.*/
     if exists("b:std_nomad") && b:std_nomad
-      " match OverLength /.\%>120/
+      "match OverLength /.\%>120v/
+      match OverLength /.\%>999v/
       "echo b:std_nomad
     else
       match OverLength /.\%>81v/
@@ -1668,7 +1674,7 @@ fun! Enable_overlen_hi()
   let b:std_overlen_hi = 1
 endfunction
 fun! Disable_overlen_hi()
-  if v:version >= 703
+  if v:version >= 704
     :setl colorcolumn=
   elseif v:version >= 600
     highlight clear OverLength
