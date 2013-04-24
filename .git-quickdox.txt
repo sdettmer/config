@@ -1,5 +1,5 @@
 git clone ssh://git@bitbucket.org/sdettmer/config config
-cp config/.git ~/
+cp -a config/.git ~/
 # warning, check local changes etc
 # Branches
 # - master
