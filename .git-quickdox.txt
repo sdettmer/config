@@ -132,3 +132,21 @@ branch because would make work tree and index dirty)
 [remote "github"]
 	fetch = +refs/heads/*:refs/remotes/origin/*
 	url = ssh://git@github.com/sdettmer/config.git
+
+------------------------------------------------------------------->8=======
+
+GIT SVN
+
+  $ git svn clone <url> <destdir>
+  $ cd <destdir>
+  $ git svn rebase
+  $ git checkout -b topic
+  $ git svn dcommit
+  $ git svn rebase
+
+Adding "file-based history" retrospectively:
+
+  $ cp -a file.bak file.txt
+  $ git commit "--date=`date -u -r file.txt`" file.txt
+  $ cp -a file.bak2 file.txt
+  $ git commit "--date=`date -u -r file.txt`" file.txt
