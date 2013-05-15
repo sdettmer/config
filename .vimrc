@@ -1661,7 +1661,7 @@ fun! Enable_overlen_hi()
     endif
   elseif v:version >= 600
     "highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-    highlight OverLength ctermbg=blue guibg=#f0f0f0
+    highlight OverLength ctermbg=darkblue guibg=#f0f0f0
     "match OverLength /\%81v.*/
     if exists("b:std_nomad") && b:std_nomad
       "match OverLength /.\%>120v/
