@@ -695,6 +695,12 @@ endfun
 "  map ,Sbl :g/^\s*$/,/[^ <c-i>]/-j
 "  map ,Sbl :g/^\s*$/,/[^ \t]/-j
    map ,Sbl :g/^\s*$/,/\S/-j
+
+" When viewing colored log files with VIM, a "follow mode" might be helpful
+"   (like tail "-f" or less "F")
+"nmap ,F :set lazyredraw | while 1 | silent e! | $ | redraw | sleep 1 | endwhile
+nmap ,F :call FollowMode()<CR>
+
 "
 " ===================================================================
 " Editing of email replies and Usenet followups - using autocommands
@@ -1913,6 +1919,25 @@ function! SmallerFont()
 endfunction
 command! SmallerFont call SmallerFont()
 
+" When viewing colored log files with VIM, a "follow mode" might be helpful
+"   (like tail "-f" or less "F"). Could be used with a hotkey, for example:
+" :nmap ,F :call FollowMode()<CR>
+function! FollowMode()
+  echo "Follow mode"
+  set lazyredraw
+  try
+    while 1
+      silent e!
+      $
+      redraw
+      echo "following file changes (CTRL-C to stop)..."
+      sleep 1
+    endwhile
+  catch /^Vim:Interrupt$/
+    redraw
+    echo 'stopped following file changes.'
+  endtry
+endfunction
 
 " http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
 "   Currency sign: "¤"
