@@ -53,6 +53,11 @@ export CECCMD=~steffen/work/download/flist
 
 export ILOG_CONSOLE_COLOR=1
 
+# Debian "sudo" passes $DISPLAY and $XAUTHORITY, but sets XAUTHORITY only
+# for local X session logins. When logging in via SSH, DISPLAY is set but
+# not working, which breaks things.
+test -z "$XAUTHORITY" && export XAUTHORITY=~/.Xauthority
+
 # Needed in ND environment with forced UTF-8 on servers (?)
 #   I hope I'll get a better idea how to workaround this one day...
 #export LC_ALL=C.UTF-8

@@ -132,3 +132,27 @@ branch because would make work tree and index dirty)
 [remote "github"]
 	fetch = +refs/heads/*:refs/remotes/origin/*
 	url = ssh://git@github.com/sdettmer/config.git
+
+------------------------------------------------------------------->8=======
+
+GIT SVN
+
+  $ git svn clone <url> <destdir>
+  $ cd <destdir>
+  $ git commit ...        # Work and commit the changes.
+  $ git stash             # Avoiding git-svn refusing "risky" actions.
+  $ git svn rebase        # Fetch and rebase updates from SVN.
+  $ git rebase -i git-svn # Arrange commits to be pushed to SVN to be at top.
+  $ git log               # !! Find out ID of the last commit to be pushed !!
+  $ git svn dcommit <ID>  # Commit up to given ID.
+  $ git svn rebase
+  $ git stash pop         # Get back working state.
+
+=======8<-------------------------------------------------------------------
+
+Adding "file-based history" retrospectively:
+
+  $ cp -a file.bak file.txt
+  $ git commit "--date=`date -u -r file.txt`" file.txt
+  $ cp -a file.bak2 file.txt
+  $ git commit "--date=`date -u -r file.txt`" file.txt
