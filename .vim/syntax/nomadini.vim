@@ -27,7 +27,7 @@ syn keyword nomadiniKeyword TCP IP UDP ICMP
 syn match   nomadiniRange    "\<\d\+\(-\d\+\)\?\>"
 " approx:
 syn match   nomadiniAddress "\(\d\{1,3}\.\)\{3}\d\{1,3}\(:\d\{1,5}\)\?"
-syn match   nomadiniHostPort "\<\(\a[0-9A-Za-z-]*\.\?\)\+:\d\{1,5}\>"
+syn match   nomadiniHostPort "\<\(\a[0-9A-Za-z-]+\.\?\)\+:\d\{1,5}\>"
 
 " find . -iname '*.ini' | xargs \
 "   perl -n -e '/^#(\w+)=/ && print "syn keyword nomadiniParameter $1\n"' \
