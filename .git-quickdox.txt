@@ -26,6 +26,8 @@ git config --global color.ui auto
 
 # push a new branch upstream:
 git push -u origin mybranch
+# Forcing options incl. "+" to bypass ff-check (not for shared repos):
+git push --force origin +mymaster:remotemaster
 
 
 # Windows Putty Agent with Cygwin SSH:
