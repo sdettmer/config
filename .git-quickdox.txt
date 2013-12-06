@@ -158,3 +158,10 @@ Adding "file-based history" retrospectively:
   $ git commit "--date=`date -u -r file.txt`" file.txt
   $ cp -a file.bak2 file.txt
   $ git commit "--date=`date -u -r file.txt`" file.txt
+
+------------------------------------------------------------------->8=======
+
+Find lost commits (including dropped stashes):
+
+  $ gitk --all $( git fsck --no-reflog | awk '/dangling commit/ {print $3}' )
+
