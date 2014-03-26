@@ -29,18 +29,14 @@ git push -u origin mybranch
 # Forcing options incl. "+" to bypass ff-check (not for shared repos):
 git push --force origin +mymaster:remotemaster
 
-
-# Windows Putty Agent with Cygwin SSH:
-http://cuviper.github.com/ssh-pageant/
-# (copy .exe to a folder that is in PATH,
-# e.g. C:\cygwin\usr\local\bin)
-
+# Windows Putty Agent with Cygwin SSH: http://cuviper.github.com/ssh-pageant/
+# (copy .exe to a folder that is in PATH, e.g. C:\cygwin\usr\local\bin)
 
 # see branch topology
-#   git log --graph --oneline --branches --decorate --simplify-by-decoration
+git log --graph --oneline --branches --decorate --simplify-by-decoration
 
 # ignore untracked
-# git config status.showuntrackedfiles no
+git config status.showuntrackedfiles no
 
 ------------------------------------------------------------------->8=======
 COOKBOOK
@@ -164,4 +160,10 @@ Adding "file-based history" retrospectively:
 Find lost commits (including dropped stashes):
 
   $ gitk --all $( git fsck --no-reflog | awk '/dangling commit/ {print $3}' )
+
+=======8<-------------------------------------------------------------------
+
+Search for youngest commit with message matching regex:
+
+ $ git log :/<regex>                     e.g. $ git log ":/bug fix"
 
