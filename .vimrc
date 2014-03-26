@@ -32,8 +32,15 @@ endif
 "       autoindent:  "off" as I usually do not write code.
 " set noautoindent
   set autoindent
-  set smartindent
-  set nocindent
+"  http://vim.wikia.com/wiki/Indenting_source_code
+"      If you plan on using file type based indentation, don't set
+"      'smartindent' or 'cindent'. You may still set 'autoindent', since it
+"      doesn't interfere.
+"  set smartindent
+"  set nocindent
+filetype plugin indent on
+set cinoptions=l1,(1s
+
 "       autoread: When a file has been detected to have been changed
 "       outside of Vim and it has not been changed inside of Vim,
 "       automatically read it again.
@@ -1711,6 +1718,7 @@ fun! NomadSrcMode()
   " TODO, LASTER and MAYBE are well-defined (usually followed by colon)
   match Todo /TODO:\?\|LATER:\?\|MAYBE:\?/
   set path=.,,src/*/,wd-src/src/*/,wd-nomad/src/*/
+  set cinoptions=l1,(0
 endfun
 
 
