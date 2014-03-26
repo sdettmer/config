@@ -1565,6 +1565,7 @@ endfunction
 "if has("autocmd")
 "       autocmd BufEnter *.html,*.htm,*.shtml call html_maps()
 "endif
+"set clipboard^=html
 
 "not needed anymore on most systems:
 ":filetype plugin on
