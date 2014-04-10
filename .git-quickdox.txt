@@ -10,6 +10,10 @@ git config --global user.email "steffen.dettmer@gmail.com"
 git config user.name "Steffen Dettmer"
 git config user.email "steffen@dett.de"
 git config --global color.ui auto
+git config --global merge.conflictstyle diff3
+#  undo: git config --global merge.conflictstyle merge
+git config --global rebase.autosquash true
+# With GIT 1.8, test rebase.autostash true
 
 # to avoid "git reset --hard HEAD^" after unwanted merge
 # ? git config --global alias.pl 'pull --ff-only'
@@ -166,4 +170,9 @@ Find lost commits (including dropped stashes):
 Search for youngest commit with message matching regex:
 
  $ git log :/<regex>                     e.g. $ git log ":/bug fix"
+
+Sometimes "git gc" does not run because of lack of disk space and prune helps:
+
+ $ git prune --expire=2.weeks.ago
+
 
