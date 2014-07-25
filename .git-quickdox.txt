@@ -10,6 +10,10 @@ git config --global user.email "steffen.dettmer@gmail.com"
 git config user.name "Steffen Dettmer"
 git config user.email "steffen@dett.de"
 git config --global color.ui auto
+git config --global merge.conflictstyle diff3
+#  undo: git config --global merge.conflictstyle merge
+git config --global rebase.autosquash true
+# With GIT 1.8, test rebase.autostash true
 
 # to avoid "git reset --hard HEAD^" after unwanted merge
 # ? git config --global alias.pl 'pull --ff-only'
@@ -26,19 +30,23 @@ git config --global color.ui auto
 
 # push a new branch upstream:
 git push -u origin mybranch
+# Forcing options incl. "+" to bypass ff-check (not for shared repos):
+git push --force origin +mymaster:remotemaster
 
-
-# Windows Putty Agent with Cygwin SSH:
-http://cuviper.github.com/ssh-pageant/
-# (copy .exe to a folder that is in PATH,
-# e.g. C:\cygwin\usr\local\bin)
-
+# Windows Putty Agent with Cygwin SSH: http://cuviper.github.com/ssh-pageant/
+# (copy .exe to a folder that is in PATH, e.g. C:\cygwin\usr\local\bin)
 
 # see branch topology
-#   git log --graph --oneline --branches --decorate --simplify-by-decoration
+git log --graph --oneline --branches --decorate --simplify-by-decoration
 
 # ignore untracked
-# git config status.showuntrackedfiles no
+git config status.showuntrackedfiles no
+# Show ignored files in current directory, recursively
+git ls-files --others --ignored --exclude-standard
+git clean -ndX
+# Show unknown/untracked files (including ignored files) in cwd, recursively
+git ls-files --other
+
 
 ------------------------------------------------------------------->8=======
 COOKBOOK
@@ -156,3 +164,26 @@ Adding "file-based history" retrospectively:
   $ git commit "--date=`date -u -r file.txt`" file.txt
   $ cp -a file.bak2 file.txt
   $ git commit "--date=`date -u -r file.txt`" file.txt
+
+------------------------------------------------------------------->8=======
+
+Find lost commits (including dropped stashes):
+
+  $ gitk --all $( git fsck --no-reflog | awk '/dangling commit/ {print $3}' )
+
+=======8<-------------------------------------------------------------------
+
+Search for youngest commit with message matching regex:
+
+ $ git log :/<regex>                     e.g. $ git log ":/bug fix"
+
+Sometimes "git gc" does not run because of lack of disk space and prune helps:
+
+ $ git prune --expire=2.weeks.ago
+
+If it failed once, it may help to remove stale tmp files (untested):
+
+ $ rm .git/objects/ca/tmp_obj_* .git/objects/pack/tmp_pack_*
+
+
+
