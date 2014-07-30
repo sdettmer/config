@@ -21,6 +21,8 @@
 #     netmask 255.255.255.0
 #     gateway 192.168.41.2
 #
+# apt-get remove avahi-daemon
+#
 # Then have ~/.ssh/config
 #   Host vm
 #   HostName 192.168.41.28
