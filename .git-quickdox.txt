@@ -14,6 +14,8 @@ git config --global merge.conflictstyle diff3
 #  undo: git config --global merge.conflictstyle merge
 git config --global rebase.autosquash true
 # With GIT 1.8, test rebase.autostash true
+# With GIT 2.0, test pull.ff true
+
 
 # to avoid "git reset --hard HEAD^" after unwanted merge
 # ? git config --global alias.pl 'pull --ff-only'
@@ -24,6 +26,7 @@ git config --global rebase.autosquash true
 # Repos
 # url = ssh://git@bitbucket.org/sdettmer/config
 # url = git://github.com/sdettmer/config.git
+# In case of emergency: git config http.sslVerify false
 # Merge messages
 # git log --pretty=format:'%s (%ad)%n%b' --date=local ORIG_HEAD..MERGE_HEAD
 
