@@ -49,6 +49,10 @@ export MANPATH=~/usr/share/man:$MANPATH
 # Nomad Digital test port offset value for Steffen:
 export ND_PORT_OFFSET=9
 
+# ClearCase Tool "-avobs" speed-up:
+export CLEARCASE_AVOBS="/vobs/TWCS_HEN"
+export CLEARCASE_CMNT_PN=~/cs/.last_ct_comment.txt
+
 # see ~/.git-completion.bash
 GIT_PS1_SHOWDIRTYSTATE=1            # "*" when dirty
 GIT_PS1_SHOWSTASHSTATE=1            # "$" when stashed
@@ -135,7 +139,7 @@ if [ "$MSYSTEM" = "MINGW32" ] ; then
     test -n "$PS1_org" && export PS1=$PS1_org
 fi
 
-umask 022
+umask 002
 # http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
 #   Currency sign: "¤"
 # vim: et sw=4 ts=4 tw=75:
