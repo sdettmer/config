@@ -764,7 +764,8 @@ if v:version >= 600
   au BufNewFile,BufRead *.utf8    setlocal noautoread
 endif
 " old nd-style
-au BufNewFile,BufRead /nomad*src*     call NomadSrcMode()
+au BufNewFile,BufRead /vobs*      call NomadSrcMode()
+au BufNewFile,BufRead /nomad*src* call NomadSrcMode()
 au BufNewFile,BufRead /nomad*ini  setf nomadini
 au BufNewFile,BufRead /nomad*log  setf nomadlog
 " new nd-style

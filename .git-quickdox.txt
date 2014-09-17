@@ -89,13 +89,14 @@ the commands "git add notes.txt" and "git am --resolved")
 
 Creating an upstream
 
-  $ cd ~/work/repos
+  $ cd ~/repos
   $ mkdir myproj.git
   $ chmod g+ws myproj.git
   $ cd myproj.git
   $ git init --bare --shared
   $ cd ~/work/myproj
-  $ git remote add origin ~/work/repos/wd-src.git
+  $ git remote add origin ~/repos/myproj.git
+  $ git push --set-upstream origin master
   $ git push -u origin --all
   # don't use --mirror, it pushes remotes and may delete remote things!
   $ git push origin --tags
