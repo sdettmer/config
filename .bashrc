@@ -64,6 +64,9 @@ export KEYFILEPATH="c:/Programme/INGEDEV408/Key/"
 # Nomad Digital test port offset value for Steffen:
 export ND_PORT_OFFSET=9
 
+# ClearCase Tool "-avobs" speed-up:
+export CLEARCASE_AVOBS="\TWCS_HEN"
+
 # see ~/.git-completion.bash
 GIT_PS1_SHOWDIRTYSTATE=1            # "*" when dirty
 GIT_PS1_SHOWSTASHSTATE=1            # "$" when stashed
