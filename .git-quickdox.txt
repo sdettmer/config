@@ -44,6 +44,9 @@ git push --force origin +mymaster:remotemaster
 # see branch topology
 git log --graph --oneline --branches --decorate --simplify-by-decoration
 
+# ignore file modes (e.g. Windows/FAT...)
+git config core.filemode false
+git config --global core.filemode false
 # ignore untracked
 git config status.showuntrackedfiles no
 # Show ignored files in current directory, recursively
