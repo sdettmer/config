@@ -1,0 +1,35 @@
+#!/bin/bash
+# This is commit-by-original-date helper.
+# Commits given file with given -opts and --long-options,
+# file by file with date of the file.
+# The commits then can be rearranged by interactive rebasing.
+patterns=""
+opts=""
+for arg in "$@" ; do
+  case $arg in
+    -*)
+      opts="$opts $arg"
+    ;;
+    *)
+      patterns="$patterns $arg"
+    ;;
+  esac
+done
+if [ -z "$patterns" ] ; then
+  echo "usage: git ci-by-date [opts] <filename|pattern>"
+  echo "This commits each file [using opts] by its original date."
+  exit 2
+fi
+
+echo "DEBUG: opts \"$opts\""
+echo "DEBUG: args \"$patterns\""
+
+files=`ls -art $patterns` \
+  || { echo "ls failed, abort." ; exit 10; }
+for file in $files ; do
+  date="--date=\"`date -u -r $file`\"" \
+    || { echo "date failed, abort." ; exit 10; }
+   echo DEBUG git add $file ";" commit \"$date\" $opts $file
+  git add $file
+  git commit "$date" $opts $file
+done
