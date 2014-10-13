@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 # Diffs given file against predecessor. If no files given, all
-# checked out files are diff'd.
+# checked out files are diff'd. If no files are checked out,
+# all 
 use strict;
 
 my @files = ();
@@ -19,7 +20,36 @@ if ($arg_file) {
     # use all checked out files
     @files = `cleartool lsco -avobs -me -cview -s`;
     if($? != 0) { dodie("$me: failed to determine checked out files."); }
-    map { chomp } @files;
+    if (@files) {
+        print "Diffing all checked out files.\n";
+        map { chomp } @files;
+    }
+}
+
+# Neither argument given nor checked out files present - try branch.
+if (!@files) {
+    my $mkbranch = `cleartool catcs | grep -e ^\\s*mkbranch`;
+    my $branch;
+    if ($mkbranch =~ m/^\s*mkbranch\s+(\w+)$/) {
+        print "Branch $1\n";
+        $branch=$1;
+    }
+    if ($branch) {
+        #@files = `ct find -avobs -type f -version "brtype($branch)" -print | grep -v '/0$'`
+        @files = `cleartool find -avobs -type f -version "brtype($branch)" -print | grep -v '/0\$'`
+        # Note: we keep the @@/version part. This ensures that we
+        # do not see changes that have not been checked in, which
+        # could not be desired in all cases. Here it is, because
+        # we use this diff mode only if there are not checked out files.
+        # TODO it makes not much sense to diff against last
+        # version if a file was checked in multiple times in the
+        # branch. This should be addressed in future versions.
+    }
+    if (@files) {
+        print "Diffing all files with branch \"$branch\" against their last revision (NOT first).\n";
+        map { chomp } @files;
+        # print join ("\n", @files), "\n";
+    }
 }
 
 # Check if we can use ctdiff.pl
@@ -62,5 +92,10 @@ foreach my $file (@files) {
 
     my $colordiff = "";
     if ($color) { $colordiff = "| colordiff.pl"; }
-    print exec "diff $switches $predfile $file $colordiff | less";
+    open (DIFF, "diff $switches $predfile $file $colordiff | less |")
+        or dodie("$me: failed to create diff pipe: $!.");
+    while (my $line = <DIFF>) {
+        $line =~ tr|\r\n||d;
+        print "$line\n";
+    }
 }

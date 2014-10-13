@@ -50,7 +50,7 @@ export MANPATH=~/usr/share/man:$MANPATH
 export ND_PORT_OFFSET=9
 
 # ClearCase Tool "-avobs" speed-up:
-export CLEARCASE_AVOBS="/vobs/TWCS_HEN"
+export CLEARCASE_AVOBS="/vobs/TWCS_HEN /vobs/twcs_tools"
 export CLEARCASE_CMNT_PN=~/cs/.last_ct_comment.txt
 
 # see ~/.git-completion.bash
