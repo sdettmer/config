@@ -54,8 +54,12 @@ fi
 # Nomad Digital test port offset value for Steffen:
 export ND_PORT_OFFSET=9
 
+# http://stackoverflow.com/questions/12568658/java-lang-outofmemoryerror-permgen-space-error
+MAVEN_OPTS="-Xmx512m"
 if [ -d /vobs/TWCS_HEN/3p/Maven ] ; then
     export M2_HOME=/vobs/TWCS_HEN/3p/Maven
+elif [ -d ~/ccviews/sdettmer_dt5_wcg_dev_snap/vobs/TWCS_HEN/3p/Maven ] ; then
+    export M2_HOME=~/ccviews/sdettmer_dt5_wcg_dev_snap/vobs/TWCS_HEN/3p/Maven
 fi
 # ClearCase Tool "-avobs" speed-up:
 export CLEARCASE_AVOBS="/vobs/TWCS_HEN /vobs/twcs_tools"
