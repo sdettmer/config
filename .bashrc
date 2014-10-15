@@ -42,6 +42,11 @@ export PERL5LIB=~/usr/lib/perl5:~/usr/lib/perl5/site_perl
 export LD_LIBRARY_PATH=~/usr/lib
 export MANPATH=~/usr/share/man:$MANPATH
 
+if [ -d ~/opt/jdk1.7.0_71 ] ; then
+    export JAVA_HOME=~/opt/jdk1.7.0_71
+    export PATH=~/bin:~/opt/jdk1.7.0_71/bin:$PATH:/home/pub/bin
+fi
+
 # git-unlock-pack wasn't found
 # test -z "${PATH/*local*/}" || PATH="$PATH:/usr/local/bin/"
 # export PATH
@@ -49,6 +54,9 @@ export MANPATH=~/usr/share/man:$MANPATH
 # Nomad Digital test port offset value for Steffen:
 export ND_PORT_OFFSET=9
 
+if [ -d /vobs/TWCS_HEN/3p/Maven ] ; then
+    export M2_HOME=/vobs/TWCS_HEN/3p/Maven
+fi
 # ClearCase Tool "-avobs" speed-up:
 export CLEARCASE_AVOBS="/vobs/TWCS_HEN /vobs/twcs_tools"
 export CLEARCASE_CMNT_PN=~/cs/.last_ct_comment.txt
