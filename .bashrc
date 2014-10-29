@@ -151,6 +151,11 @@ if [ "$MSYSTEM" = "MINGW32" ] ; then
     test -n "$PS1_org" && export PS1=$PS1_org
 fi
 
+# Old GIT versions (<=1.7.x?) do not support rev-list --count, set legacy mode.
+if ! git rev-list --count HEAD >/dev/null 2>&1 ; then
+    GIT_PS1_SHOWUPSTREAM="$GIT_PS1_SHOWUPSTREAM legacy"
+fi
+
 umask 002
 # http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
 #   Currency sign: "¤"
