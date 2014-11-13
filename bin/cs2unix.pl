@@ -12,6 +12,6 @@ while (my $line = <>) {
     # Prepent the VOBs mountpoint "/vobs":
     #   element -dir /twcs_tools/3p                    /main/LATEST
     #   load /vobs/TcmsGenSw/tools
-    $line =~ s/^(\s*(#\s*|#\s*DEV:\s*)?(element|load)(\s+-\w+)*\s+)(\/)/$1$vobmnt$5/;
+    $line =~ s/^(\s*(#\s*|#\s*DEV:\s*)?(element|load)(\s+-\w+)*\s+"?)(\/)/$1$vobmnt$5/;
     print $line, "\n";
 }
