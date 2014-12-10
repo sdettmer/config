@@ -29,6 +29,8 @@ test -z "$PROFILEREAD" && test -z "$PROFILEONCE" &&
 test -e ~/.alias_all && . ~/.alias_all
 test -e ~/.alias && . ~/.alias
 test -e ~/.git-completion.bash && . ~/.git-completion.bash
+#test -e ~/.ct-completion.bash && . ~/.ct-completion.bash
+test -e ~/bash-clearcase && . ~/bash-clearcase
 
 # standard environment
 test -z "${LESS/*-R*/}" || export LESS="$LESS -R"
@@ -111,6 +113,9 @@ HISTCONTROL=ignoreboth
 # append to the history file, don't overwrite it
 shopt -s histappend
 
+# Make multi-line commandsline in history
+shopt -q -s cmdhist
+
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=10000
 HISTFILESIZE=20000
@@ -119,6 +124,8 @@ HISTFILESIZE=20000
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
+# Turn on the extended pattern matching features
+# shopt -q -s extglob
 
 #export LANG=de_DE.ISO-8859-1
 

@@ -6,6 +6,7 @@ use strict;
 
 my @files = ();
 my $color = 1;
+$color = 1;
 
 # Based on http://stackoverflow.com/questions/375398/any-way-to-use-a-custom-diff-tool-with-cleartool-clearcase
 my ($arg_file, $switches) = @ARGV;
