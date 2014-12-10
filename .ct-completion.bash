@@ -712,21 +712,21 @@ _cleartool()
 					options=$(cleartool lsvob |sed -e "/^\s/d" -e "s/^\*\s\+\(\S*\).*/\1/")
 					;;
 				setview)
-					if [[ "$prev" == -exe?(c) ]]; then
+					if [[ "$prev" == -exe || "$prev" == -exec ]]; then
 						COMPREPLY=( $(compgen -A command -- $cur) )
 					else
 						options=$(cleartool lsview -short)
 					fi
 					;;
 				lsview)
-					if [[ "$prev" == -hos?(t) ]]; then
+					if [[ "$prev" == -hos || "$prev" == -host ]]; then
 						_known_hosts
-					elif [[ "$prev" == -reg?(ion) ]]; then
+					elif [[ "$prev" == -reg || "$prev" == -region ]]; then
 						options=$(cleartool lsregion -short)
-					elif [[ "$prev" == -sto?(rage) ]]; then
+					elif [[ "$prev" == -sto || "$prev" == -storage ]]; then
 						# TODO: Doesn't work OK.
 						options=$(cleartool lsview |sed -e "s/.*\s\(\S*\)$/\1/")
-					elif [[ "$prev" == -uui?(d) ]]; then
+					elif [[ "$prev" == -uui || "$prev" == -uuid ]]; then
 						options=$(cleartool lsview -long |grep "^View uuid: " |sed -e "s/^View uuid: //" |sort |uniq)
 					else
 						options=$(cleartool lsview -short)
@@ -738,7 +738,8 @@ _cleartool()
 					options=$(cleartool lscheckout -short -me)
 					;;
 				checkin|ci)
-					if [[ "$prev" != @(-fro?(m)|-cfi?(le)) ]]; then
+					# if [[ "$prev" != @(-fro?(m)|-cfi?(le)) ]]; then
+					if [[ "$prev" != -fro && "$prev" != -from && "$prev" != -cfi && "$prev" != -cfile ]]; then
 						options=$(cleartool lscheckout -short -me)
 					fi
 					;;
@@ -746,20 +747,20 @@ _cleartool()
 					options=$(cleartool lsregion -short)
 					;;
 				rmregion)
-					if [[ "$prev" != -pas?(sword) ]]; then
+					if [[ "$prev" != -pas && "$prev" != -password ]]; then
 						options=$(cleartool lsregion -short)
 					fi
 					;;
 				lsvob)
-					if [[ "$prev" == -reg?(ion) ]]; then
+					if [[ "$prev" == -reg || "$prev" == -region ]]; then
 						options=$(cleartool lsregion -short)
-					elif [[ "$prev" == -hos?(t) ]]; then
+					elif [[ "$prev" == -hos || "$prev" == -host ]]; then
 						_known_hosts
-					elif [[ "$prev" == -uui?(d) ]]; then
+					elif [[ "$prev" == -uui || "$prev" == -uuid ]]; then
 						options=$(cleartool lsvob -long |grep "^Vob replica uuid: " |sed -e "s/^Vob replica uuid: //" |sort |uniq)
-					elif [[ "$prev" == -fam?(ily) ]]; then
+					elif [[ "$prev" == -fam || "$prev" == -family ]]; then
 						options=$(cleartool lsvob -long |grep "^Vob family uuid: " |sed -e "s/^Vob family uuid: //" |sort |uniq)
-					elif [[ "$prev" == -sto?(rage) ]]; then
+					elif [[ "$prev" == -sto || "$prev" == -storage ]]; then
 						# TODO: Doesn't work OK
 						options=$(cleartool lsvob |sed -e "s/^\*\?\ \S*\s*\(\S*\).*/\1/")
 					fi
