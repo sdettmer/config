@@ -735,12 +735,12 @@ _cleartool()
 				uncheckout|unco)
 					# List of user's checked out elements
 					# TODO: Include list of activities for checkin
-					options=$(cleartool lscheckout -short -me)
+					options=$(cleartool lscheckout -short -me -cview -avobs)
 					;;
 				checkin|ci)
 					# if [[ "$prev" != @(-fro?(m)|-cfi?(le)) ]]; then
 					if [[ "$prev" != -fro && "$prev" != -from && "$prev" != -cfi && "$prev" != -cfile ]]; then
-						options=$(cleartool lscheckout -short -me)
+						options=$(cleartool lscheckout -short -me -cview -avobs)
 					fi
 					;;
 				lsregion)
