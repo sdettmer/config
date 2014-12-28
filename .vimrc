@@ -773,6 +773,11 @@ au BufNewFile,BufRead *nomad/*ini  setf nomadini
 au BufNewFile,BufRead *nomad/*log  setf nomadlog
 au BufNewFile,BufRead Makefile*   setl tw=0 noet nolist ts=8 sts=0
 au BufNewFile,BufRead *.utf8      setl fileencoding=utf8
+" If on Windows someone really edits an NFO file, it could be an
+"   old MS-DOS INFO file.
+if has("gui_win32")
+  au BufNewFile,BufRead *.nfo     set nolist guifont=Terminal:h10
+endif
 augroup filetypedetect
   au! BufRead,BufNewFile *.sce setfiletype scilab
 augroup END
