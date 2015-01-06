@@ -251,7 +251,9 @@ set listchars=trail:·,tab:»·
 "
 "       shortmess:   Kind of messages to show.   Abbreviate them all!
 "          New since vim-5.0v: flag 'I' to suppress "intro message".
-  set   shortmess=at
+"          O message for reading a file overwrites any previous message.
+"             Also for quickfix message (e.g., ":cn").
+  set   shortmess=atO
 "
 "       showcmd:     Show current uncompleted command?  Absolutely!
   set   showcmd
