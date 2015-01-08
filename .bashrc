@@ -36,8 +36,8 @@ test -z "${LESS/*-R*/}" || export LESS="$LESS -R"
 test -z "${LS_OPTIONS}" && export LS_OPTIONS='--color=auto'
 
 export EDITOR=vim
-export CVS_RSH="`which ssh`"
-export RSYNC_RSH="`which ssh`"
+export CVS_RSH="`type -p ssh`"
+export RSYNC_RSH="`type -p ssh`"
 export PATH=~/bin:$PATH:/home/pub/bin
 export PERL5LIB=~/usr/lib/perl5:~/usr/lib/perl5/site_perl
 export LD_LIBRARY_PATH=~/usr/lib
@@ -148,7 +148,7 @@ shopt -s checkwinsize
 # [[ -f "/home/steffen/.config/autopackage/paths-bash" ]] && . "/home/steffen/.config/autopackage/paths-bash"
 
 # Safety: when there is no GIT, don't use it in prompt
-if [ ! -x "`which git`" ] ; then
+if [ ! -x "`type -p git`" ] ; then
     __git_ps1() { fmt=$1 || "%s" ; printf $fmt "no git"; }
 fi
 # in MSYS, shell moans about non-implemented pipe subst or so
