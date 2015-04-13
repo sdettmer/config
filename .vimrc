@@ -579,6 +579,11 @@ endif
 "     Stws = show trailing whitespace
   nmap ,Stws :%s/  *$/_/g<C-M>
   vmap ,Stws :%s/  *$/_/g<C-M>
+
+" cleartool config spec:
+" convert "ct ci" STDOUT to config spec rules.
+  vmap ,ctcs :s/Checked in "/    element /g<C-M>:'<,'>s/" version "/\t/<C-M>:'<,'>s/"\.$/<C-M>:g/\s*cleartool: Warning: Version checked in is not selected by view./d<C-M>
+
 " kill trailing whitespace
 fun! KtwsAuto()
   if exists("b:std_nomad") && b:std_nomad
