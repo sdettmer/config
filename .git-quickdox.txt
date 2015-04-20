@@ -29,6 +29,10 @@ git config --global rebase.autosquash true
 # url = ssh://git@bitbucket.org/sdettmer/config
 # url = git://github.com/sdettmer/config.git
 # In case of emergency: git config http.sslVerify false
+# Otherwise: Download certificates
+wget http://curl.haxx.se/ca/cacert.pem -O ~/mozilla-cacert.pem
+git config --global http.sslCAinfo ~/mozilla-cacert.pem
+
 # Merge messages
 # git log --pretty=format:'%s (%ad)%n%b' --date=local ORIG_HEAD..MERGE_HEAD
 
