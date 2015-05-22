@@ -22,22 +22,35 @@
 " Doesn't work if multiple windows exist before script started.  In
 " that case the script will abort with error message.
 "
+" If the current buffer is modified, some error messages will appear
+" before the script starts, and an extra window is left behind after
+" the script exits.  Workaround: save your buffers first.
+"
 "Other Info:
 " Inspired by cmatrix...
 " Didn't feel inspired enough to start using pico/nano, of course ^_^;
 "
+" 05/13/08 - disable cursorline, cursorcolumn and spell
+"            (thanks to Diederick Niehorster for the suggestion).
+" 12/21/06 - multiwindow support by S. Lockwood-Childs.
+" 10/03/05 - added silent! to cursor positioning code to stop drawing
+"            numbers during animation (thanks to David Eggum for the
+"            suggestion).
+" 10/02/05 - disable showmatch
 " 03/16/05 - make new buffer modifiable before running
 " 01/27/05 - added sleep to consume less CPU
 "            removed frame counter
 " 01/26/05 - initial version
+"
+" This script is released under MIT license.
 
 
 " Speed range, must be positive.  Lower delay = faster.
 let s:mindelay = 1
 let s:maxdelay = 5
 
-" Temporary buffer name.
-let s:tmpfile = tempname()
+" Session file for preserving original window layout
+let s:session_file = tempname()
 
 
 function! s:Rand()
@@ -69,24 +82,24 @@ function! s:DrawObject(i)
    " Draw head
    if y <= b:h
       if b:head{a:i}
-         exec 'norm! :' . y . nr2char(13) . x . '|R' . b:d[s:Rand()%b:dl] . '_' . nr2char(27)
+         silent! exec 'norm! :' . y . nr2char(13) . x . '|R' . b:d[s:Rand()%b:dl] . '_' . nr2char(27)
          if y > 1
-            exec 'norm! kR' . ((s:Rand() % 2) ? '`' : ' ') . nr2char(27)
+            silent! exec 'norm! kR' . ((s:Rand() % 2) ? '`' : ' ') . nr2char(27)
          endif
       else
          let a = ((s:Rand() % 2) ? '`' : ' ') . nr2char(27)
-         exec 'norm! :'. y . nr2char(13) . x . '|R' . b:d[s:Rand() % b:dl] . a
+         silent! exec 'norm! :'. y . nr2char(13) . x . '|R' . b:d[s:Rand() % b:dl] . a
       endif
    else
       if b:head{a:i} && y == b:h + 1
-         exec 'norm! :' . b:h . nr2char(13) . (x + 1) . '|R' . ((s:Rand() % 2) ? '`' : ' ') . nr2char(27)
+         silent! exec 'norm! :' . b:h . nr2char(13) . (x + 1) . '|R' . ((s:Rand() % 2) ? '`' : ' ') . nr2char(27)
       endif
    endif
 
    " Draw tail
    let y = y - b:len{a:i}
    if 1 <= y && y <= b:h
-      exec 'norm! :'. y . nr2char(13) . x . '|R  ' . nr2char(27)
+      silent! exec 'norm! :'. y . nr2char(13) . x . '|R  ' . nr2char(27)
    endif
    let b:reserve{b:x{a:i}} = y
 endfunction
@@ -156,31 +169,28 @@ function! s:Reset()
    endwhile
 endfunction
 
-function! s:DetectSplit()
-   let i = winnr()
-   silent! wincmd w
-   let j = winnr()
-   silent! wincmd W
-   if i != j
-      return 1
-   else
-      return 0
-   endif
-endfunction
-
 function! s:Init()
-   " Create new buffer and hide the current buffer.  Hiding the
-   " current buffer without switching to a new buffer preserves
+   " Create new buffer and hide the existing buffers.  Hiding the
+   " existing buffers without switching to a new buffer preserves
    " undo history.
-   let s:oldbuf = bufnr('%')
-   silent! exec 'new ' . s:tmpfile
-   let s:newbuf = bufnr(s:tmpfile)
-   if winbufnr(0) != s:newbuf
+   exec 'mksession! ' . s:session_file
+   let s:num_orig_win = winnr("$")
+
+   " move to top window, so created window will become window 1,
+   " then attempt to create new window
+   1 wincmd w
+   silent! new
+
+   " check that there really is an additional window
+   if winnr("$") != s:num_orig_win + 1
       return 1
    endif
+   let s:newbuf = bufnr('%')
+
+   " close all but window 1, which is the new window
+   only
+
    setl bh=delete bt=nofile ma nolist nonu noro noswf tw=0 nowrap
-   wincmd w
-   hide
 
    " Set GUI options
    if has('gui')
@@ -197,14 +207,21 @@ function! s:Init()
       let s:o_ts = &titlestring
       exec 'set titlestring=\ '
    endif
+   if v:version >= 700
+      let s:o_spell = &spell
+      let s:o_cul = &cul
+      let s:o_cuc = &cuc
+      set nospell nocul nocuc
+   endif
    let s:o_ch = &ch
    let s:o_ls = &ls
    let s:o_lz = &lz
    let s:o_siso = &siso
+   let s:o_sm = &sm
    let s:o_smd = &smd
    let s:o_so = &so
    let s:o_ve = &ve
-   set ch=1 ls=0 lz nosmd siso=0 so=0 ve=all
+   set ch=1 ls=0 lz nosm nosmd siso=0 so=0 ve=all
 
    " Initialize PRNG
    let b:seed = localtime()
@@ -256,31 +273,32 @@ function! s:Cleanup()
       let &titlestring = s:o_ts
       unlet s:o_ts
    endif
+   if v:version >= 700
+      let &spell = s:o_spell
+      let &cul = s:o_cul
+      let &cuc = s:o_cuc
+      unlet s:o_cul s:o_cuc
+   endif
    let &ch = s:o_ch
    let &ls = s:o_ls
    let &lz = s:o_lz
    let &siso = s:o_siso
+   let &sm = s:o_sm
    let &smd = s:o_smd
    let &so = s:o_so
    let &ve = s:o_ve
-   unlet s:o_ch s:o_ls s:o_lz s:o_siso s:o_smd s:o_so s:o_ve
+   unlet s:o_ch s:o_ls s:o_lz s:o_siso s:o_sm s:o_smd s:o_so s:o_ve
 
-   " Restore old buffer
-   exec 'b! ' . s:oldbuf
+   " Restore old buffers
+   exec 'source ' . s:session_file
    exec 'bwipe ' . s:newbuf
-   unlet s:oldbuf s:newbuf
+   unlet s:newbuf
 
    " Clear keystroke
    let c = getchar(0)
 endfunction
 
 function! Matrix()
-   if s:DetectSplit()
-      echohl ErrorMsg
-      echon 'Multiple windows opened'
-      echohl None
-      return
-   endif
    if s:Init()
       echohl ErrorMsg
       echon 'Can not create window'
@@ -300,9 +318,9 @@ function! Matrix()
 endfunction
 
 
-if !has('virtualedit') || !has('windows')
+if !has('virtualedit') || !has('windows') || !has('syntax')
    echohl ErrorMsg
-   echon 'Not enough features, need at least +virtualedit and +windows'
+   echon 'Not enough features, need at least +virtualedit, +windows and +syntax'
    echohl None
 else
    command! Matrix call Matrix()

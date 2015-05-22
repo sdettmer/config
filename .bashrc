@@ -29,17 +29,24 @@ test -z "$PROFILEREAD" && test -z "$PROFILEONCE" &&
 test -e ~/.alias_all && . ~/.alias_all
 test -e ~/.alias && . ~/.alias
 test -e ~/.git-completion.bash && . ~/.git-completion.bash
+test -e ~/.ct-completion.bash && . ~/.ct-completion.bash
 
 # standard environment
 test -z "${LESS/*-R*/}" || export LESS="$LESS -R"
 test -z "${LS_OPTIONS}" && export LS_OPTIONS='--color=auto'
 
 export EDITOR=vim
-export CVS_RSH="`which ssh`"
-export RSYNC_RSH="`which ssh`"
+export CVS_RSH="`type -p ssh`"
+export RSYNC_RSH="`type -p ssh`"
 export PATH=~/bin:$PATH:/home/pub/bin
 export PERL5LIB=~/usr/lib/perl5:~/usr/lib/perl5/site_perl
 export LD_LIBRARY_PATH=~/usr/lib
+export MANPATH=~/usr/share/man:$MANPATH
+
+if [ -d ~/opt/jdk1.7.0_71 ] ; then
+    export JAVA_HOME=~/opt/jdk1.7.0_71
+    export PATH=~/bin:~/opt/jdk1.7.0_71/bin:$PATH:/home/pub/bin
+fi
 
 # git-unlock-pack wasn't found
 # test -z "${PATH/*local*/}" || PATH="$PATH:/usr/local/bin/"
@@ -64,8 +71,16 @@ export KEYFILEPATH="c:/Programme/INGEDEV408/Key/"
 # Nomad Digital test port offset value for Steffen:
 export ND_PORT_OFFSET=9
 
-# ClearCase Tool "-avobs" speed-up:
-export CLEARCASE_AVOBS="\TWCS_HEN"
+
+# http://stackoverflow.com/questions/12568658/java-lang-outofmemoryerror-permgen-space-error
+MAVEN_OPTS="-Xmx512m"
+if [ -d /vobs/TWCS_HEN/3p/Maven ] ; then
+    export M2_HOME=/vobs/TWCS_HEN/3p/Maven
+elif [ -d ~/ccviews/sdettmer_dt5_wcg_dev_snap/vobs/TWCS_HEN/3p/Maven ] ; then
+    export M2_HOME=~/ccviews/sdettmer_dt5_wcg_dev_snap/vobs/TWCS_HEN/3p/Maven
+fi
+export CLEARCASE_AVOBS='\TWCS_HEN \twcs_tools \twcs_wcac'
+#export CLEARCASE_CMNT_PN=~/cs/.last_ct_comment.txt
 
 # see ~/.git-completion.bash
 GIT_PS1_SHOWDIRTYSTATE=1            # "*" when dirty
@@ -124,6 +139,9 @@ HISTCONTROL=ignoreboth
 # append to the history file, don't overwrite it
 shopt -s histappend
 
+# Make multi-line commandsline in history
+shopt -q -s cmdhist
+
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=10000
 HISTFILESIZE=20000
@@ -132,6 +150,8 @@ HISTFILESIZE=20000
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
+# Turn on the extended pattern matching features
+# shopt -q -s extglob
 
 #export LANG=de_DE.ISO-8859-1
 
@@ -155,7 +175,7 @@ shopt -s checkwinsize
 # [[ -f "/home/steffen/.config/autopackage/paths-bash" ]] && . "/home/steffen/.config/autopackage/paths-bash"
 
 # Safety: when there is no GIT, don't use it in prompt
-if [ ! -x "`which git`" ] ; then
+if [ ! -x "`type -p git`" ] ; then
     __git_ps1() { fmt=$1 || "%s" ; printf $fmt "no git"; }
 fi
 # in MSYS, shell moans about non-implemented pipe subst or so
@@ -164,7 +184,12 @@ if [ "$MSYSTEM" = "MINGW32" ] ; then
     test -n "$PS1_org" && export PS1=$PS1_org
 fi
 
-umask 022
+# Old GIT versions (<=1.7.x?) do not support rev-list --count, set legacy mode.
+if ! git rev-list --count HEAD >/dev/null 2>&1 ; then
+    GIT_PS1_SHOWUPSTREAM="$GIT_PS1_SHOWUPSTREAM legacy"
+fi
+
+umask 002
 # http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
 #   Currency sign: "¤"
 # vim: et sw=4 ts=4 tw=75:

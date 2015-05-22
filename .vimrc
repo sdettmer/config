@@ -251,7 +251,9 @@ set listchars=trail:·,tab:»·
 "
 "       shortmess:   Kind of messages to show.   Abbreviate them all!
 "          New since vim-5.0v: flag 'I' to suppress "intro message".
-  set   shortmess=at
+"          O message for reading a file overwrites any previous message.
+"             Also for quickfix message (e.g., ":cn").
+  set   shortmess=atO
 "
 "       showcmd:     Show current uncompleted command?  Absolutely!
   set   showcmd
@@ -577,6 +579,11 @@ endif
 "     Stws = show trailing whitespace
   nmap ,Stws :%s/  *$/_/g<C-M>
   vmap ,Stws :%s/  *$/_/g<C-M>
+
+" cleartool config spec:
+" convert "ct ci" STDOUT to config spec rules.
+  vmap ,ctcs :s/Checked in "/    element /g<C-M>:'<,'>s/" version "/\t/<C-M>:'<,'>s/"\.$/<C-M>:g/\s*cleartool: Warning: Version checked in is not selected by view./d<C-M>
+
 " kill trailing whitespace
 fun! KtwsAuto()
   if exists("b:std_nomad") && b:std_nomad
@@ -764,7 +771,8 @@ if v:version >= 600
   au BufNewFile,BufRead *.utf8    setlocal noautoread
 endif
 " old nd-style
-au BufNewFile,BufRead /nomad*src*     call NomadSrcMode()
+au BufNewFile,BufRead /vobs*      call NomadSrcMode()
+au BufNewFile,BufRead /nomad*src* call NomadSrcMode()
 au BufNewFile,BufRead /nomad*ini  setf nomadini
 au BufNewFile,BufRead /nomad*log  setf nomadlog
 " new nd-style
