@@ -35,7 +35,7 @@ test -e ~/.ct-completion.bash && . ~/.ct-completion.bash
 test -z "${LESS/*-R*/}" || export LESS="$LESS -R"
 test -z "${LS_OPTIONS}" && export LS_OPTIONS='--color=auto'
 
-export EDITOR=vim
+export EDITOR="vim -X"
 export CVS_RSH="`type -p ssh`"
 export RSYNC_RSH="`type -p ssh`"
 export PATH=~/bin:$PATH:/home/pub/bin
