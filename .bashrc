@@ -22,6 +22,9 @@
 # So we use two variables to guard sourcing.
 # Note: if only MSYS has /etc/profile source ~/.bashrc, maybe a MSYS
 # specific exception could be better.
+# Idea:
+# # If we have a prompt, we have an interactive shell, and bash read profile already.
+# [ "$PS1" ] && export PROFILEONCE=true
 test -z "$PROFILEREAD" && test -z "$PROFILEONCE" &&
     { export PROFILEONCE=true ; . /etc/profile ; }
 
