@@ -20,12 +20,19 @@ my $prefix;
 my $user;
 my $name;
 my $mkbrtype=0;
+my $comment="";
+if ($ARGV[0] eq  "-c") {
+    shift;
+    warn "Will use branch comment.\n";
+    $comment=shift;
+}
 if ($ARGV[0] eq  "-m") {
     warn "Will create branch type on CLEARCASE_AVOBS=$ENV{'CLEARCASE_AVOBS'}\n";
     $mkbrtype=1;
-    shift
+    shift;
 }
 my $branchname=shift;
+$comment=$branchname unless ($comment);
 
 # poor mans basename:
 my $scriptname=$0;
@@ -43,6 +50,9 @@ if ($branchname =~ m/^((dev)_([a-zA-Z]+))_((\w+))$/) {
     $prefix=$1;
     $user=$3;
     $name=$4;
+} elsif ($branchname) {
+    die "First argument must be valid branchname (not \`$branchname').\n"
+      . "Hint: invoke without arguments to get usage help.\n"
 } else {
     die "First argument must be branchname.\n"
       . "Hint: invoke without arguments to get usage help.\n"
@@ -65,7 +75,7 @@ while (my $line = <>) {
 
 if ($mkbrtype) {
     for my $vob (split(/\s+/, $ENV{'CLEARCASE_AVOBS'})) {
-       print STDERR `cleartool mkbrtype -nc $branchname\@$vob`
+       print STDERR `cleartool mkbrtype -c "$comment" $branchname\@$vob`
     }
 }
 
