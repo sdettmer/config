@@ -66,6 +66,8 @@ elif [ -d ~/ccviews/sdettmer_dt5_wcg_dev_snap/vobs/TWCS_HEN/3p/Maven ] ; then
     export M2_HOME=~/ccviews/sdettmer_dt5_wcg_dev_snap/vobs/TWCS_HEN/3p/Maven
 fi
 # ClearCase Tool "-avobs" speed-up:
+#    "Specify CLEARCASE_AVOBS as a list of VOB tags separated by commas,
+#    white space, or colons (UNIX and Linux) or by semicolons (Windows)."
 export CLEARCASE_AVOBS="/vobs/TWCS_HEN /vobs/twcs_tools /vobs/twcs_wcac"
 #export CLEARCASE_CMNT_PN=~/cs/.last_ct_comment.txt
 

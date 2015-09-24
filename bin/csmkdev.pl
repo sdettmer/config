@@ -74,7 +74,9 @@ while (my $line = <>) {
 }
 
 if ($mkbrtype) {
-    for my $vob (split(/\s+/, $ENV{'CLEARCASE_AVOBS'})) {
+    # "Specify CLEARCASE_AVOBS as a list of VOB tags separated by commas,
+    # white space, or colons (UNIX and Linux) or by semicolons (Windows)."
+    for my $vob (split(/[\s,:;]+/, $ENV{'CLEARCASE_AVOBS'})) {
        print STDERR `cleartool mkbrtype -c "$comment" $branchname\@$vob`
     }
 }
