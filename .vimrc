@@ -1583,11 +1583,15 @@ endfunction
 " let mysyntaxfile = "~/.vim/mysyntax.vim"
 " so "~/.vim/doxyvim.vim"
 "so ~/.vim/doxygen.vim
+autocmd BufReadPost server.log* :setf gflog
+"autocmd BufReadPost *.log :setl nowrap
+autocmd BufReadPost server.log* :setl wrap
 " mszlog now is a syntax file (automatically loaded via setf mszlog)
 "so ~/.vim/mszlog.vim
 autocmd BufReadPost *.log :setf mszlog
 "autocmd BufReadPost *.log :setl nowrap
 autocmd BufReadPost *.log :setl wrap
+
 
 " make clogEnter and clogLeave around the current C function
 map ,enter ?^{<CR>?(<CR>byw/^{<CR>ocbaseErrorId_t status = CBASE_ERR_OK;<CR>clogEnter(("<ESC>pA"));<CR><ESC>?^{<CR>%O<CR>clogLeave(("<ESC>pA"));<CR>return status;<ESC>
