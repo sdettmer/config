@@ -216,6 +216,7 @@ set listchars=trail:·,tab:»·
 
 " Tags (use default)
 "   generate with e.g. "ctags -eR --c-kinds=+px .".
+"   or on ancient systems with e.g. "ctags  `find . -name '*.[ch]*'`"
 
 "       report: show a report when N lines were changed.
 "               report=0 thus means "show all changes"!

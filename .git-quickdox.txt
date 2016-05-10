@@ -228,3 +228,19 @@ Finding when a method has been removed:
   $ # git bisect view
   $ git bisect run grep methodName path/FileName.java
 
+------------------------------------------------------------------->8=======
+
+List changed files with status:
+
+  $ git diff --name-status HEAD^^ HEAD^
+
+=======8<-------------------------------------------------------------------
+
+Cygwin: rebase with whitespace errors lead to abort, see
+http://stackoverflow.com/questions/13463173/git-rebase-failing-due-to-whitespace-error
+
+  $ git rebase -Xignore-space-at-eol origin/master
+  $ git rebase --whitespace=fix origin/master
+  $ git rebase --whitespace=nowarn origin/master
+  $ git rebase -Xignore-space-change -Xignore-all-space --ignore-whitespace origin/master
+
