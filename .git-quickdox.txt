@@ -40,6 +40,7 @@ git config --global http.sslCAinfo ~/mozilla-cacert.pem
 # push a new branch upstream:
 git push -u origin mybranch
 # Forcing options incl. "+" to bypass ff-check (not for shared repos):
+# Note: on remote, comment out config:[receive] denyNonFastforwards = true.
 git push --force origin +mymaster:remotemaster
 
 # Windows Putty Agent with Cygwin SSH: http://cuviper.github.com/ssh-pageant/
@@ -91,6 +92,12 @@ to be applied in the other repository:
 (before, I checked in empty notes.txt and had to apply the first
 patch by hand (patch < .git/rebase-apply/patch) and continue with
 the commands "git add notes.txt" and "git am --resolved")
+
+Brutal (!) dos2unix history filter:
+
+  $ git filter-branch \
+    --tree-filter "find . -name '*.html' -o -name '*.js' | xargs dos2unix" \
+    HEAD
 
 =======8<-------------------------------------------------------------------
 
@@ -202,12 +209,38 @@ If it failed once, it may help to remove stale tmp files (untested):
 
 Retrospectively overwrite all author / commiter fields by rewriting:
 
-git filter-branch --commit-filter '
-  if [ "$GIT_AUTHOR_NAME" = "root" ];
-    GIT_AUTHOR_NAME="Steffen Dettmer" ; 
-    GIT_AUTHOR_EMAIL="steffen.dettmer@de.transport.bombardier.com" ;
-    GIT_COMMITTER_NAME="Steffen Dettmer" ;
-    GIT_COMMITTER_EMAIL="steffen.dettmer@de.transport.bombardier.com" ; 
-  fi ;
-  git commit-tree "$@"'
+  $ git filter-branch --commit-filter '
+      if [ "$GIT_AUTHOR_NAME" = "root" ];
+        GIT_AUTHOR_NAME="Steffen Dettmer" ;
+        GIT_AUTHOR_EMAIL="steffen.dettmer@de.transport.bombardier.com" ;
+        GIT_COMMITTER_NAME="Steffen Dettmer" ;
+        GIT_COMMITTER_EMAIL="steffen.dettmer@de.transport.bombardier.com" ;
+      fi ;
+      git commit-tree "$@"'
+
+=======8<-------------------------------------------------------------------
+
+Finding when a method has been removed:
+
+  $ git bisect start
+  $ git bisect bad
+  $ git bisect good efd61b4
+  $ # git bisect view
+  $ git bisect run grep methodName path/FileName.java
+
+------------------------------------------------------------------->8=======
+
+List changed files with status:
+
+  $ git diff --name-status HEAD^^ HEAD^
+
+=======8<-------------------------------------------------------------------
+
+Cygwin: rebase with whitespace errors lead to abort, see
+http://stackoverflow.com/questions/13463173/git-rebase-failing-due-to-whitespace-error
+
+  $ git rebase -Xignore-space-at-eol origin/master
+  $ git rebase --whitespace=fix origin/master
+  $ git rebase --whitespace=nowarn origin/master
+  $ git rebase -Xignore-space-change -Xignore-all-space --ignore-whitespace origin/master
 

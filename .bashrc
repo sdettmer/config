@@ -22,6 +22,9 @@
 # So we use two variables to guard sourcing.
 # Note: if only MSYS has /etc/profile source ~/.bashrc, maybe a MSYS
 # specific exception could be better.
+# Idea:
+# # If we have a prompt, we have an interactive shell, and bash read profile already.
+# [ "$PS1" ] && export PROFILEONCE=true
 test -z "$PROFILEREAD" && test -z "$PROFILEONCE" &&
     { export PROFILEONCE=true ; . /etc/profile ; }
 
@@ -35,7 +38,7 @@ test -e ~/.ct-completion.bash && . ~/.ct-completion.bash
 test -z "${LESS/*-R*/}" || export LESS="$LESS -R"
 test -z "${LS_OPTIONS}" && export LS_OPTIONS='--color=auto'
 
-export EDITOR=vim
+export EDITOR="vim -X"
 export CVS_RSH="`type -p ssh`"
 export RSYNC_RSH="`type -p ssh`"
 export PATH=~/bin:$PATH:/home/pub/bin
@@ -79,6 +82,10 @@ if [ -d /vobs/TWCS_HEN/3p/Maven ] ; then
 elif [ -d ~/ccviews/sdettmer_dt5_wcg_dev_snap/vobs/TWCS_HEN/3p/Maven ] ; then
     export M2_HOME=~/ccviews/sdettmer_dt5_wcg_dev_snap/vobs/TWCS_HEN/3p/Maven
 fi
+
+# ClearCase Tool "-avobs" speed-up:
+#    "Specify CLEARCASE_AVOBS as a list of VOB tags separated by commas,
+#    white space, or colons (UNIX and Linux) or by semicolons (Windows)."
 export CLEARCASE_AVOBS='\TWCS_HEN \twcs_tools \twcs_wcac'
 #export CLEARCASE_CMNT_PN=~/cs/.last_ct_comment.txt
 

@@ -216,6 +216,7 @@ set listchars=trail:·,tab:»·
 
 " Tags (use default)
 "   generate with e.g. "ctags -eR --c-kinds=+px .".
+"   or on ancient systems with e.g. "ctags  `find . -name '*.[ch]*'`"
 
 "       report: show a report when N lines were changed.
 "               report=0 thus means "show all changes"!
@@ -586,7 +587,7 @@ endif
 
 " kill trailing whitespace
 fun! KtwsAuto()
-  if exists("b:std_nomad") && b:std_nomad
+  if exists("b:std_noktws") && b:std_noktws
   else
     call Ktws()
   endif
@@ -754,8 +755,10 @@ map ,rplc :if confirm("set auto reply?", "&yes\n&no", 2) == 1<CR>:normal ,rpl<CR
 " "autoindent", "expandtab", "shiftwidth", "tabstop", and "textwidth":
 au BufNewFile,BufRead *.[ch]      setl ai et sw=3 ts=3
 au BufNewFile,BufRead *.cc        setl ai et sw=4 ts=4
+au BufNewFile,BufRead *.cpp,*.cxx setl ai et sw=4 ts=4
 au BufNewFile,BufRead *.java      setl ai et sw=4 ts=4
 au BufNewFile,BufRead *.idl       setl ai et sw=4 ts=4
+au BufNewFile,BufRead *.moc       setl ai et sw=4 ts=4
 au BufNewFile,BufRead *.pl,*.rb,*.hs setl ai et sw=4 ts=4
 au BufNewFile,BufRead .vimrc      setl ai et sw=4 ts=4
 au BufNewFile,BufRead *.html      setl ai et sw=2 ts=2
@@ -771,7 +774,6 @@ if v:version >= 600
   au BufNewFile,BufRead *.utf8    setlocal noautoread
 endif
 " old nd-style
-au BufNewFile,BufRead /vobs*      call NomadSrcMode()
 au BufNewFile,BufRead /nomad*src* call NomadSrcMode()
 au BufNewFile,BufRead /nomad*ini  setf nomadini
 au BufNewFile,BufRead /nomad*log  setf nomadlog
@@ -779,6 +781,10 @@ au BufNewFile,BufRead /nomad*log  setf nomadlog
 au BufNewFile,BufRead *nomad/*src*     call NomadSrcMode()
 au BufNewFile,BufRead *nomad/*ini  setf nomadini
 au BufNewFile,BufRead *nomad/*log  setf nomadlog
+" BT PIS
+au BufNewFile,BufRead /vobs*      call PisSrcMode()
+au BufNewFile,BufRead vobs/PIS*   call PisSrcMode()
+
 au BufNewFile,BufRead Makefile*   setl tw=0 noet nolist ts=8 sts=0
 au BufNewFile,BufRead *.utf8      setl fileencoding=utf8
 " If on Windows someone really edits an NFO file, it could be an
@@ -1587,11 +1593,15 @@ endfunction
 " let mysyntaxfile = "~/.vim/mysyntax.vim"
 " so "~/.vim/doxyvim.vim"
 "so ~/.vim/doxygen.vim
+autocmd BufReadPost server.log* :setf gflog
+"autocmd BufReadPost *.log :setl nowrap
+autocmd BufReadPost server.log* :setl wrap
 " mszlog now is a syntax file (automatically loaded via setf mszlog)
 "so ~/.vim/mszlog.vim
 autocmd BufReadPost *.log :setf mszlog
 "autocmd BufReadPost *.log :setl nowrap
 autocmd BufReadPost *.log :setl wrap
+
 
 " make clogEnter and clogLeave around the current C function
 map ,enter ?^{<CR>?(<CR>byw/^{<CR>ocbaseErrorId_t status = CBASE_ERR_OK;<CR>clogEnter(("<ESC>pA"));<CR><ESC>?^{<CR>%O<CR>clogLeave(("<ESC>pA"));<CR>return status;<ESC>
@@ -1628,6 +1638,9 @@ fun! Show_Status()
   let l:status = []
   if exists("b:std_nomad") && b:std_nomad
     call add(l:status, "nomad")
+  endif
+  if exists("b:std_pis") && b:std_pis
+    call add(l:status, "PIS")
   endif
   if exists("b:std_pastemode") && b:std_pastemode
     call add(l:status, "PASTE")
@@ -1678,9 +1691,8 @@ fun! Enable_overlen_hi()
   "   future VIMs handle it better.
   if v:version >= 704
     " textwidth + 1 and col 79
-    if exists("b:std_nomad") && b:std_nomad
+    if exists("b:std_nocolorcol") && b:std_nocolorcol
       " :setl colorcolumn=120
-      "echo b:std_nomad
       :setl colorcolumn=
     else
       :setl colorcolumn=+1,79
@@ -1690,10 +1702,10 @@ fun! Enable_overlen_hi()
     "highlight OverLength ctermbg=darkblue guibg=#f0f0f0
     highlight OverLength guibg=#f0f0f0
     "match OverLength /\%81v.*/
-    if exists("b:std_nomad") && b:std_nomad
+    if exists("b:std_nocolorcol") && b:std_nocolorcol
       "match OverLength /.\%>120v/
       match OverLength /.\%>999v/
-      "echo b:std_nomad
+      "echo b:std_nocolorcol
     else
       match OverLength /.\%>81v/
     endif
@@ -1720,9 +1732,26 @@ endfunction
 call Enable_overlen_hi()
 
 " To automatically reconfigure buffers
+fun! PisSrcMode()
+  "echo "BT PIS mode"
+  let b:std_pis = 1
+  let b:std_noktws = 1
+  let b:std_nocolorcol = 1
+  " We already enabled it, ensure to have it off
+  call Disable_overlen_hi()
+  au! BufWrite *.[ch]
+  au! BufWrite *.cpp
+  au! BufWrite *.moc
+  setl ai et sw=4 ts=4 tw=110
+  set path=.,,vobs/PIS/source/*/src/,vobs/PIS/source/*/*/src/,vobs/PIS/test/*/*/src
+endfun
+
+" To automatically reconfigure buffers
 fun! NomadSrcMode()
   "echo "Nomad mode"
   let b:std_nomad = 1
+  let b:std_noktws = 1
+  let b:std_nocolorcol = 1
   " We already enabled it, ensure to have it off
   call Disable_overlen_hi()
   au! BufWrite *.[ch]

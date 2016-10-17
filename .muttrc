@@ -35,8 +35,9 @@ set pgp_timeout=1
 #GPG:
 #source /usr/share/doc/packages/mutt/pgp2.rc
 #source /usr/share/doc/packages/mutt/pgp5.rc
-source /usr/share/doc/packages/mutt/gpg.rc
+#source /usr/share/doc/packages/mutt/gpg.rc
 #source /usr/share/doc/packages/mutt/gpg-compat.rc
+source /usr/share/doc/mutt/examples/gpg.rc
 
 #Follow Up anzeigen
 set followup_to
@@ -244,14 +245,16 @@ unset sig_dashes
 # mailboxes imap://sdettmer@mail.bln/INBOX +!inbox! ~/Mail-In/!inbox!
 
 # automatically get all from `Mail-In' at startup
-mailboxes `find /home/steffen/Mail-In -type f -not -name \
-.fromlog -not -path '*BACKUP*' -not -path '*archive-mail.pl' \
+mailboxes `find /home/steffen/Mail-In \
 	-mindepth 1 -maxdepth 2 \
+	-type f -not -name \
+	.fromlog -not -path '*BACKUP*' -not -path '*archive-mail.pl' \
 	-not -path '*/new/*' -not -path '*/cur/*' -not -path '*/tmp/*' \
 	| xargs echo -n; \
 	echo -n " " ; \
-find /home/steffen/Mail-In -type d \
+find /home/steffen/Mail-In \
 	-mindepth 1 -maxdepth 2 \
+	-type d \
 	-not -path '*/new' -not -path '*/cur' -not -path '*/tmp' \
 	| xargs echo -n; \
 	echo `

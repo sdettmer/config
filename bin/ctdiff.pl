@@ -6,13 +6,22 @@ use strict;
 
 my @files = ();
 my $color = 1;
-$color = 1;
+if (defined $ENV{'color'}) {
+    $color = $ENV{'color'};
+}
 
 # Based on http://stackoverflow.com/questions/375398/any-way-to-use-a-custom-diff-tool-with-cleartool-clearcase
 my ($arg_file, $switches) = @ARGV;
 $switches ||= '-u';
 
 my $me = "ctdiff.pl";
+
+my $predtemp;
+{
+  use File::Temp qw/tempfile/;
+  my ($fh, $filename) = tempfile("ctdiff.tmp.pred.XXXXXXXXX", UNLINK => 1);
+  $predtemp=$filename;
+}
 
 if ($arg_file) {
     # use given file only
@@ -79,7 +88,7 @@ foreach my $file (@files) {
     $predfile =~ s/\'//g;#'
     # printf("$predfile\n");
     if ($is_snapshot) {
-        my $predtemp = "c:\\temp\\pred.txt";
+        #my $predtemp = "c:\\temp\\pred.txt";
         unlink($predtemp);
         my $cmd = "cleartool get -to $predtemp $predfile"; printf("$cmd\n");
         my $str2 = `$cmd`;

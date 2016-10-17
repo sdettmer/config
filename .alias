@@ -11,10 +11,13 @@ alias lsl="less +/-\{3,\}"
 alias ....='cd ../../../'
 alias .....='cd ../../../../'
 
+# On WAN VPN links, XServer connect gets really slow
+alias vi='vim -X'
+
 # ClearCase
 alias ct=cleartool
 alias lsco='ct lsco -me -cview -avobs'
-alias ctlsco='CLEARCASE_AVOBS=`cleartool catcs | grep -o "/vobs/[[:alpha:]|_|0-9]*"| sort -u | tr "\\n" ":" | sed -e "s/:$//"`; cleartool lsco -avobs -me -cview'
+alias ctlsco='CLEARCASE_AVOBS=`cleartool catcs | grep -o "/vobs/[[:alpha:]|_|0-9-]*"| sort -u | tr "\\n" ":" | sed -e "s/:$//"`; cleartool lsco -avobs -me -cview'
 
 # testing
 test -x /tmp/steffen-build/mutt-1.5.21/mutt && \
