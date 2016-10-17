@@ -767,6 +767,7 @@ au BufNewFile,BufRead *.rb        setl ai et sw=2 ts=2
 au BufNewFile,BufRead *.erb       setl ai et sw=2 ts=2
 au BufNewFile,BufRead confspec.prepare  setl tw=0 sts=0
 au BufNewFile,BufRead configure.{in,ac} setl tw=0 sts=0
+au BufNewFile,BufRead *.log       setl tw=0 sts=0 | :let b:std_nocolorcol=1 | call Disable_overlen_hi()
 " I used .utf8 to communicate with Browser plugin
 "   (mozex, ItsAllText or similar) and do not want to lose my
 "   changes if browser behaves oddly, so no autoread here
