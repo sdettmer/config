@@ -9,6 +9,18 @@ version 5.3
 " master branch
 " Linux version
 
+" Vundle
+" git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+" We use a start wrapper (always exist) to load Vundle if it exists.
+  let std_vundle_start_file=glob("~/.vim/vundle_start.vim")
+  let std_vundle_main_file=glob("~/.vim/bundle/Vundle.vim/autoload/vundle.vim")
+  if filereadable(std_vundle_main_file)
+     let std_vundle_start_result="file readable: " . std_vundle_main_file
+     exe "source " . std_vundle_start_file
+  else
+     let std_vundle_start_result="file not readable: " . std_vundle_main_file
+  endif
+
 " http://stackoverflow.com/questions/5477565/how-to-setup-vim-properly-for-editing-in-utf-8
 if has("multi_byte")
   if &termencoding == ""
@@ -162,6 +174,10 @@ set statusline+=\ [%{strlen(&fenc)?&fenc:'none'}, "file encoding
 "set statusline+=%-.2{&ff}] "file format
 set statusline+=%-.2{strpart(&ff,0,1)}] "file format first letter
 set statusline+=%y      "filetype
+" GIT infos
+if exists('g:loaded_fugitive')
+  set statusline+=\ %{fugitive#statusline()}
+endif
 " Show in which C function we are
 "   http://vim.wikia.com/wiki/VimTip1454
 set statusline+=\ %{WhatFunction()}
