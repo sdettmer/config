@@ -1593,6 +1593,7 @@ endfunction
 autocmd BufReadPost server.log* :setf gflog
 "autocmd BufReadPost *.log :setl nowrap
 autocmd BufReadPost server.log* :setl wrap
+autocmd BufReadPost pis.log,*HePisTestAppl*.log,*.modTest*.log :setf helog
 " mszlog now is a syntax file (automatically loaded via setf mszlog)
 "so ~/.vim/mszlog.vim
 autocmd BufReadPost *.log :setf mszlog
