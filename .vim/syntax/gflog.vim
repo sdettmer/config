@@ -36,11 +36,13 @@ syntax match log_gf "\[glassfish 4.1\]"
 syntax region log_rest_trick start="\[[^]]\+\] " matchgroup=log_rest end=".*\r\?$" contained transparent
 syntax match  log_time "\[\d\d\d\d-\d\d-\d\dT\d\d[:.]\d\d[:.]\d\d[.]\d\d\d[+-]\d\d\d\d\] \[[^]]\+\] \[[^]]\+\]" contained containedin=log_meta transparent
 syntax region log_meta       start="^\[" end="\[\[\r\?$" contained oneline contains=log_time,log_gf,log_level,log_level_rest transparent
-syntax match  log_level    "\[\(ERROR\|WARNING\|X\?INFO\d\?\|CONFIG\|FINE\|FINER\|FINEST\)\]" contained transparent contains=log_rest_trick nextgroup=log_rest_trick
+syntax match  log_level    "\[\(ERROR\|WARNING\|WARNG\|X\?INFO\d\?\|CONFIG\|FINE\|FINER\|FINEST\)\]" contained transparent contains=log_rest_trick nextgroup=log_rest_trick
 
 syntax region log_error      start="^\[\d\d\d\d-\d\d-\d\dT\d\d[:.]\d\d[:.]\d\d[.]\d\d\d[+-]\d\d\d\d\] \[[^]]\+\] \[ERROR\].*\[\[\r\?$" end="\]\]\r\?$" contains=log_meta,log_message
-syntax region log_warn       start="^\[\d\d\d\d-\d\d-\d\dT\d\d[:.]\d\d[:.]\d\d[.]\d\d\d[+-]\d\d\d\d\] \[[^]]\+\] \[WARNING\].*\[\[\r\?$" end="\]\]\r\?$" contains=log_meta,log_message
-syntax region log_info       start="^\[\d\d\d\d-\d\d-\d\dT\d\d[:.]\d\d[:.]\d\d[.]\d\d\d[+-]\d\d\d\d\] \[[^]]\+\] \[X\?INFO\d\?\].*\[\[\r\?$" end="\]\]\r\?$" contains=log_meta,log_message
+syntax region log_warn       start="^\[\d\d\d\d-\d\d-\d\dT\d\d[:.]\d\d[:.]\d\d[.]\d\d\d[+-]\d\d\d\d\] \[[^]]\+\] \[\(WARNING\|WARNG\)\].*\[\[\r\?$" end="\]\]\r\?$" contains=log_meta,log_message
+syntax region log_progress    start="^\[\d\d\d\d-\d\d-\d\dT\d\d[:.]\d\d[:.]\d\d[.]\d\d\d[+-]\d\d\d\d\] \[[^]]\+\] \[XINFO\].*\[\[\r\?$" end="\]\]\r\?$" contains=log_meta,log_message
+syntax region log_info       start="^\[\d\d\d\d-\d\d-\d\dT\d\d[:.]\d\d[:.]\d\d[.]\d\d\d[+-]\d\d\d\d\] \[[^]]\+\] \[INFO\].*\[\[\r\?$" end="\]\]\r\?$" contains=log_meta,log_message
+syntax region log_info       start="^\[\d\d\d\d-\d\d-\d\dT\d\d[:.]\d\d[:.]\d\d[.]\d\d\d[+-]\d\d\d\d\] \[[^]]\+\] \[INFO\d\+\].*\[\[\r\?$" end="\]\]\r\?$" contains=log_meta,log_message
 syntax region log_config     start="^\[\d\d\d\d-\d\d-\d\dT\d\d[:.]\d\d[:.]\d\d[.]\d\d\d[+-]\d\d\d\d\] \[[^]]\+\] \[CONFIG\].*\[\[\r\?$" end="\]\]\r\?$" contains=log_meta,log_message
 syntax region log_fine       start="^\[\d\d\d\d-\d\d-\d\dT\d\d[:.]\d\d[:.]\d\d[.]\d\d\d[+-]\d\d\d\d\] \[[^]]\+\] \[FINE\].*\[\[\r\?$" end="\]\]\r\?$" contains=log_meta,log_message
 syntax region log_finer      start="^\[\d\d\d\d-\d\d-\d\dT\d\d[:.]\d\d[:.]\d\d[.]\d\d\d[+-]\d\d\d\d\] \[[^]]\+\] \[FINER\].*\[\[\r\?$" end="\]\]\r\?$" contains=log_meta,log_message
