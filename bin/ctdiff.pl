@@ -14,19 +14,12 @@ if (defined $ENV{'color'}) {
 my ($arg_file, $switches) = @ARGV;
 $switches ||= '-u';
 
-my $tmpdir = $ENV{TMPDIR} || $ENV{TEMP} || $ENV{TMP} || "/tmp";
-if (-d $tmpdir) {
-    $tmpdir .= '/';
-} else {
-    $tmpdir = ''; # try CWD
-}
 my $me = "ctdiff.pl";
 
 my $predtemp;
 {
   use File::Temp qw/tempfile/;
-  my ($fh, $filename) = tempfile("${tmpdir}ctdiff.tmp.pred.XXXXXXXXX",
-      TMPDIR => 1, UNLINK => 1);
+  my ($fh, $filename) = tempfile("ctdiff.tmp.pred.XXXXXXXXX", UNLINK => 1);
   $predtemp=$filename;
 }
 
