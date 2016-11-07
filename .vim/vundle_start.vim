@@ -21,6 +21,15 @@ Plugin 'VundleVim/Vundle.vim'
 " $ vim -u NONE -c "helptags vim-fugitive/doc" -c q
 Plugin 'tpope/vim-fugitive'
 
+" http://valloric.github.io/YouCompleteMe:
+"   YouCompleteMe is a fast, as-you-type, fuzzy-search code completion engine for Vim.
+"   >200 MB download (!), needs native code compilation
+"   After PluginInstall:
+"   $ cd ~/.vim/bundle/YouCompleteMe
+"   $ ./install.py --clang-completer
+"   May download clang from internet.
+Plugin 'valloric/YouCompleteMe'
+
 " plugin from http://vim-scripts.org/vim/scripts.html
 " Plugin 'L9'
 " Git plugin not hosted on GitHub
