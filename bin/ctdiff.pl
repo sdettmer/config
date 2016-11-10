@@ -19,7 +19,9 @@ my $me = "ctdiff.pl";
 my $predtemp;
 {
   use File::Temp qw/tempfile/;
-  my ($fh, $filename) = tempfile("ctdiff.tmp.pred.XXXXXXXXX", UNLINK => 1);
+  use File::Spec;
+  my ($fh, $filename) = tempfile("ctdiff.tmp.pred.XXXXXXXXX",
+      DIR=>File::Spec->tmpdir(), UNLINK => 1);
   $predtemp=$filename;
 }
 
