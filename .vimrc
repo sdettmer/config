@@ -599,7 +599,7 @@ endif
 
 " cleartool config spec:
 " convert "ct ci" STDOUT to config spec rules.
-  vmap ,ctcs :s/Checked in "/    element /g<C-M>:'<,'>s/" version "/\t/<C-M>:'<,'>s/"\.$/<C-M>:g/\s*cleartool: Warning: Version checked in is not selected by view./d<C-M>
+  vmap ,ctcs :s/Checked in "\(\/view\/[^\/]\+\)\?\(\/local\/[^\/]\+\/ccviews\/[^\/]\+\)\?/    element /g<C-M>:'<,'>s/" version "/\t/<C-M>:'<,'>s/"\.$/<C-M>:g/\s*cleartool: Warning: Version checked in is not selected by view./d<C-M>:g/\s*Loading ".*" (\d\+ bytes).*/d<C-M>
 
 " kill trailing whitespace
 fun! KtwsAuto()
