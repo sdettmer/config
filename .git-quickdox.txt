@@ -244,3 +244,12 @@ http://stackoverflow.com/questions/13463173/git-rebase-failing-due-to-whitespace
   $ git rebase --whitespace=nowarn origin/master
   $ git rebase -Xignore-space-change -Xignore-all-space --ignore-whitespace origin/master
 
+------------------------------------------------------------------->8=======
+
+Append information from a file to commit messages in last 10 commits:
+
+  #!/bin/bash
+  # git filter-branch  --msg-filter /tmp/appendcs.sh HEAD~10..HEAD
+  cat
+  git show $GIT_COMMIT:version.txt
+
