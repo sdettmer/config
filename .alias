@@ -10,6 +10,8 @@ alias rcn='rcnamed reload'
 alias lsl="less +/-\{3,\}"
 alias ....='cd ../../../'
 alias .....='cd ../../../../'
+alias ......='cd ../../../../../'
+alias .......='cd ../../../../../..'
 
 # On WAN VPN links, XServer connect gets really slow
 alias vi='vim -X'

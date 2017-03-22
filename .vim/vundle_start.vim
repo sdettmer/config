@@ -28,7 +28,7 @@ Plugin 'tpope/vim-fugitive'
 "   $ cd ~/.vim/bundle/YouCompleteMe
 "   $ ./install.py --clang-completer
 "   May download clang from internet.
-Plugin 'valloric/YouCompleteMe'
+" Plugin 'valloric/YouCompleteMe'
 
 " plugin from http://vim-scripts.org/vim/scripts.html
 " Plugin 'L9'
