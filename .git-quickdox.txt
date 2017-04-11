@@ -207,6 +207,13 @@ If it failed once, it may help to remove stale tmp files (untested):
 
 ------------------------------------------------------------------->8=======
 
+Retrospectively remove a file from entire (branch) history:
+
+  $ git filter-branch --index-filter \
+      'git rm --cached --ignore-unmatch .gitignore.swp'
+
+------------------------------------------------------------------->8=======
+
 Retrospectively overwrite all author / commiter fields by rewriting:
 
   $ git filter-branch --commit-filter '
@@ -252,4 +259,10 @@ Append information from a file to commit messages in last 10 commits:
   # git filter-branch  --msg-filter /tmp/appendcs.sh HEAD~10..HEAD
   cat
   git show $GIT_COMMIT:version.txt
+
+In case of "A previous backup already exists in refs/original/" use:
+
+  git for-each-ref --format="%(refname)" refs/original/ \
+    | xargs --no-run-if-empty -n 1 git update-ref -d
+
 
