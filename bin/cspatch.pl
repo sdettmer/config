@@ -29,16 +29,21 @@ BEGIN
     while (my $logline = <LOG>) {
       chomp $logline;
       if ($logline =~ m/^Checked in "(\S*)" version "(\S*)"\.$/) {
+         my ($element, $version) = ($1, $2);
+         $element =~ s|/view/[^/]+/|/|; # cut optional "/view/sdettmer_latest/" prefix
          # Whitespace-free without quoting.
-         $logline = sprintf "%-184s %s", "    element $1", $2;
+         $logline = sprintf "%-184s %s", "    element $element", $version;
       } elsif ($logline =~ m/^Checked in (".*") version (".*")\.$/) {
          # whitespace in path -> quoting.
          $logline = sprintf "%-184s %s", "    element $1", $2;
+      } elsif ($logline =~ m/^cleartool: Warning: Version checked in is not selected by view\.$/) {
+          # ignore
+          $logline = undef;
       } else {
          # comment
          $logline = "    # $logline";
       }
-      push @loglines, $logline;
+      push @loglines, $logline unless (!defined($logline));
     }
     $patch = join("\n", @loglines);
     close LOG, "$checkinlog" or die "Failed to close log $checkinlog: $!\n";
