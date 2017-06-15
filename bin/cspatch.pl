@@ -1,8 +1,8 @@
-#!/usr/bin/perl -np
-# This is config spec patcher hack.
-# This is an untested hack that may kill your pet.
-# It will use the output of "clearcase ci" to patch a config spec.
+#!/usr/bin/perl -w -np
+# This is config spec patcher. It uses the output of "clearcase ci" (optionally
+# prefixed by comment lines) to patch a config spec.
 
+use strict;
 our $checkinlog;
 our $startlineregex;
 our $replacements;
@@ -15,7 +15,7 @@ sub usage()
   # ct ci -c `cat message` | tee -a ~/tmp/out.txt
   die "usage: cspatch <checkin_log_file> <start_tag_regex>\n"
     . " e.g.: cspatch ~/tmp/out.txt \"BEGIN wcg-load ASV\"\n"
-    . " e.g.: perl -npi ./cspatch.pl ~/tmp/sync_out.txt \"BEGIN wcg-load ASV\" /vobs/path/my.cs\n";
+    . " e.g.: perl -npi ./cspatch.pl sync_out.txt \"BEGIN.*ASV\" ~/cs/my.cs\n";
 }
 
 BEGIN
@@ -26,41 +26,80 @@ BEGIN
     open LOG, "$checkinlog" or die "Failed to open log $checkinlog: $!\n";
     my @loglines = (<LOG>);
     close LOG, "$checkinlog" or die "Failed to close log $checkinlog: $!\n";
-    my $maxlen = -1;
-    # find length of longest log line. Be quick include everything, we just need an idea for tab size.
-    map { if (length > $maxlen) { $maxlen = length; } } @loglines;
-    $maxlen += -length('Checked in "" version "/main/1".') + 2;
-    $maxlen += -$maxlen % 4; # For Micha, who wants dividable by 4.
 
-    my @patchlines = ();
-    push @patchlines, ""; # start with a blank line.
+    # Extract elements, versions and log lines (messages) from input.
+    my @rules = ();
+    my $extralen=0;
     foreach my $logline (@loglines) {
       chomp $logline;
       if ($logline =~ m/^Checked in "(\S*)" version "(\S*)"\.$/) {
-         my ($element, $version) = ($1, $2);
-         $element =~ s|/view/[^/]+/|/|; # cut optional "/view/sdettmer_latest/" prefix
-         # Whitespace-free without quoting.
-         $logline = sprintf "    element %*s %s", -$maxlen, "$element", $version;
+        my ($element, $version) = ($1, $2);
+        $element =~ s|/view/[^/]+/|/|; # cut optional "/view/sdettmer_latest/" prefix
+        push @rules, { 'element' => $element, 'version' => $version };
+        # Whitespace-free without quoting.
+      } elsif ($logline =~ m/^Checked in (".*") version "(\S*)"\.$/) {
+        my ($element, $version) = ($1, $2);
+        $element =~ s|/view/[^/]+/|/|; # cut optional "/view/sdettmer_latest/" prefix
+        push @rules, { 'element' => $element, 'version' => $version };
+        # whitespace in path -> quoting.
       } elsif ($logline =~ m/^Checked in (".*") version (".*")\.$/) {
-         my ($element, $version) = ($1, $2);
-         $element =~ s|/view/[^/]+/|/|; # cut optional "/view/sdettmer_latest/" prefix
-         # whitespace in path -> quoting.
-         $logline = sprintf "    element %*s %s", -$maxlen+1, "$element", $version;
+        my ($element, $version) = ($1, $2);
+        $element =~ s|/view/[^/]+/|/|; # cut optional "/view/sdettmer_latest/" prefix
+        push @rules, { 'element' => $element, 'version' => $version };
+        # whitespace in path and version -> quoting of version, too.
+        $extralen=1;
       } elsif ($logline =~ m/^cleartool: Warning: Version checked in is not selected by view\.$/) {
-          # ignore
-          $logline = undef;
+        # ignore
+        $logline = undef;
       } else {
-         # comment
-         $logline = "    # $logline";
+        $logline =~ s|\s+$||; # kill trailing whitespace
+        # comment
+        push @rules, { 'logline' => $logline };
       }
-      push @patchlines, $logline unless (!defined($logline));
     }
-    $patch = join("\n", @patchlines);
+
+    # Determine max length (and set to to match next tab size = 4 position for Micha :))
+    my $maxlen = -1;
+    # find length of longest log line. Be quick include everything, we just need an idea for tab size.
+    map { my $e = $_->{'element'}; if (defined($e) && length($e) > $maxlen) { $maxlen = length($e); } } @rules;
+    $maxlen += $extralen; # In case version needs to be quoted.
+    $maxlen += -$maxlen % 4 + (4-length("    element  ") % 4); # For Micha.
+
+    # If last log line is blank, remove it.
+    {
+      foreach my $rule (reverse @rules) {
+        if (defined($rule->{'logline'}) && length($rule->{'logline'}) == 0) {
+          $rule->{'logline'} = undef;
+          last;
+        }
+      }
+    }
+
+    # Generate the rules (and comments).
+    $patch = "\n\n"; # start with a blank line.
+    foreach my $rule (@rules) {
+      if (defined($rule->{'element'}) && substr($rule->{'version'}, 0, 1) eq '"') {
+        # Quoted version, 1 character left to have all "/main"
+        # under each other.
+        $patch .= sprintf "    element %*s %s\n", -$maxlen+1, $rule->{'element'}, $rule->{'version'};
+      } elsif (defined($rule->{'element'})) {
+        # Unquoted (whitespace-free) element.
+        $patch .= sprintf "    element %*s %s\n", -$maxlen, $rule->{'element'}, $rule->{'version'};
+      } elsif (defined($rule->{'logline'}) && length($rule->{'logline'}) == 0) {
+        $patch .= sprintf "    #\n";
+      } elsif (defined($rule->{'logline'})) {
+        my $line = sprintf "    # %s\n", $rule->{'logline'};
+        # expand tabs (http://perldoc.perl.org/perlfaq4.html#How-do-I-expand-tabs-in-a-string%3f)
+        while ($line =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) { };
+        $patch .= $line;
+      }
+    }
   }
   warn "log \"$checkinlog\", regex \"$startlineregex\", ARGV: @ARGV\n";
+  # $patch .= "last\n";
 }
 
-if (s/($startlineregex)/\1\n$patch/) {
+if (s/($startlineregex)/$1$patch/) {
   $replacements++;
   # warn "xxx $replacements replacements\n";
 }
@@ -73,3 +112,4 @@ END
       die "No replacements performed!\n";
   }
 }
+# vi: set et ts=2 sw=2:
