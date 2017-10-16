@@ -1,0 +1,25 @@
+#!/bin/bash
+# liblinks - generate symbolic links 
+# given libx.so.0.0.0 this would generate links for libx.so.0.0, libx.so.0, libx.so
+# Idea inspired by https://stackoverflow.com/questions/462100/bash-script-to-create-symbolic-links-to-shared-libraries
+
+for lib in $(ls lib*.so.*) ; do
+    linked=0
+    shortlib=$lib
+    basename=$lib
+    while
+        verpart=$(echo $shortlib | sed -n '/\.[0-9][0-9]*$/s/.*\(\.[0-9][0-9]*\)$/\1/p')
+        [ -n "$verpart" ]
+    do
+         linked=1
+         # cut next version part, create link and continue with remainders
+         shortlib=$(basename $shortlib $verpart)
+         echo $basename -> $shortlib
+         ln -sf $basename $shortlib
+         basename=$shortlib
+    done
+    if [ $linked -eq 0 ] ; then
+         echo "Warning, no link(s) created for $lib!" >&2
+    fi
+done
+
