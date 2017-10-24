@@ -92,6 +92,23 @@ function at_exit()
 }
 trap at_exit EXIT
 
+# "-stgloc auto" is horrible slow (at least) on dehetucks3, so
+# add simple hacky special handling.
+getdefaultnasviewstore()
+{
+  case $(hostname) in
+    dehetucks|dehetucks.bt.bombardier.net|dehetucks.cone.bombardier.com)
+      defaultnasviewstore=nasviewstore;;
+    dehetucks2|dehetucks2.bt.bombardier.net|dehetucks2.cone.bombardier.com)
+      defaultnasviewstore=nasviewstore2;;
+    dehetucks3|dehetucks3.bt.bombardier.net|dehetucks3.cone.bombardier.com)
+      defaultnasviewstore=nasviewstore3;;
+  esac
+  echo $defaultnasviewstore
+}
+
+: ${nasviewstore:="$(getdefaultnasviewstore)"} # assign default value
+
 function viewname()
 {
     name=$1
@@ -115,7 +132,7 @@ function viewsetup()
             cleartool rmview -f -tag ${view}
         fi
     fi
-    cleartool mkview -tag "$view" -stgloc nasviewstore || die "csdiff.sh: failed to mkview $view (status $?)"
+    cleartool mkview -tag "$view" -stgloc ${nasviewstore} || die "csdiff.sh: failed to mkview $view (status $?)"
     cleartool setcs -tag "$view" "$cs" || die "csdiff.sh: failed to setcs -tag $view $cs (status $?)"
     test -d "/view/${view}" || die "no /view/${view} directory"
 }
