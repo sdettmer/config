@@ -265,4 +265,23 @@ In case of "A previous backup already exists in refs/original/" use:
   git for-each-ref --format="%(refname)" refs/original/ \
     | xargs --no-run-if-empty -n 1 git update-ref -d
 
+=======8<-------------------------------------------------------------------
+
+Show 10 largest blobs:
+
+  git rev-list --objects --all \
+    | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' \
+    | awk '/^blob/ {print substr($0,6)}' \
+    | sort --numeric-sort --key=2 \
+    | tail \
+    | cut --complement --characters=13-40 \
+    | numfmt --field=2 --to=iec-i --suffix=B --padding=7 --round=nearest
+
+------------------------------------------------------------------->8=======
+
+Windows speed up:
+
+  git config --global core.preloadindex true
+  git config --global core.fscache true
+  git config --global gc.auto 256
 
