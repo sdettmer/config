@@ -11,7 +11,7 @@ warn() { echo "WARNING: $@" >&2 ; }
 die()  { warn "$@" ; exit 1 ; }
 [ -x $par2 ] || { die "Cannot execute $par2"; }
 
-echo "started  at $(date)"
+echo "started at $(date)"
 for dir in "$@" ; do
     IFS=$'\n' pars=( $(find $dir -maxdepth 1 -type f -iname '*.par*') )
     if [ "$pars" -a "$check" ] ; then
@@ -45,7 +45,7 @@ for dir in "$@" ; do
             # Redundancy in MB: 4%
             rm=$((size/(100/4)))
             # min 10 MB
-            if [ "$rm" -lt 15 ] ; then rm=10 ; fi
+            if [ "$rm" -lt 10 ] ; then rm=10 ; fi
             # Check for largest files in MB, calculate * 2.5 and
             largest=$(du -sm "${files[@]}" | sort -n | tail -1 | cut -f 1)
             largestrm=$((largest*2+(largest/2)))
@@ -65,11 +65,11 @@ for dir in "$@" ; do
                "${files[@]}"
             parsize=$(du -csm *par2|tail -1 |cut -f 1)
             echo "Created $dir ($parsize MB for ${#files[*]} files)"
-            echo "Creation done at $(date)"
+            echo "(done   at $(date))"
        fi
     fi
 done
-echo "done     at $(date)"
+echo "done    at $(date)"
 
 
 # ~/work/par2cmdline/par2 c -v -a "$(basename $(pwd))" -s128000 -rm20 -n2 -- *.JPG
