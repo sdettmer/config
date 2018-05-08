@@ -11,10 +11,10 @@ workingdir=$(pwd)
 # try to find "vobs" directory in current working directory:
 # remove last directory until it ends with 'vobs', e.g.
 while [ ${workingdir#*vobs} ] ; do
-workingdir=${workingdir%/*}
-echo workingdir=$workingdir
-# Maybe we found it as sibling:
-[ -d "${workingdir}/vobs" ] && workingdir="${workingdir}/vobs"
+    workingdir=${workingdir%/*}
+    #echo workingdir=$workingdir
+    # Maybe we found it as sibling:
+    [ -d "${workingdir}/vobs" ] && workingdir="${workingdir}/vobs"
 done
 multibuild="$workingdir/tisc_ccu-c/load/bld/multibuild.sh"
 #echo multibuild=$multibuild
