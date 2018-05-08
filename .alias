@@ -21,6 +21,8 @@ alias ct=cleartool
 alias lsco='ct lsco -me -cview -avobs'
 alias ctlsco='CLEARCASE_AVOBS=`cleartool catcs | grep -o "/vobs/[[:alpha:]|_|0-9-]*"| sort -u | tr "\\n" ":" | sed -e "s/:$//"`; cleartool lsco -avobs -me -cview'
 
+alias devtags='ctags -eR --c-kinds=+px vobs/'
+
 # testing
 test -x /tmp/steffen-build/mutt-1.5.21/mutt && \
     alias mutt=/tmp/steffen-build/mutt-1.5.21/mutt

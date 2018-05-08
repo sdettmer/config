@@ -14,9 +14,9 @@ git config user.email "steffen@dett.de"
 git config --global color.ui auto
 git config --global merge.conflictstyle diff3
 #  undo: git config --global merge.conflictstyle merge
-git config --global rebase.autosquash true
-# With GIT 1.8, test rebase.autostash true
-# With GIT 2.0, test pull.ff true
+git config --global rebase.autoSquash true
+git config --global rebase.autoStash true # GIT 1.8+
+git config --global pull.ff only # GIT 2.0+
 
 
 # to avoid "git reset --hard HEAD^" after unwanted merge
