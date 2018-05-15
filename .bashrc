@@ -34,6 +34,12 @@ test -e ~/.alias && . ~/.alias
 test -e ~/.git-completion.bash && . ~/.git-completion.bash
 test -e ~/.ct-completion.bash && . ~/.ct-completion.bash
 
+test -e ~/.multibuild-completion.bash && ~/.multibuild-completion.bash
+if [ -x ~/bin/multibuild.sh ] ; then
+  alias mb=multibuild.sh
+  complete -F _multibuild mb
+fi
+
 # standard environment
 test -z "${LESS/*-R*/}" || export LESS="$LESS -R"
 test -z "${LS_OPTIONS}" && export LS_OPTIONS='--color=auto'

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # This is multibuild search & exec.
 # If invoked ANYWHERE below tisc-src/vobs or tisc-src/build, it finds multibuild.sh.
 
@@ -18,7 +18,7 @@ while [ ${workingdir#*vobs} ] ; do
     # If we have multibuild.info (and no parameters), use its parameters
     if [ -e "${workingdir}/multibuild.info" -a -z "$1" ] ; then
         echo "Using ${workingdir}/multibuild.info"
-        source "${workingdir}/multibuild.info"
+        . "${workingdir}/multibuild.info"
         # multibuild="$topsrc/vobs/tisc_ccu-c/load/bld/multibuild.sh"
         multibuild="$cmakesrcdir/multibuild.sh"
         exec $multibuild -n "$name" -p "$project" -t "$platformname" -b "$build_type"
