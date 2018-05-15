@@ -28,7 +28,7 @@ useinfo()
 {
     echo "Using $multibuildinfo"
     . "${multibuildinfo}"
-    [ "${multibuild}" ] || multibuild="$cmakesrcdir/multibuild.sh"
+    [ "${multibuild}" ] || multibuild="$topsrc/vobs/tisc_ccu-c/load/bld/multibuild.sh"
     ${multibuild} "$@" "$multibuildinfo"
 }
 
