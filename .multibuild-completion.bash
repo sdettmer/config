@@ -29,11 +29,16 @@ _multibuild()
       ;;
   esac
 
-  # actually, we have ONLY opts (yet?)
-  #if [[ "$cur" == -* ]]; then
+  if [[ "$cur" == -* ]]; then
+    # Opts:
     COMPREPLY=( $(compgen -W '$( _parse_help "$1" --help )' -- ${cur}) )
     [[ $COMPREPLY == *= ]] && compopt -o nospace
     [[ $COMPREPLY ]] && return
-  #fi
+  else
+    # multibuild.info files
+    _filedir info
+    # find "$cur" -name multibuild.info
+    # _multibuildinfo
+  fi
 } &&
 complete -F _multibuild multibuild.sh
