@@ -1,3 +1,48 @@
+#_multibuildinfo()
+#{
+#    # Store current globstar setting and set globstar if necessary
+#    local glob_flag
+#    if shopt -q globstar; then
+#        glob_flag=0
+#    else
+#        glob_flag=1
+#        shopt -s globstar
+#    fi
+#    local file
+#    local cur=${COMP_WORDS[COMP_CWORD]}
+#    for file in "$cur"**/multibuild.info; do
+#        # If the glob doesn't match, we'll get the glob itself, so make sure
+#        # we have an existing file
+#        [[ -e $file ]] || continue
+#
+#        # If it's a directory, add a trailing /
+#        if [[ -d $file ]] ; then
+#           : # COMPREPLY+=( "$file/" )
+#        elif [[ $file == *multibuild.info ]] ; then
+#           COMPREPLY+=( "$file" )
+#        fi
+#    done
+#
+#    # Set globstar back to previous value if necessary
+#    if (( glob_flag == 1 )); then
+#        shopt -u globstar
+#    fi
+#}
+
+#_multibuildinfo()
+#{
+#    #local cur=${COMP_WORDS[COMP_CWORD]}
+#    #echo "cur=$cur"
+#    # _filedir -d
+#    for d in $(compgen -d -- $cur) ; do
+#       COMPREPLY+=( $(compgen  -X '!*multibuild.info' -- $d) )
+#    done
+#    #compgen -o plusdirs -f -X '!*multibuild.info' --
+#    #MULTIBUILDINFOS=$(find . -name multibuild.info )
+
+#    #COMPREPLY=( $(compgen -W "${MULTIBUILDINFOS}" -- $cur) )
+#}
+
 _multibuild()
 {
   local cur prev

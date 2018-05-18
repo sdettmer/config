@@ -1757,7 +1757,8 @@ fun! PisSrcMode()
   au! BufWrite *.cpp
   au! BufWrite *.moc
   setl ai et sw=4 ts=4 tw=110
-  set path=.,vobs/PIS/source/*/inc,vobs/PIS/source/*/*/inc,vobs/PIS/source/*/src/,vobs/PIS/source/*/*/src/,vobs/PIS/source/*/*/src/*/,vobs/PIS/test/*/*/src
+  " set path=.,vobs/PIS/source/*/inc,vobs/PIS/source/*/*/inc,vobs/PIS/source/*/src/,vobs/PIS/source/*/*/src/,vobs/PIS/source/*/*/src/*/,vobs/PIS/test/*/*/src
+  set path=.,vobs/PIS/source/**,vobs/PIS/test/**,vobs/PIS/pis/**,vobs/TcmsGenSw/lib/*/**,vobs/tisc_*/*/src/**,vobs/tisc_*/*/inc/**,vobs/tisc_*/*/tst/**,vobs/TWCS_HEN/source/**,vobs/TWCS_HEN/test/MDT/**,vobs/TcmsGenSw/hevt/mcgwebui/src**,vobs/tisc_ccu-c/load/bld/
 endfun
 
 " To automatically reconfigure buffers
