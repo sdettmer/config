@@ -31,7 +31,7 @@ fi
 # set PROFILEREAD after sourcing, then on cywgwin /etc/profile
 # and endless recursion happens... So we use a second variable
 test -z "$PROFILEREAD" && test -z "$PROFILEONCE" &&
-    { export PROFILEONCE=true ; . /etc/profile ; }
+    { PROFILEONCE=true ; . /etc/profile ; }
 
 # PATH and stuff also needed for non-interactive remote shells (when using
 #   something over SSH, for example), should go into ~/.bashrc, because

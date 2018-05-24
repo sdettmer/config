@@ -76,7 +76,7 @@ _multibuild()
 
   if [[ "$cur" == -* ]]; then
     # Opts:
-    COMPREPLY=( $(compgen -W '$( _parse_help "$1" --help )' -- ${cur}) )
+    COMPREPLY=( $(compgen -W '$( _parse_help "$1" --help 2> /dev/null )' -- ${cur}) )
     [[ $COMPREPLY == *= ]] && compopt -o nospace
     [[ $COMPREPLY ]] && return
   else
@@ -87,3 +87,8 @@ _multibuild()
   fi
 } &&
 complete -F _multibuild multibuild.sh
+# (This) completion does not work with alias (it internally would call mb).
+#  alias mb=multibuild.sh
+if [ -x ~/bin/mb ] ; then
+  test -e ~/.multibuild-completion.bash && complete -F _multibuild mb
+fi
