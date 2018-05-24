@@ -10,3 +10,4 @@
 !.vim/plugin/*
 !.vim/syntax
 !.vim/syntax/*
+.*.sw?

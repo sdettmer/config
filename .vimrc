@@ -9,6 +9,18 @@ version 5.3
 "
 " (Windows branch)
 
+" Vundle
+" git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+" We use a start wrapper (always exist) to load Vundle if it exists.
+  let std_vundle_start_file=glob("~/.vim/vundle_start.vim")
+  let std_vundle_main_file=glob("~/.vim/bundle/Vundle.vim/autoload/vundle.vim")
+  if filereadable(std_vundle_main_file)
+     let std_vundle_start_result="file readable: " . std_vundle_main_file
+     exe "source " . std_vundle_start_file
+  else
+     let std_vundle_start_result="file not readable: " . std_vundle_main_file
+  endif
+
 " http://stackoverflow.com/questions/5477565/how-to-setup-vim-properly-for-editing-in-utf-8
 if has("multi_byte")
   if &termencoding == ""
@@ -162,6 +174,10 @@ set statusline+=\ [%{strlen(&fenc)?&fenc:'none'}, "file encoding
 "set statusline+=%-.2{&ff}] "file format
 set statusline+=%-.2{strpart(&ff,0,1)}] "file format first letter
 set statusline+=%y      "filetype
+" GIT infos
+if exists('g:loaded_fugitive')
+  set statusline+=\ %{fugitive#statusline()}
+endif
 " Show in which C function we are
 "   http://vim.wikia.com/wiki/VimTip1454
 set statusline+=\ %{WhatFunction()}
@@ -583,7 +599,7 @@ endif
 
 " cleartool config spec:
 " convert "ct ci" STDOUT to config spec rules.
-  vmap ,ctcs :s/Checked in "/    element /g<C-M>:'<,'>s/" version "/\t/<C-M>:'<,'>s/"\.$/<C-M>:g/\s*cleartool: Warning: Version checked in is not selected by view./d<C-M>
+  vmap ,ctcs :s/Checked in "\(\/view\/[^\/]\+\)\?\(\/local\/[^\/]\+\/ccviews\/[^\/]\+\)\?/    element /g<C-M>:'<,'>s/" version "/\t/<C-M>:'<,'>s/"\.$/<C-M>:g/\s*cleartool: Warning: Version checked in is not selected by view./d<C-M>:g/\s*Loading ".*" (\d\+ bytes).*/d<C-M>
 
 " kill trailing whitespace
 fun! KtwsAuto()
@@ -1597,6 +1613,7 @@ endfunction
 autocmd BufReadPost server.log* :setf gflog
 "autocmd BufReadPost *.log :setl nowrap
 autocmd BufReadPost server.log* :setl wrap
+autocmd BufReadPost pis.log,*HePisTestAppl*.log,*.modTest*.log :setf helog
 " mszlog now is a syntax file (automatically loaded via setf mszlog)
 "so ~/.vim/mszlog.vim
 autocmd BufReadPost *.log :setf mszlog
@@ -1744,7 +1761,8 @@ fun! PisSrcMode()
   au! BufWrite *.cpp
   au! BufWrite *.moc
   setl ai et sw=4 ts=4 tw=110
-  set path=.,,vobs/PIS/source/*/src/,vobs/PIS/source/*/*/src/,vobs/PIS/test/*/*/src
+  " set path=.,vobs/PIS/source/*/inc,vobs/PIS/source/*/*/inc,vobs/PIS/source/*/src/,vobs/PIS/source/*/*/src/,vobs/PIS/source/*/*/src/*/,vobs/PIS/test/*/*/src
+  set path=.,vobs/PIS/source/**,vobs/PIS/test/**,vobs/PIS/pis/**,vobs/TcmsGenSw/lib/*/**,vobs/tisc_*/*/src/**,vobs/tisc_*/*/inc/**,vobs/tisc_*/*/tst/**,vobs/TWCS_HEN/source/**,vobs/TWCS_HEN/test/MDT/**,vobs/TcmsGenSw/hevt/mcgwebui/src**,vobs/tisc_ccu-c/load/bld/
 endfun
 
 " To automatically reconfigure buffers

@@ -19,7 +19,9 @@ my $me = "ctdiff.pl";
 my $predtemp;
 {
   use File::Temp qw/tempfile/;
-  my ($fh, $filename) = tempfile("ctdiff.tmp.pred.XXXXXXXXX", UNLINK => 1);
+  use File::Spec;
+  my ($fh, $filename) = tempfile("ctdiff.tmp.pred.XXXXXXXXX",
+      DIR=>File::Spec->tmpdir(), UNLINK => 1);
   $predtemp=$filename;
 }
 
@@ -28,10 +30,12 @@ if ($arg_file) {
     push @files, $arg_file;
 } else {
     # use all checked out files
-    @files = `cleartool lsco -avobs -me -cview -s`;
+    # @files = `cleartool lsco -avobs -me -cview -s`;
+    my $CLEARCASE_AVOBS=`cleartool catcs | grep -o "/vobs/[[:alpha:]|_|0-9-]*"| sort -u | tr "\\n" ":" | sed -e "s/:\$//"`;
+    @files = `CLEARCASE_AVOBS=$CLEARCASE_AVOBS; cleartool lsco -avobs -me -cview -s`;
     if($? != 0) { dodie("$me: failed to determine checked out files."); }
     if (@files) {
-        print "Diffing all checked out files.\n";
+        print "Diffing all checked out files ($CLEARCASE_AVOBS).\n";
         map { chomp } @files;
     }
 }

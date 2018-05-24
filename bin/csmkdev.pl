@@ -16,9 +16,6 @@ use strict;
 
 my $vobmnt="/vobs";
 
-my $prefix;
-my $user;
-my $name;
 my $mkbrtype=0;
 my $comment="";
 if ($ARGV[0] eq  "-c") {
@@ -46,18 +43,13 @@ if (!$branchname) {
       . "  $scriptname dev_sde_wcg_scr_b2pis00003408 < wcg_dt5_latest_unx.cs \\\n"
       . "        > dev_sde_wcg_scr_b2pis00003408.cs\n";
 }
-if ($branchname =~ m/^((dev)_([a-zA-Z]+))_((\w+))$/) {
-    $prefix=$1;
-    $user=$3;
-    $name=$4;
-} elsif ($branchname) {
+if ($branchname !~ m/^[a-zA-Z]\w+$/) {
     die "First argument must be valid branchname (not \`$branchname').\n"
       . "Hint: invoke without arguments to get usage help.\n"
-} else {
+} elsif (!$branchname) {
     die "First argument must be branchname.\n"
       . "Hint: invoke without arguments to get usage help.\n"
 }
-#die "p=$prefix\nuser=$user\nname=$name\n";
 
 while (my $line = <>) {
     #chop $line;
@@ -68,7 +60,7 @@ while (my $line = <>) {
     #  #DEV: mkbranch dev_<user>_<feature_or_scr>
     #  #DEV: end mkbranch dev_<user>_<feature_or_scr>
     if ($line =~ m/^\s*#\s*DEV:/) {
-        $line =~ s/^\s*#\s*DEV:\s*(.*)dev_<user>_<feature_or_scr>/$line\n$1dev_${user}_${name}/;
+        $line =~ s/^\s*#\s*DEV:\s*(.*)dev_<user>_<feature_or_scr>/$line\n$1${branchname}/;
     }
     print $line, "\n";
 }

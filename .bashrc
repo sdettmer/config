@@ -26,13 +26,15 @@
 # # If we have a prompt, we have an interactive shell, and bash read profile already.
 # [ "$PS1" ] && export PROFILEONCE=true
 test -z "$PROFILEREAD" && test -z "$PROFILEONCE" &&
-    { export PROFILEONCE=true ; . /etc/profile ; }
+    { PROFILEONCE=true ; . /etc/profile ; }
 
 # Source helpers
 test -e ~/.alias_all && . ~/.alias_all
 test -e ~/.alias && . ~/.alias
 test -e ~/.git-completion.bash && . ~/.git-completion.bash
 test -e ~/.ct-completion.bash && . ~/.ct-completion.bash
+
+test -e ~/.multibuild-completion.bash && . ~/.multibuild-completion.bash
 
 # standard environment
 test -z "${LESS/*-R*/}" || export LESS="$LESS -R"
