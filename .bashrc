@@ -48,7 +48,10 @@ export PERL5LIB=~/usr/lib/perl5:~/usr/lib/perl5/site_perl
 export LD_LIBRARY_PATH=~/usr/lib
 export MANPATH=~/usr/share/man:$MANPATH
 
-if [ -d ~/opt/jdk1.7.0_71 ] ; then
+if [ -d ~/opt/jdk1.8.0_171/ ] ; then
+    export JAVA_HOME=~/opt/jdk1.8.0_171
+    export PATH=~/bin:~/opt/jdk1.8.0_171/bin:$PATH:/home/pub/bin
+elif [ -d ~/opt/jdk1.7.0_71 ] ; then
     export JAVA_HOME=~/opt/jdk1.7.0_71
     export PATH=~/bin:~/opt/jdk1.7.0_71/bin:$PATH:/home/pub/bin
 fi

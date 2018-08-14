@@ -49,7 +49,7 @@ export CVSROOT=:ext:${RANDYUSER}@${RANDY}:/home/repositories/systems
 #export XCVSSERVER=xcvs
 #export XSRCCVSROOT=/home/extcvsrepos/packages/src
 
-export CECCMD=~steffen/work/download/flist
+export CECCMD=~/work/download/flist
 
 export ILOG_CONSOLE_COLOR=1
 

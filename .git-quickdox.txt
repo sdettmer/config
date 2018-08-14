@@ -285,3 +285,10 @@ Windows speed up:
   git config --global core.fscache true
   git config --global gc.auto 256
 
+=======8<-------------------------------------------------------------------
+
+Diffing re-indented source code (putting curly braces on different lines):
+
+  git diff --word-diff-regex=[^[:space:]] commitid^..commitid file1...
+
+
