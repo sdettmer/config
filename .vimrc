@@ -1759,6 +1759,7 @@ fun! PisSrcMode()
   setl ai et sw=4 ts=4 tw=110
   " set path=.,vobs/PIS/source/*/inc,vobs/PIS/source/*/*/inc,vobs/PIS/source/*/src/,vobs/PIS/source/*/*/src/,vobs/PIS/source/*/*/src/*/,vobs/PIS/test/*/*/src
   set path=.,vobs/PIS/source/**,vobs/PIS/test/**,vobs/PIS/pis/**,vobs/TcmsGenSw/lib/*/**,vobs/tisc_*/*/src/**,vobs/tisc_*/*/inc/**,vobs/tisc_*/*/tst/**,vobs/TWCS_HEN/source/**,vobs/TWCS_HEN/test/MDT/**,vobs/TcmsGenSw/hevt/mcgwebui/src**,vobs/tisc_ccu-c/load/bld/,vobs/tisc_webhmi/src/schema/src/**,vobs/tisc_webhmi/test/**
+  setl complete-=i
 endfun
 
 " To automatically reconfigure buffers
@@ -2003,6 +2004,9 @@ function! FollowMode()
     echo 'stopped following file changes.'
   endtry
 endfunction
+
+" Swap GoogleTest EXPECT macro args:
+" '<,'>s/EXPECT\([_A-Z]*\)(\(.*\), \(.*\))/EXPECT\1(\3, \2)/g
 
 " http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
 "   Currency sign: "¤"

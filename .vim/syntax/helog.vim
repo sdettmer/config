@@ -33,8 +33,8 @@ syn match eevvarknown0	/ \S\+:New Value KNOWN\/0/ contained
 syn match eevvarunknown	/ \S\+:New Value UNKNOWN\/.*/ contained
 syn match eevvarunknownx	/ \S\+ now UNKNOWN\/.*/ contained
 
-if !exists("did_helog_syntax_inits")
-  let did_helog_syntax_inits = 1
+"if !exists("b:did_helog_syntax_inits")
+"  let b:did_helog_syntax_inits = 1
   hi debugLine	ctermfg=darkblue	guifg=darkblue
   hi warnLine	ctermfg=yellow		guifg=yellow
   hi errLine	ctermfg=red		guifg=red
@@ -57,6 +57,6 @@ if !exists("did_helog_syntax_inits")
   hi link eevvarunknown eevunknown
   hi link eevvarknownx eevknown1
   hi link eevvarunknownx eevunknown
-endif
+"endif
 
 let b:current_syntax="helog"

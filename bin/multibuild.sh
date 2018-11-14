@@ -36,7 +36,7 @@ declare -a args=()
 for arg in "$@" ; do
     case $arg in
         -n|-t|-b|-p) tryinfo="" ; args+=($arg);;
-        VERBOSE=*)   export VERBOSE="1";;
+        VERBOSE=?*)  export VERBOSE="1";;
         *)           args+=($arg);;
     esac
 done
