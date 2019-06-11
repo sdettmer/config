@@ -16,6 +16,8 @@ for lib in $(ls lib*.so.*) ; do
          shortlib=$(basename $shortlib $verpart)
          # echo "$basename -> $shortlib"
          ln -sf $basename $shortlib
+         # be more reproducible
+         touch --reference $basename $shortlib
          basename=$shortlib
     done
     if [ $linked -eq 0 ] ; then

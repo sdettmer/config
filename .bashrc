@@ -172,6 +172,9 @@ if ! git rev-list --count HEAD >/dev/null 2>&1 ; then
     GIT_PS1_SHOWUPSTREAM="$GIT_PS1_SHOWUPSTREAM legacy"
 fi
 
+# export NVM_DIR="/net/dehecnas1/Homes/sdettmer/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+
 umask 002
 # http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
 #   Currency sign: "¤"

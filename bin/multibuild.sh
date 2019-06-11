@@ -46,6 +46,7 @@ useinfo()
 {
     echo "Using $multibuildinfo"
     . "${multibuildinfo}"
+    # very old tisc-src versions had multibuild.info without $multibuild.
     [ "${multibuild}" ] || multibuild="$topsrc/vobs/tisc_ccu-c/load/bld/multibuild.sh"
     ${multibuild} "$@" "$multibuildinfo"
 }
@@ -82,7 +83,15 @@ while [ ${workingdir#*vobs} ] ; do
     # Maybe we found it as sibling:
     [ -d "${workingdir}/vobs" ] && workingdir="${workingdir}/vobs"
 done
-multibuild="$workingdir/tisc_ccu-c/load/bld/multibuild.sh"
+
+if [ -x "$workingdir/twcs_wcac/load/bld/multibuild.sh" ] ; then
+  multibuild="$workingdir/twcs_wcac/load/bld/multibuild.sh"
+elif [ -x "$workingdir/tisc_ccu-c/load/bld/multibuild.sh" ] ; then
+  multibuild="$workingdir/tisc_ccu-c/load/bld/multibuild.sh"
+else
+  echo "No multibuild.sh found below $workingdir" >&2
+  exit 2
+fi
 #echo multibuild=$multibuild
 
 # exec does the error handling here (gives e.g. "No such file or directory")
