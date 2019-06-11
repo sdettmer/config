@@ -128,6 +128,17 @@ shopt -q -s cmdhist
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=10000
 HISTFILESIZE=20000
+HISTTIMEFORMAT="[%F %T] "
+
+# auto pager (avoid plain "history" kills $HISTSIZE lines of terminal history)
+function history()
+{
+  if [ "$@" ] ; then
+    command history "$@"
+  else
+    command history | less
+  fi
+}
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.

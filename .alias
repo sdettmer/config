@@ -8,6 +8,7 @@ alias ns='/var/named/master/new_serial '
 alias rcn='rcnamed reload'
 # less search line: less with search for --- or more -
 alias lsl="less +/-\{3,\}"
+#alias history='history|less'
 alias ....='cd ../../../'
 alias .....='cd ../../../../'
 alias ......='cd ../../../../../'
