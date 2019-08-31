@@ -146,6 +146,8 @@ for (my $n=1; $n<100; $n++) {
         $dest =~ tr|a-zA-Z0-9_.-|!|c;
         #print "$picked  --> $dest\n";
         `ln -fs '$path' '$destdir/$dest'`;
+      }
+      {
         if (1) {
           # [ -d t ] || mkdir t
           # rm -f DIFF_*.JPG;
@@ -170,16 +172,34 @@ for (my $n=1; $n<100; $n++) {
             mogrify -path tmp -thumbnail 128x128 *.JPG;
             cd tmp;
             pwd;
-            rm -f *_DIFF_*.JPG;
+            rm -f *_DIFF_*.JPG 0000_A_FOUND* 0000_A_MISSING*;
+            touch 0000_A_MISSING.bin;
             for i in *[Jj][Pp][Gg]; do
               echo "Analysing \$i:";
               r=\$(compare -metric PSNR "\$i" 0000_*.JPG "tmp_DIFF_\$i" 2>&1);
               ret=\$?;
-              rf=\$( LC_ALL=C printf "%06.2f" \$r 2>/dev/null);
-              echo "RESULT: \$ret --> \$rf (\$r))";
-              mv "tmp_DIFF_\$i" "JPG_DIFF_\${rf}_\${i}";
+              echo "ret=\$ret, r=\$r";
+              if [ \$ret -eq 0 ] ; then
+                echo "FOUND SAME";
+                mv "tmp_DIFF_\$i" "JPG_DIFF_\${rf}_\${i}";
+              elif [ \$ret -eq 1 ] ; then
+                rf=\$( LC_ALL=C printf "%06.2f" \$r 2>/dev/null);
+                ri=\${r%%.*};
+                echo "RESULT: \$ret --> \$rf (\$r) --> \$ri";
+                mv "tmp_DIFF_\$i" "JPG_DIFF_\${rf}_\${i}";
+                if [ "\$ri" -gt 25 ] ; then
+                  echo "FOUND (with \$r)!";
+                  rm -f 0000_A_MISSING.bin;
+                  touch 0000_A_FOUND_\${rf}_\${i}.sfv;
+                else
+                  echo "NOT_FOUND (with \$r)";
+                fi
+              else
+                echo "UNCOMPARABLE (\$ret:\$r)";
+              fi
               echo; echo;
-            done
+            done;
+            cp -a 0000_A_* ..;
           `;
         }
       }
