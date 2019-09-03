@@ -1,6 +1,47 @@
 #!/usr/bin/perl
 # This is a quick hack to check if JPGs are in archive
 #   (using similarity to accept cropping, sharpening, color fix...)
+#
+# - collects all files from SRC
+# - filter SRC list to get only JPG
+# - checks if a file with same filehash exists (if so, it obviously exists)
+# - otherwise, symlink to MISSING folder (that contains images
+#   that do not binrary wise exist in arc)
+# - otherwise, all files with same name (and different filehash) are compared
+#   with imagemagick compare metric
+# - if metric > 25 (empirically picked value) count as "very similar existing"
+#   so produce a state file 0000_A_FOUND
+# - if none of the same named files is "very similar", produce a
+#   state file 0000_A_MISSING
+#
+# TODO:
+# - built takeout file list (instead of loading /Takeout/files.txt)?
+# - currently all 2019 images are missing because not yet in archive
+# - fails if two picks have same file name,
+#   then we have two 0000_Google_xxx_jpg and maybe
+#   A_MISSING plus one or more A_FOUND :(
+# - avoid comaparing with itself and remove special handling for PSNR==0 (equality)
+# - how to evalutate the result / state files?
+# - What next? delete existing from MISSING?
+# -- maybe first check if all Google Takeout files have at least
+#    one instance in a date folder?
+# - how to handle result?
+#   state file extension bin (bad) because alert-alike icon (VLC),
+#   extension .sfv (good) is a green check icon in win 7 explorer
+#
+# Notes:
+#   ARC "/raid1/pics/arc"
+#       (the pic archive)
+#   SRC "/raid1/pics/arc/GooglePhotos/Takeout/Google Fotos"
+#       (from ZIP "D:\01_GooglePhotoDownload")
+#   TMP $missingroot="/raid1/pics/arc/GooglePhotos/Takeout/missing/"
+#
+# Initial metrics:
+#   Found    54293 Google entries in /raid1/pics/arc/GooglePhotos/Takeout/files.txt
+#   Found    24092 Google JPGs in /raid1/pics/arc/GooglePhotos/Takeout/files.txt
+#   Found    92395 ARC entries in /raid1/pics/arc
+#   Found    83756 ARC JPGs in /raid1/pics/arc
+#
 use strict;
 #use utf8;
 use File::Basename;
@@ -133,6 +174,7 @@ for (my $n=1; $n<100; $n++) {
         print Data::Dumper->Dump( [$arcimages->{$lcfile} ], ["lcfile"] );
         die "end"
       }
+      # FIXME if two picks have same name, we re-use an existing directory here!
       my $dir = $picked;
       $dir =~ s/.jpe?g$//i;
       my $destdir="/raid1/pics/arc/GooglePhotos/Takeout/missing/$dir";
@@ -148,6 +190,9 @@ for (my $n=1; $n<100; $n++) {
         `ln -fs '$path' '$destdir/$dest'`;
       }
       {
+        # FIXME fails if two picks have same file name,
+        # then we have two 0000_Google_xxx_jpg and maybe
+        # A_MISSING plus one or more A_FOUND :(
         if (1) {
           # [ -d t ] || mkdir t
           # rm -f DIFF_*.JPG;
@@ -165,7 +210,9 @@ for (my $n=1; $n<100; $n++) {
           # 3:
           # rm -f *_DIFF_*.JPG; for i in *JPG ; do echo "$i:" ; r=$(compare -metric PSNR "$i" 0000_*.JPG "tmp_DIFF_$i" 2>&1); ret=$?; rf=$( LC_ALL=C printf "%07.2f" $r 2>/dev/null) ; echo "RESULT: $ret --> $rf ($r))"; mv  "tmp_DIFF_$i"  "JPG_DIFF_${rf}_${i}" ; echo; echo; done
 
-          # TODO m kdir && 3
+          # NOTE: state file extension bin (bad) because
+          # alert-alike icon (VLC), extension .sfv (good) is a green check icon
+          # in win 7 explorer
           print `
             cd '$destdir';
             [ -d tmp ] || mkdir tmp;
