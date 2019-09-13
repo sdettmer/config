@@ -60,6 +60,10 @@ fi
 # test -z "${PATH/*local*/}" || PATH="$PATH:/usr/local/bin/"
 # export PATH
 
+# fslint is a toolset to find various problems with filesystems,
+# including duplicate files and problematic filenames etc.
+[ -d /usr/share/fslint/fslint/ ] && export PATH=$PATH:/usr/share/fslint/fslint/
+
 # Nomad Digital test port offset value for Steffen:
 export ND_PORT_OFFSET=9
 
@@ -146,8 +150,6 @@ shopt -s checkwinsize
 
 # Turn on the extended pattern matching features
 # shopt -q -s extglob
-
-#export LANG=de_DE.ISO-8859-1
 
 
 #

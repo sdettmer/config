@@ -5,7 +5,7 @@
 # ################
 IMAPAccount gmail
 # Address to connect to
-Host imaps:imap.gmail.com
+Host imap.gmail.com
 User steffen.dettmer@gmail.com
 PassCmd "~/Mail/!__Gmail__!/pass"
 # To store the password in an encrypted file use PassCmd instead of Pass
@@ -13,7 +13,8 @@ PassCmd "~/Mail/!__Gmail__!/pass"
 #
 # Use SSL
 #SSLType IMAPS
-RequireSSL yes
+SSLType IMAPS
+#RequireSSL yes
 # The following line should work. If get certificate errors, uncomment the two following lines and read the "Troubleshooting" section.
 CertificateFile /etc/ssl/certs/ca-certificates.crt
 #CertificateFile ~/.cert/imap.gmail.com.pem
