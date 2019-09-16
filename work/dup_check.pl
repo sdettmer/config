@@ -15,8 +15,6 @@
 #   state file 0000_A_MISSING
 #
 # TODO:
-# - built takeout file list (instead of loading /Takeout/files.txt)?
-# - currently all 2019 images are missing because not yet in archive
 # - fails if two picks have same file name,
 #   then we have two 0000_Google_xxx_jpg and maybe
 #   A_MISSING plus one or more A_FOUND :(
@@ -32,16 +30,15 @@
 # Notes:
 #   ARC "/raid1/pics/arc"
 #       (the pic archive)
-#   SRC "/raid1/pics/arc/GooglePhotos/Takeout/Google Fotos"
+#   SRC "/raid1/pics/GooglePhotos/Takeout/Google Fotos"
 #       (from ZIP "D:\01_GooglePhotoDownload")
-#   TMP $missingroot="/raid1/pics/arc/GooglePhotos/Takeout/missing/"
+#   TMP $missingroot="/raid1/pics/GooglePhotos/Takeout/missing/"
 #
-# Initial metrics:
-#   Found    54293 Google entries in /raid1/pics/arc/GooglePhotos/Takeout/files.txt
-#   Found    24092 Google JPGs in /raid1/pics/arc/GooglePhotos/Takeout/files.txt
-#   Found    92395 ARC entries in /raid1/pics/arc
-#   Found    83756 ARC JPGs in /raid1/pics/arc
-#
+# Some metrics:
+#   Found    54292 Google entries in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Found    24105 Google JPGs in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Found   102904 ARC entries in /raid1/pics/arc
+#   Found    87383 ARC JPGs in /raid1/pics/arc
 use strict;
 #use utf8;
 use File::Basename;
@@ -50,45 +47,57 @@ use File::Basename;
 binmode( STDOUT, 'utf8:' );
 
 
-my $filelist = "/raid1/pics/arc/GooglePhotos/Takeout/files.txt";
-my $googleroot = "/raid1/pics/arc/GooglePhotos/Takeout/Google Fotos";
+my $filelist = "/raid1/pics/GooglePhotos/Takeout/files.txt";
+my $googleroot = "/raid1/pics/GooglePhotos/Takeout/Google Fotos";
 my $arcroot = "/raid1/pics/arc";
 
-my $handle;
-open $handle, "<:encoding(UTF-8)", $filelist
-  or die "Could not open file '$filelist': $!\n";
-chomp(my @images = <$handle>);
-close $handle
-  or die "Don't care error while closing '$filelist': $!\n";
+# Recursively finds JPGs
+sub findJpg($)
+{
+    my $path = shift;
+    my $handle;
+    # We use "find */" to "follow first-level symlinks"
+    open $handle, "-|:encoding(UTF-8)", "cd '$path' && find */ -type f"
+      or die "Could pipe find in '$path;': $!\n";
+    chomp(my @arcimages = <$handle>);
+    close $handle
+      or die "Don't care error while closing pipe find in '$path': $!\n";
+    return @arcimages;
+}
 
-#@images=("1", "2", "3");
-printf "Found %8d Google entries in $filelist\n", $#images + 1;
-@images = grep { !/.(json|mp4|mts|m4v|mov|avi|bin)$/i } @images;
-# Some strange webp files like "./2019-04-04/13.07(1).14 - 1"
-@images = grep { !/\/\d\d[.]\d\d([(]\d+[)])?[.]\d\d - [123]/i } @images;
+# Filter off all known non-Jpgs (i.e. keep Jpg and unknown)
+sub filterJpg($)
+{
+    my $inlist = shift;
+    my @jpgs = @${inlist};
 
+    @jpgs = grep { !/.(json|mp4|mts|m4v|mov|avi|bin)$/i } @jpgs;
+    @jpgs = grep { !/.(par2|db|db.1|db.2|info|info.1|cr2|tmp|thm|ini|cpt|7z|log|zip|tps|xmp|putt|pspimage|rss|hdr)$/i } @jpgs;
+    @jpgs = grep { !/.(gif|png|pdf|psd|webp)$/i } @jpgs;
+    @jpgs = grep { !/descript.ion(.1)?|Online.url anzeigen$/i } @jpgs;
+    # Some strange webp files without extension, like "./2019-04-04/13.07(1).14 - 1"
+    @jpgs = grep { !/\/\d\d[.]\d\d([(]\d+[)])?[.]\d\d - [123]$/i } @jpgs;
+    # Test: remove jpgs
+    #@jpgs = grep { !/.(jpg|jpeg)$/i } @jpgs;
+}
+
+
+my @images = findJpg($googleroot);
+printf "Found %8d Google entries in $googleroot\n", $#images + 1;
+@images = filterJpg(\@images);
 # renumbered inside, checked manually (OK)
-@images = grep { !/2015_12_09\//i } @images;
+@images = grep { !/^2015_12_09\//i } @images;
+printf "Found %8d Google JPGs in $googleroot\n", $#images + 1;
 
-# remove non-jpgs
-@images = grep { !/.(png|gif|webp)$/i } @images;
-# Test: remove jpgs
-#@images = grep { !/.(jpg|jpeg)$/i } @images;
-printf "Found %8d Google JPGs in $filelist\n", $#images + 1;
+#open T, ">/tmp/f3.lst";
+#print T join("\n", @images);
+#close T;
 
-open $handle, "-|:encoding(UTF-8)", "cd $arcroot && find ????/ -type f"
-  or die "Could pipe find in '$arcroot;': $!\n";
-chomp(my @arcimages = <$handle>);
-close $handle
-  or die "Don't care error while closing pipe find in '$arcroot': $!\n";
+my @arcimages = findJpg($arcroot);
 printf "Found %8d ARC entries in $arcroot\n", $#arcimages + 1;
-@arcimages = grep { !/.(json|mp4|mts|m4v|mov|avi|bin)$/i } @arcimages;
-@arcimages = grep { !/.(par2|db|db.1|db.2|info|info.1|cr2|tmp|thm|ini|cpt|7z|log|zip|tps|xmp|putt|pspimage|rss|hdr)$/i } @arcimages;
-@arcimages = grep { !/.(gif|png|pdf|psd)$/i } @arcimages;
-@arcimages = grep { !/descript.ion(.1)?|Online.url anzeigen$/i } @arcimages;
-# Test: remove jpgs
-#@arcimages = grep { !/.(jpg|jpeg)$/i } @arcimages;
+@arcimages = filterJpg(\@arcimages);
 printf "Found %8d ARC JPGs in $arcroot\n", $#arcimages + 1;
+
 my $arcimages = {};
 # this processing takes > 500ms!
 foreach my $arcimage (@arcimages) {
@@ -149,20 +158,20 @@ for (my $n=1; $n<100; $n++) {
   }
 
   # TODO FIXME HACK we dont have 2019 on server yet, so skip these
-  if ($pickedfull =~ m/2019-/) {
-    printf "  x %8s: #%7d %s\n", "Skipping", $pickidx, $pickedfull;
-    next;
-  }
+  #if ($pickedfull =~ m/2019-/) {
+  #  printf "  x %8s: #%7d %s\n", "Skipping", $pickidx, $pickedfull;
+  #  next;
+  #}
 
   {
-    my $missingroot="/raid1/pics/arc/GooglePhotos/Takeout/missing/";
+    my $missingroot="/raid1/pics/GooglePhotos/Takeout/missing/";
     `[ -d '$missingroot' ] || mkdir '$missingroot'`;
   }
   if ($found) {
     #use Data::Dumper;
     #print Dumper $found, "found";
     printf "+++ %8s: #%7d %s\n", "Found", $pickidx, $pickedfull;
-    `ln -fs '../Google Fotos/$pickedfull' '/raid1/pics/arc/GooglePhotos/Takeout/found/'`;
+    `ln -fs '../Google Fotos/$pickedfull' '/raid1/pics/GooglePhotos/Takeout/found/'`;
   } else {
     if (exists $arcimages->{$lcfile}) {
       my $samenamecount = $#{$arcimages->{$lcfile}} + 1;
@@ -177,7 +186,7 @@ for (my $n=1; $n<100; $n++) {
       # FIXME if two picks have same name, we re-use an existing directory here!
       my $dir = $picked;
       $dir =~ s/.jpe?g$//i;
-      my $destdir="/raid1/pics/arc/GooglePhotos/Takeout/missing/$dir";
+      my $destdir="/raid1/pics/GooglePhotos/Takeout/missing/$dir";
       `[ -d '$destdir' ] || mkdir '$destdir'`;
       my $gdest = $pickedfull;
       $gdest =~ tr|a-zA-Z0-9_.-|!|c;
@@ -252,7 +261,7 @@ for (my $n=1; $n<100; $n++) {
       }
     } else {
       printf "--- %8s: #%7d %s\n", "Missing", $pickidx, $pickedfull;
-      `ln -fs '../Google Fotos/$pickedfull' '/raid1/pics/arc/GooglePhotos/Takeout/missing/'`;
+      `ln -fs '../Google Fotos/$pickedfull' '/raid1/pics/GooglePhotos/Takeout/missing/'`;
     }
   }
   # die "debug end\n";
