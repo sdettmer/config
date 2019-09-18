@@ -43,28 +43,35 @@
 
 use strict;
 #use utf8;
+#use encoding 'utf8';
 use File::Basename;
 #use Digest::MD5 qw(md5_hex);
 
-binmode( STDOUT, 'utf8:' );
+binmode(STDOUT, ':utf8' );
+#print "I owe you \N{U+20AC}160\n";
 
 
 my $filelist = "/raid1/pics/GooglePhotos/Takeout/files.txt";
 my $googleroot = "/raid1/pics/GooglePhotos/Takeout/Google Fotos";
 my $arcroot = "/raid1/pics/arc";
 
-# Recursively finds JPGs
-sub findJpg($)
+# These two must be direct subdirs of GooglePhotos/Takeout/:
+my $missingroot = "/raid1/pics/GooglePhotos/Takeout/missing";
+my $foundroot = "/raid1/pics/GooglePhotos/Takeout/found";
+my $outputroot =  "/raid1/pics/GooglePhotos/Takeout/check_result";
+
+# Recursively finds files such as JPGs
+sub findFiles($)
 {
     my $path = shift;
     my $handle;
     # We use "find */" to "follow first-level symlinks"
     open $handle, "-|:encoding(UTF-8)", "cd '$path' && find */ -type f"
       or die "Could pipe find in '$path;': $!\n";
-    chomp(my @arcimages = <$handle>);
+    chomp(my @images = <$handle>);
     close $handle
       or die "Don't care error while closing pipe find in '$path': $!\n";
-    return @arcimages;
+    return @images;
 }
 
 # Filter off all known non-Jpgs (i.e. keep Jpg and unknown)
@@ -84,7 +91,7 @@ sub filterJpg($)
 }
 
 
-my @gimages = findJpg($googleroot);
+my @gimages = findFiles($googleroot);
 printf "Found %8d Google entries in $googleroot\n", $#gimages + 1;
 @gimages = filterJpg(\@gimages);
 # renumbered inside, checked manually (OK)
@@ -100,7 +107,7 @@ printf "Found %8d Google JPGs in $googleroot\n", $#gimages + 1;
 #print T join("\n", @gimagebases), "\n";
 #close T;
 
-my @arcimages = findJpg($arcroot);
+my @arcimages = findFiles($arcroot);
 printf "Found %8d ARC entries in $arcroot\n", $#arcimages + 1;
 @arcimages = filterJpg(\@arcimages);
 printf "Found %8d ARC JPGs in $arcroot\n", $#arcimages + 1;
@@ -144,6 +151,11 @@ my $pickidx=-1; # counter for array index (compat to old log messages)
 foreach my $pickedfull (@gimages) {
   $pickidx++;
   # next if ($pickedfull =~ m/Klappe.Die.Erste/);
+  if (0) {
+    print "DEBUG SHORTCUT: assuming being done with checking\n";
+    last;
+  }
+
   my $gpath = $googleroot . "/" . $pickedfull;
   my ($ghash, $rest) = split /\s+/, `md5sum '$gpath'`;
   my $picked=basename($pickedfull);
@@ -172,21 +184,15 @@ foreach my $pickedfull (@gimages) {
     #print Dumper $arcimages->{$lcfile};
   }
 
-  # TODO FIXME HACK we dont have 2019 on server yet, so skip these
-  #if ($pickedfull =~ m/2019-/) {
-  #  printf "  x %8s: #%7d %s\n", "Skipping", $pickidx, $pickedfull;
-  #  next;
-  #}
-
   {
-    my $missingroot="/raid1/pics/GooglePhotos/Takeout/missing/";
     `[ -d '$missingroot' ] || mkdir '$missingroot'`;
   }
   if ($found) {
     #use Data::Dumper;
     #print Dumper $found, "found";
     printf "+++ %8s: #%7d %s\n", "Found", $pickidx, $pickedfull;
-    `ln -fs '../Google Fotos/$pickedfull' '/raid1/pics/GooglePhotos/Takeout/found/'`;
+    # FIXME TODO we must use jpgid here as well!
+    `ln -fs '../Google Fotos/$pickedfull' '$foundroot/'`;
   } else {
     my $jpgid = $pickedfull;
     $jpgid =~ tr|a-zA-Z0-9_# .-|!|c;
@@ -201,7 +207,7 @@ foreach my $pickedfull (@gimages) {
         print Data::Dumper->Dump( [$arcimages->{$lcfile} ], ["lcfile"] );
         die "end"
       }
-      my $destdir="/raid1/pics/GooglePhotos/Takeout/missing/tmp_$jpgid";
+      my $destdir=$missingroot . "/tmp_$jpgid";
       $destdir =~ s/.jpe?g$//i;
       `[ -d '$destdir' ] || mkdir '$destdir'`;
       `ln -fs '../../Google Fotos/$pickedfull' '$destdir/0000_GooglePhotos__$jpgid'`;
@@ -275,9 +281,9 @@ foreach my $pickedfull (@gimages) {
             my @a_missing = glob("$destdir/0000_A_MISSING*");
             my @a_found = glob("$destdir/0000_A_FOUND*");
             if (@a_missing) {
-              `ln -fs '../Google Fotos/$pickedfull' '/raid1/pics/GooglePhotos/Takeout/missing/diff_$jpgid'`;
+              `ln -fs '../Google Fotos/$pickedfull' '$missingroot/diff_$jpgid'`;
             } elsif (@a_found) {
-              `ln -fs '../Google Fotos/$pickedfull' '/raid1/pics/GooglePhotos/Takeout/found/same_$jpgid'`;
+              `ln -fs '../Google Fotos/$pickedfull' '$foundroot/same_$jpgid'`;
             } else {
               print "$destdir/0000_A_MISSING*\n";
               print @a_missing, "\n";
@@ -292,10 +298,137 @@ foreach my $pickedfull (@gimages) {
       }
     } else {
       printf "--- %8s: #%7d %s\n", "Missing", $pickidx, $pickedfull;
-      `ln -fs '../Google Fotos/$pickedfull' '/raid1/pics/GooglePhotos/Takeout/missing/none_$jpgid'`;
+      `ln -fs '../Google Fotos/$pickedfull' '$missingroot/none_$jpgid'`;
     }
   }
   # die "debug end\n";
+}
+
+
+# Now present the output somehow.
+# Assume results in "found" and "missing" in form of symlinks
+{
+  # Read in found root. Note: unfortunately, we did not rename
+  # direct found matches and thus they are maybe not unique.
+  my %found_gfiles = ();
+  if (1) {
+    {
+      my @found;
+      @found = glob("$foundroot/*.[Jj][Pp][Gg]");
+      printf "Found %8d FOUND entries in $foundroot\n", $#found + 1;
+      foreach my $found (@found) {
+        my $dest = readlink($found);
+        # we now our filesystem is UTF-8 and thus is readlink result:
+        $dest = Encode::decode_utf8( $dest );
+        #print "LINK: $found -> $dest\n";
+        $dest =~ s/^..\/Google Fotos\///;
+        my $gfile = $googleroot . "/" . $dest;
+        if (!-e $gfile) {
+          die "file not found $gfile\n";
+        } else {
+          #print "GFILE: $gfile\n";
+        }
+        # FIXME HACK REMOVE NOTE: unfortunately, we did not rename
+        # direct found matches and thus they are maybe not unique.
+        if ($found !~ "/same_") {
+          #print "not same_: $found\n";
+          $dest=basename($dest);
+          $found="NOT UNIQUE BUG"; # FIXME use jpgid
+        } else {
+          #print "yes same_: $found\n";
+        }
+        #($dest=~m/FILE0273/) && print "HASH: $dest -> $found\n";
+        if (exists $found_gfiles{$dest}) {
+          #FIXME must die
+          warn "ALREADY HASHED $dest -> $found\nas $found_gfiles{$dest}\n";
+        }
+        $found_gfiles{$dest} = $found;
+        #die "debug\n";
+      }
+    }
+    printf "Hashed%8d FOUND entries in $foundroot\n", scalar keys %found_gfiles;
+  }
+
+  # Read in missing files
+  my %missing_gfiles = ();
+  if (1) {
+    {
+      my @missing;
+      @missing = glob("$missingroot/*.[Jj][Pp][Gg]");
+      printf "Found %8d MISSING entries in $missingroot\n", $#missing + 1;
+      foreach my $missing (@missing) {
+        my $dest = readlink($missing);
+        # we now our filesystem is UTF-8 and thus is readlink result:
+        $dest = Encode::decode_utf8( $dest );
+        $dest =~ s/^..\/Google Fotos\///;
+        my $gfile = $googleroot . "/" . $dest;
+        #print "LINK: $missing -> $dest\n";
+        if (!-e $gfile) {
+          die "file not found $gfile\n";
+        } else {
+          #print "GFILE: $gfile\n";
+        }
+
+        #print "HASH: $dest -> $missing\n";
+        if (exists $missing_gfiles{$dest}) {
+          die "ALREADY HASHED $dest -> $missing\nas $missing_gfiles{$dest}\n";
+        }
+        $missing_gfiles{$dest} = $missing;
+        #die "debug\n";
+      }
+    }
+    printf "Hashed%8d MISSING entries in $missingroot\n", scalar keys %missing_gfiles;
+  }
+
+  print `[ -d '$outputroot' ] || mkdir '$outputroot'`;
+  my $pickidx = -1; # counter for array index (compat to old log messages)
+  my $foundcount = 0;
+  my $missingcount = 0;
+  foreach my $pickedfull (@gimages) {
+    # TODO we cannot postprocess because we skipped above
+    next if ($pickedfull =~ m/Klappe.Die.Erste/);
+    # TODO NOTE: we ignore the 11 -iname '*jpeg' files for now!
+    next if ($pickedfull =~ m/.jpeg$/);
+    # DEBUG:
+    #last if ($pickidx > 10);
+
+    $pickidx++;
+    my $gpath = $googleroot . "/" . $pickedfull;
+    #print "pickedfull = $pickedfull\n";
+
+    # replicate structure for JPGs
+    {
+      my $destdir = $outputroot . "/" . dirname($pickedfull);
+      my $destfile = $outputroot . "/" . $pickedfull;
+      print `[ -d '$destdir' ] || mkdir '$destdir'`;
+      print `ln -fs '$gpath' '$destdir'`;
+      my $pickedbasename=basename($pickedfull);
+      if (exists $missing_gfiles{$pickedfull}) {
+        $missingcount++;
+        print `touch '$destfile'.bin`;
+        #print "  is missing ($missing_gfiles{$pickedfull})\n";
+      } elsif (exists $found_gfiles{$pickedfull}) {
+        $foundcount++;
+        print `touch '$destfile'.sfv`;
+        #print "  was found  ($found_gfiles{$pickedfull})\n";
+      } elsif (exists $found_gfiles{$pickedbasename}) {
+        $foundcount++;
+        print `touch '$destfile'.sfv`;
+        # FIXME HACK REMOVE NOTE: unfortunately, we did not rename
+        # direct found matches and thus they are maybe not unique.
+        #print "  was found  ($found_gfiles{$pickedfull})\n";
+      } else {
+        print "  neither found or missing: $pickedfull\n";
+        print "                      base: $pickedbasename\n";
+        #print `ls -l '$gpath'`;
+        #print `md5sum '$gpath'`;
+        print `md5sum '$googleroot/$pickedfull'`;
+        die "nfm\n";
+      }
+    }
+
+  }
+  print "postprocess done, found = $foundcount, missing = $missingcount\n";
 }
 
 
