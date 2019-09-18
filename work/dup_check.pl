@@ -82,16 +82,36 @@ sub filterJpg($)
 }
 
 
-my @images = findJpg($googleroot);
-printf "Found %8d Google entries in $googleroot\n", $#images + 1;
-@images = filterJpg(\@images);
+my @gallimages = findJpg($googleroot);
+printf "Found %8d Google entries in $googleroot\n", $#gallimages + 1;
+@gallimages = filterJpg(\@gallimages);
 # renumbered inside, checked manually (OK)
-@images = grep { !/^2015_12_09\//i } @images;
-printf "Found %8d Google JPGs in $googleroot\n", $#images + 1;
+@gallimages = grep { !/^2015_12_09\//i } @gallimages;
+printf "Found %8d Google JPGs in $googleroot\n", $#gallimages + 1;
 
-#open T, ">/tmp/f3.lst";
-#print T join("\n", @images);
-#close T;
+# "2013-12-31-", "2013-12-31 -", "2013-12-31 -  #2" etc. are per-date backup folders
+#   They may have duplicates in other folders (albums).
+#   Other folders may have no entry there (if no backup but upload)
+my @gimages    = grep {  /^\d\d\d\d-\d\d-\d\d/ } @gallimages;
+my @gdupimages = grep { !/^\d\d\d\d-\d\d-\d\d/ } @gallimages;
+printf "Found %8d Google main JPGs in $googleroot\n", $#gimages + 1;
+printf "Found %8d Google dup  JPGs in $googleroot\n", $#gdupimages + 1;
+
+my @gimagebases = map { lc(basename($_)) } @gimages;
+printf "Found %8d Google base JPGs in $googleroot\n", $#gimagebases + 1;
+open T, ">/tmp/b1.lst";
+print T join("\n", @gimagebases), "\n";
+close T;
+
+# Check if all gdupimages are really dups (i.e. included in gimages)
+foreach my $gdupimage (@gdupimages) {
+    my $lcdup=lc(basename($gdupimage));
+    if (grep { $lcdup eq $_ } @gimagebases) {
+        #print "dup: $lcdup\n";
+    } else {
+        print "No duplicate: $gdupimage\n";
+    }
+}
 
 my @arcimages = findJpg($arcroot);
 printf "Found %8d ARC entries in $arcroot\n", $#arcimages + 1;
@@ -124,8 +144,8 @@ foreach my $arcimage (@arcimages) {
 #}
 
 for (my $n=1; $n<100; $n++) {
-  my $pickidx = int(rand($#images + 1));
-  my $pickedfull = $images[$pickidx];
+  my $pickidx = int(rand($#gimages + 1));
+  my $pickedfull = $gimages[$pickidx];
   # $pickedfull = "Silvester 2012/IMG_0113.JPG";
   #$pickedfull = "2018-08-18/DSC_0003.JPG";
   #$pickedfull = "2015_12_09/IMG_1077.jpg";
