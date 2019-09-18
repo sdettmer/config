@@ -36,6 +36,10 @@
 #   Found    24105 Google JPGs in /raid1/pics/GooglePhotos/Takeout/Google Fotos
 #   Found   102904 ARC entries in /raid1/pics/arc
 #   Found    87383 ARC JPGs in /raid1/pics/arc
+#   Found    10286 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
+#   Hashed   10286 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
+#   Found    13808 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
+#   Hashed   13808 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
 #
 #   real    157m16,288s
 #   user    94m28,768s
@@ -150,6 +154,7 @@ foreach my $arcimage (@arcimages) {
 my $pickidx=-1; # counter for array index (compat to old log messages)
 foreach my $pickedfull (@gimages) {
   $pickidx++;
+  # TODO debug shortcut:
   # next if ($pickedfull =~ m/Klappe.Die.Erste/);
   if (0) {
     print "DEBUG SHORTCUT: assuming being done with checking\n";
@@ -160,7 +165,11 @@ foreach my $pickedfull (@gimages) {
   my ($ghash, $rest) = split /\s+/, `md5sum '$gpath'`;
   my $picked=basename($pickedfull);
   my $lcfile = lc($picked);
-  # TODO debug shortcut:
+
+  my $jpgid = $pickedfull;
+  $jpgid =~ tr|a-zA-Z0-9_# .-|!|c;
+  $jpgid =~ tr| |_|;
+
   # printf "Picked #%8d: %s (%s)\n", $pickidx, $pickedfull, $ghash;
   my $found = 0;
   if (exists $arcimages->{$lcfile}) {
@@ -185,18 +194,15 @@ foreach my $pickedfull (@gimages) {
   }
 
   {
-    `[ -d '$missingroot' ] || mkdir '$missingroot'`;
+    print `[ -d '$missingroot' ] || mkdir '$missingroot'`;
+    print `[ -d '$foundroot' ] || mkdir '$foundroot'`;
   }
   if ($found) {
     #use Data::Dumper;
     #print Dumper $found, "found";
     printf "+++ %8s: #%7d %s\n", "Found", $pickidx, $pickedfull;
-    # FIXME TODO we must use jpgid here as well!
-    `ln -fs '../Google Fotos/$pickedfull' '$foundroot/'`;
+    print `ln -fs '../Google Fotos/$pickedfull' '$foundroot/equal_$jpgid'`;
   } else {
-    my $jpgid = $pickedfull;
-    $jpgid =~ tr|a-zA-Z0-9_# .-|!|c;
-    $jpgid =~ tr| |_|;
     if (exists $arcimages->{$lcfile}) {
       my $samenamecount = $#{$arcimages->{$lcfile}} + 1;
       my $samestr = sprintf "Name %3d", $samenamecount;
@@ -209,8 +215,8 @@ foreach my $pickedfull (@gimages) {
       }
       my $destdir=$missingroot . "/tmp_$jpgid";
       $destdir =~ s/.jpe?g$//i;
-      `[ -d '$destdir' ] || mkdir '$destdir'`;
-      `ln -fs '../../Google Fotos/$pickedfull' '$destdir/0000_GooglePhotos__$jpgid'`;
+      print `[ -d '$destdir' ] || mkdir '$destdir'`;
+      print `ln -fs '../../Google Fotos/$pickedfull' '$destdir/0000_GooglePhotos__$jpgid'`;
       foreach my $arcmatch (@{$arcimages->{$lcfile}}) {
         my $path = $arcroot . "/" . $arcmatch->{path};
         my $dest = $arcmatch->{path};
@@ -236,6 +242,7 @@ foreach my $pickedfull (@gimages) {
           # 3:
           # rm -f *_DIFF_*.JPG; for i in *JPG ; do echo "$i:" ; r=$(compare -metric PSNR "$i" 0000_*.JPG "tmp_DIFF_$i" 2>&1); ret=$?; rf=$( LC_ALL=C printf "%07.2f" $r 2>/dev/null) ; echo "RESULT: $ret --> $rf ($r))"; mv  "tmp_DIFF_$i"  "JPG_DIFF_${rf}_${i}" ; echo; echo; done
 
+          # diff in PSNR is "similarity", >= 25 is "same" for us
           # NOTE: state file extension bin (bad) because
           # alert-alike icon (VLC), extension .sfv (good) is a green check icon
           # in win 7 explorer
@@ -281,9 +288,9 @@ foreach my $pickedfull (@gimages) {
             my @a_missing = glob("$destdir/0000_A_MISSING*");
             my @a_found = glob("$destdir/0000_A_FOUND*");
             if (@a_missing) {
-              `ln -fs '../Google Fotos/$pickedfull' '$missingroot/diff_$jpgid'`;
+              print `ln -fs '../Google Fotos/$pickedfull' '$missingroot/diff_$jpgid'`;
             } elsif (@a_found) {
-              `ln -fs '../Google Fotos/$pickedfull' '$foundroot/same_$jpgid'`;
+              print `ln -fs '../Google Fotos/$pickedfull' '$foundroot/same_$jpgid'`;
             } else {
               print "$destdir/0000_A_MISSING*\n";
               print @a_missing, "\n";
@@ -298,7 +305,7 @@ foreach my $pickedfull (@gimages) {
       }
     } else {
       printf "--- %8s: #%7d %s\n", "Missing", $pickidx, $pickedfull;
-      `ln -fs '../Google Fotos/$pickedfull' '$missingroot/none_$jpgid'`;
+      print `ln -fs '../Google Fotos/$pickedfull' '$missingroot/none_$jpgid'`;
     }
   }
   # die "debug end\n";
@@ -328,19 +335,9 @@ foreach my $pickedfull (@gimages) {
         } else {
           #print "GFILE: $gfile\n";
         }
-        # FIXME HACK REMOVE NOTE: unfortunately, we did not rename
-        # direct found matches and thus they are maybe not unique.
-        if ($found !~ "/same_") {
-          #print "not same_: $found\n";
-          $dest=basename($dest);
-          $found="NOT UNIQUE BUG"; # FIXME use jpgid
-        } else {
-          #print "yes same_: $found\n";
-        }
-        #($dest=~m/FILE0273/) && print "HASH: $dest -> $found\n";
+        # ($dest=~m/FILE0273/) && print "HASH: $dest -> $found\n";
         if (exists $found_gfiles{$dest}) {
-          #FIXME must die
-          warn "ALREADY HASHED $dest -> $found\nas $found_gfiles{$dest}\n";
+          die "ALREADY HASHED $dest -> $found\nas $found_gfiles{$dest}\n";
         }
         $found_gfiles{$dest} = $found;
         #die "debug\n";
@@ -385,8 +382,8 @@ foreach my $pickedfull (@gimages) {
   my $foundcount = 0;
   my $missingcount = 0;
   foreach my $pickedfull (@gimages) {
-    # TODO we cannot postprocess because we skipped above
-    next if ($pickedfull =~ m/Klappe.Die.Erste/);
+    # TODO debug shortcut:
+    #next if ($pickedfull =~ m/Klappe.Die.Erste/);
     # TODO NOTE: we ignore the 11 -iname '*jpeg' files for now!
     next if ($pickedfull =~ m/.jpeg$/);
     # DEBUG:
@@ -402,7 +399,6 @@ foreach my $pickedfull (@gimages) {
       my $destfile = $outputroot . "/" . $pickedfull;
       print `[ -d '$destdir' ] || mkdir '$destdir'`;
       print `ln -fs '$gpath' '$destdir'`;
-      my $pickedbasename=basename($pickedfull);
       if (exists $missing_gfiles{$pickedfull}) {
         $missingcount++;
         print `touch '$destfile'.bin`;
@@ -411,19 +407,12 @@ foreach my $pickedfull (@gimages) {
         $foundcount++;
         print `touch '$destfile'.sfv`;
         #print "  was found  ($found_gfiles{$pickedfull})\n";
-      } elsif (exists $found_gfiles{$pickedbasename}) {
-        $foundcount++;
-        print `touch '$destfile'.sfv`;
-        # FIXME HACK REMOVE NOTE: unfortunately, we did not rename
-        # direct found matches and thus they are maybe not unique.
-        #print "  was found  ($found_gfiles{$pickedfull})\n";
       } else {
         print "  neither found or missing: $pickedfull\n";
-        print "                      base: $pickedbasename\n";
-        #print `ls -l '$gpath'`;
+        print `ls -l '$gpath'`;
         #print `md5sum '$gpath'`;
         print `md5sum '$googleroot/$pickedfull'`;
-        die "nfm\n";
+        die "  neither found or missing: $pickedfull\n";
       }
     }
 
