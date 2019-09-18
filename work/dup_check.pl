@@ -82,36 +82,21 @@ sub filterJpg($)
 }
 
 
-my @gallimages = findJpg($googleroot);
-printf "Found %8d Google entries in $googleroot\n", $#gallimages + 1;
-@gallimages = filterJpg(\@gallimages);
+my @gimages = findJpg($googleroot);
+printf "Found %8d Google entries in $googleroot\n", $#gimages + 1;
+@gimages = filterJpg(\@gimages);
 # renumbered inside, checked manually (OK)
-@gallimages = grep { !/^2015_12_09\//i } @gallimages;
-printf "Found %8d Google JPGs in $googleroot\n", $#gallimages + 1;
+@gimages = grep { !/^2015_12_09\//i } @gimages;
+printf "Found %8d Google JPGs in $googleroot\n", $#gimages + 1;
+# Note: "2013-12-31-", "2013-12-31 -", "2013-12-31 -  #2" etc.
+#   are per-date backup folders (Google Photos mobile upload)
+#   They may have duplicates in other folders (created albums).
+#   Images from other folders don't need to be here (if not a
+#   mobile backup photo was used, but an album e.g. uploaded)
 
-# "2013-12-31-", "2013-12-31 -", "2013-12-31 -  #2" etc. are per-date backup folders
-#   They may have duplicates in other folders (albums).
-#   Other folders may have no entry there (if no backup but upload)
-my @gimages    = grep {  /^\d\d\d\d-\d\d-\d\d/ } @gallimages;
-my @gdupimages = grep { !/^\d\d\d\d-\d\d-\d\d/ } @gallimages;
-printf "Found %8d Google main JPGs in $googleroot\n", $#gimages + 1;
-printf "Found %8d Google dup  JPGs in $googleroot\n", $#gdupimages + 1;
-
-my @gimagebases = map { lc(basename($_)) } @gimages;
-printf "Found %8d Google base JPGs in $googleroot\n", $#gimagebases + 1;
-open T, ">/tmp/b1.lst";
-print T join("\n", @gimagebases), "\n";
-close T;
-
-# Check if all gdupimages are really dups (i.e. included in gimages)
-foreach my $gdupimage (@gdupimages) {
-    my $lcdup=lc(basename($gdupimage));
-    if (grep { $lcdup eq $_ } @gimagebases) {
-        #print "dup: $lcdup\n";
-    } else {
-        print "No duplicate: $gdupimage\n";
-    }
-}
+#open T, ">/tmp/f4.lst";
+#print T join("\n", @gimagebases), "\n";
+#close T;
 
 my @arcimages = findJpg($arcroot);
 printf "Found %8d ARC entries in $arcroot\n", $#arcimages + 1;
