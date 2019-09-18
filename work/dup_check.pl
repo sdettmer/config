@@ -15,9 +15,6 @@
 #   state file 0000_A_MISSING
 #
 # TODO:
-# - fails if two picks have same file name,
-#   then we have two 0000_Google_xxx_jpg and maybe
-#   A_MISSING plus one or more A_FOUND :(
 # - avoid comaparing with itself and remove special handling for PSNR==0 (equality)
 # - how to evalutate the result / state files?
 # - What next? delete existing from MISSING?
@@ -39,6 +36,11 @@
 #   Found    24105 Google JPGs in /raid1/pics/GooglePhotos/Takeout/Google Fotos
 #   Found   102904 ARC entries in /raid1/pics/arc
 #   Found    87383 ARC JPGs in /raid1/pics/arc
+#
+#   real    157m16,288s
+#   user    94m28,768s
+#   sys     25m11,636s
+
 use strict;
 #use utf8;
 use File::Basename;
@@ -128,17 +130,25 @@ foreach my $arcimage (@arcimages) {
 #    print Data::Dumper->Dump( [$arcimages->{"img_1077.jpg"}], ["img_1077"] );
 #}
 
-for (my $n=1; $n<100; $n++) {
-  my $pickidx = int(rand($#gimages + 1));
-  my $pickedfull = $gimages[$pickidx];
-  # $pickedfull = "Silvester 2012/IMG_0113.JPG";
-  #$pickedfull = "2018-08-18/DSC_0003.JPG";
-  #$pickedfull = "2015_12_09/IMG_1077.jpg";
-  # printf "Picked %8d = %s\n", $pickidx, $googleroot . "/" . $pickedfull;
+# Prefix-block instead use of "foreach my $pickedfull (@gimages)":
+#for (my $n=1; $n<100; $n++) {
+#  my $pickidx = int(rand($#gimages + 1));
+#  my $pickedfull = $gimages[$pickidx];
+#  # $pickedfull = "Silvester 2012/IMG_0113.JPG";
+#  #$pickedfull = "2018-08-18/DSC_0003.JPG";
+#  #$pickedfull = "2015_12_09/IMG_1077.jpg";
+#  # printf "Picked %8d = %s\n", $pickidx, $googleroot . "/" . $pickedfull;
+#}
+
+my $pickidx=-1; # counter for array index (compat to old log messages)
+foreach my $pickedfull (@gimages) {
+  $pickidx++;
+  # next if ($pickedfull =~ m/Klappe.Die.Erste/);
   my $gpath = $googleroot . "/" . $pickedfull;
   my ($ghash, $rest) = split /\s+/, `md5sum '$gpath'`;
   my $picked=basename($pickedfull);
   my $lcfile = lc($picked);
+  # TODO debug shortcut:
   # printf "Picked #%8d: %s (%s)\n", $pickidx, $pickedfull, $ghash;
   my $found = 0;
   if (exists $arcimages->{$lcfile}) {
@@ -178,6 +188,9 @@ for (my $n=1; $n<100; $n++) {
     printf "+++ %8s: #%7d %s\n", "Found", $pickidx, $pickedfull;
     `ln -fs '../Google Fotos/$pickedfull' '/raid1/pics/GooglePhotos/Takeout/found/'`;
   } else {
+    my $jpgid = $pickedfull;
+    $jpgid =~ tr|a-zA-Z0-9_# .-|!|c;
+    $jpgid =~ tr| |_|;
     if (exists $arcimages->{$lcfile}) {
       my $samenamecount = $#{$arcimages->{$lcfile}} + 1;
       my $samestr = sprintf "Name %3d", $samenamecount;
@@ -188,25 +201,18 @@ for (my $n=1; $n<100; $n++) {
         print Data::Dumper->Dump( [$arcimages->{$lcfile} ], ["lcfile"] );
         die "end"
       }
-      # FIXME if two picks have same name, we re-use an existing directory here!
-      my $dir = $picked;
-      $dir =~ s/.jpe?g$//i;
-      my $destdir="/raid1/pics/GooglePhotos/Takeout/missing/$dir";
+      my $destdir="/raid1/pics/GooglePhotos/Takeout/missing/tmp_$jpgid";
+      $destdir =~ s/.jpe?g$//i;
       `[ -d '$destdir' ] || mkdir '$destdir'`;
-      my $gdest = $pickedfull;
-      $gdest =~ tr|a-zA-Z0-9_.-|!|c;
-      `ln -fs '../../Google Fotos/$pickedfull' '$destdir/0000_GooglePhotos__$gdest'`;
+      `ln -fs '../../Google Fotos/$pickedfull' '$destdir/0000_GooglePhotos__$jpgid'`;
       foreach my $arcmatch (@{$arcimages->{$lcfile}}) {
         my $path = $arcroot . "/" . $arcmatch->{path};
         my $dest = $arcmatch->{path};
         $dest =~ tr|a-zA-Z0-9_.-|!|c;
         #print "$picked  --> $dest\n";
-        `ln -fs '$path' '$destdir/$dest'`;
+        `ln -fs '$path' '$destdir/arc_$dest'`;
       }
       {
-        # FIXME fails if two picks have same file name,
-        # then we have two 0000_Google_xxx_jpg and maybe
-        # A_MISSING plus one or more A_FOUND :(
         if (1) {
           # [ -d t ] || mkdir t
           # rm -f DIFF_*.JPG;
@@ -227,17 +233,18 @@ for (my $n=1; $n<100; $n++) {
           # NOTE: state file extension bin (bad) because
           # alert-alike icon (VLC), extension .sfv (good) is a green check icon
           # in win 7 explorer
+          # TODO NOTE: we ignore the 11 -iname '*jpeg' files for now!
           print `
             cd '$destdir';
             [ -d tmp ] || mkdir tmp;
-            mogrify -path tmp -thumbnail 128x128 *.JPG;
+            mogrify -path tmp -thumbnail 128x128 -auto-orient *.[Jj][Pp][Gg];
             cd tmp;
             pwd;
             rm -f *_DIFF_*.JPG 0000_A_FOUND* 0000_A_MISSING*;
             touch 0000_A_MISSING.bin;
             for i in *[Jj][Pp][Gg]; do
               echo "Analysing \$i:";
-              r=\$(compare -metric PSNR "\$i" 0000_*.JPG "tmp_DIFF_\$i" 2>&1);
+              r=\$(compare -metric PSNR "\$i" 0000_*.[Jj][Pp][Gg] "tmp_DIFF_\$i" 2>&1);
               ret=\$?;
               echo "ret=\$ret, r=\$r";
               if [ \$ret -eq 0 ] ; then
@@ -262,24 +269,34 @@ for (my $n=1; $n<100; $n++) {
             done;
             cp -a 0000_A_* ..;
           `;
+          # If missing in form "different versions exist only",
+          # then add link in missing directory as well:
+          {
+            my @a_missing = glob("$destdir/0000_A_MISSING*");
+            my @a_found = glob("$destdir/0000_A_FOUND*");
+            if (@a_missing) {
+              `ln -fs '../Google Fotos/$pickedfull' '/raid1/pics/GooglePhotos/Takeout/missing/diff_$jpgid'`;
+            } elsif (@a_found) {
+              `ln -fs '../Google Fotos/$pickedfull' '/raid1/pics/GooglePhotos/Takeout/found/same_$jpgid'`;
+            } else {
+              print "$destdir/0000_A_MISSING*\n";
+              print @a_missing, "\n";
+              print "glob=", glob("$destdir/0000_A_MISSING*"), "\n";
+              print "$destdir/0000_A_FOUND*\n";
+              print @a_found, "\n";
+              print "glob=", glob("$destdir/0000_A_FOUND*"), "\n";
+              die "neither found nor missing: $destdir\n";
+            }
+          }
         }
       }
     } else {
       printf "--- %8s: #%7d %s\n", "Missing", $pickidx, $pickedfull;
-      `ln -fs '../Google Fotos/$pickedfull' '/raid1/pics/GooglePhotos/Takeout/missing/'`;
+      `ln -fs '../Google Fotos/$pickedfull' '/raid1/pics/GooglePhotos/Takeout/missing/none_$jpgid'`;
     }
   }
   # die "debug end\n";
 }
-
-#for (my $n=1; $n<10; $n++) {
-#  my $pickidx = int(rand($#arcimages + 1));
-#  my $pickedfull = $arcimages[$pickidx];
-#  printf "Picked ARC #%8d: %s\n", $pickidx, $arcroot . "/" . $pickedfull;
-#  my $picked=basename($pickedfull);
-#  printf "Picked ARC #%8d: %s\n", $pickidx, $picked;
-#}
-#
 
 
 
