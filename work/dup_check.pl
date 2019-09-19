@@ -331,7 +331,7 @@ my $arc_by_fn = {};
 foreach my $arcimage (@arcimages) {
   addArcByFn($arc_by_fn, lc(basename($arcimage)), $arcimage);
 }
-printf "Hashed%8d ARC lookup by same name\n", scalar keys %$arc_by_fn;
+printf "Hashed%8d ARC lookup by Google's name\n", scalar keys %$arc_by_fn;
 
 # Create by-date index for arc as helper to find images with
 # matching timestamp
@@ -400,23 +400,17 @@ my $arc_by_fn_name_count = scalar keys %$arc_by_fn;
   my $zone_stats = {};
   my $jitter_sum_stats = {};
   my $allmatches = 0;
-  my $truepos = 0;
-  my $falsepos = 0;
   foreach my $gfilename (@gimages) {
     my $takenTime = $gimagedate_by_fn->{$gfilename};
-    my $falseposcheck = 0;
     my $gfilebasename = basename($gfilename);
-    {
-      # If we have such a stem and if does NOT match it is likely
-      # a false positive
-      if ($gfilebasename =~ m/^(DSC.\d\d\d\d|IMG_\d\d\d\d|FILE\d\d\d\d)/) {
-        $falseposcheck = 1;
-      }
-    }
     my $foundit = 0;
     foreach my $zone (@zones) {
       foreach my $jitter (@jitters) {
         my $lookuptime = $takenTime + $zone + $jitter;
+        # Update: the stem check has been removed, because
+        # unfortunately renamings such as:
+        #   2016_05_22_janosch_babybauch/IMG_0018.JPG -> 2016/2016_05_22/IMG_4023.JPG
+        # so we cannot rely on these being false positives.
         if (exists $arcimgage_by_date->{$lookuptime}) {
           $jitter_stats->{$jitter}++;
           $zone_stats->{$zone}++;
@@ -432,40 +426,8 @@ my $arc_by_fn_name_count = scalar keys %$arc_by_fn;
             my @arcinfos  = @$arcinfo_r;
             foreach my $arcinfo (@arcinfos) {
               my $path = $arcinfo->{path};
-              # if first 8 chars are DSC or IMG but do NOT match,
-              # its likely a false positive
               # printf " - %5d %2d: %s\n", $zone, $jitter, $path;
-              if ($falseposcheck) {
-                my $arcbasename = basename($path);
-                if ($arcbasename =~ m/^(DSC.\d\d\d\d|IMG_\d\d\d\d|FILE\d\d\d\d)/) {
-                  my $gstem = substr($gfilebasename, 0, 8);
-                  my $astem = substr($arcbasename, 0, 8);
-                  if ($gstem ne $astem) {
-                    # these make no sense to check, false positive
-                    # print "  POS FALSE gstem = $gstem, astem = $astem\n";
-                    $falsepos++;
-                    if ($zone + $jitter == 0) {
-                      print "  POS EXACT FALSE: $gfilename -> $path\n";
-                    }
-                  } else {
-                    # These are positives. Mostly already
-                    # included in $arc_by_fn, but we can have
-                    # postfixes (such as DSCF1470_small.jpg)
-                    $truepos++;
-                    # print "  POS positive gstem = $gstem, astem = $astem\n";
-                    # check if already marked. Note that we use
-                    # the Google filename as lookup key (lcfile).
-                    addArcByFn($arc_by_fn, lc(basename($gfilename)), $path);
-                  }
-                } else {
-                  # these include the "renamed for import"
-                  addArcByFn($arc_by_fn, lc(basename($gfilename)), $path);
-                  # print "  POS none arcbasename = $arcbasename, gfilebasename = $gfilebasename\n";
-                }
-              } else {
-                addArcByFn($arc_by_fn, lc(basename($gfilename)), $path);
-                # print "  POS none gfilebasename = $gfilebasename\n";
-              }
+              addArcByFn($arc_by_fn, lc(basename($gfilename)), $path);
             }
           }
         }
@@ -473,15 +435,13 @@ my $arc_by_fn_name_count = scalar keys %$arc_by_fn;
     }
     $nomatches++ unless ($foundit);
   }
-  printf "Found %8d timestamp matches (%d missed, %d likely, %d unlikely)\n",
-    $allmatches, $nomatches, $truepos, $falsepos;
+  printf "Found %8d timestamp matches (%d missed)\n", $allmatches, $nomatches;
   # print Data::Dumper->Dump([ $jitter_stats, $zone_stats, $jitter_sum_stats ]);
 }
 my $arc_by_fn_name_and_timestamp_count = scalar keys %$arc_by_fn;
-printf "Hashed%8d new ARC lookup by only timestamp (%d total lookups)\n",
+printf "Hashed%8d new ARC lookup via timestamp similarity (%d total lookups)\n",
   $arc_by_fn_name_and_timestamp_count - $arc_by_fn_name_count,
   $arc_by_fn_name_and_timestamp_count;
-die "debug\n";
 
 #{
 #    use Data::Dumper;
@@ -665,7 +625,7 @@ foreach my $pickedfull (@gimages) {
   # Read in found root. Note: unfortunately, we did not rename
   # direct found matches and thus they are maybe not unique.
   my %found_gfiles = ();
-  if (1) {
+  {
     {
       my @found;
       @found = glob("$foundroot/*.[Jj][Pp][Gg]");
@@ -695,7 +655,7 @@ foreach my $pickedfull (@gimages) {
 
   # Read in missing files
   my %missing_gfiles = ();
-  if (1) {
+  {
     {
       my @missing;
       @missing = glob("$missingroot/*.[Jj][Pp][Gg]");
