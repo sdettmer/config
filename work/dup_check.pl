@@ -34,12 +34,18 @@
 # Some metrics:
 #   Found    54292 Google entries in /raid1/pics/GooglePhotos/Takeout/Google Fotos
 #   Found    24105 Google JPGs in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Hashed   24105 Google for timestamps in /raid1/pics/GooglePhotos/Takeout/Google Fotos
 #   Found   102904 ARC entries in /raid1/pics/arc
 #   Found    87383 ARC JPGs in /raid1/pics/arc
-#   Found    10286 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
-#   Hashed   10286 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
-#   Found    13808 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
-#   Hashed   13808 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
+#   Hashed   34122 ARC lookup by Google's name
+#   Hashed   78490 ARC timestamps in /raid1/pics/arc
+#   Found    15721 timestamp matches (11856 missed)
+#   Hashed    2331 new ARC lookup via timestamp similarity (36453 total lookups)
+#   Found    12530 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
+#   Hashed   12530 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
+#   Found    11564 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
+#   Hashed   11564 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
+#   postprocess done, found = 12530, missing = 11564
 #
 #   real    157m16,288s
 #   user    94m28,768s
@@ -59,7 +65,6 @@ select(STDOUT); $| = 1;
 #print "I owe you \N{U+20AC}160\n";
 
 
-my $filelist = "/raid1/pics/GooglePhotos/Takeout/files.txt";
 my $googleroot = "/raid1/pics/GooglePhotos/Takeout/Google Fotos";
 my $arcroot = "/raid1/pics/arc";
 
@@ -459,10 +464,11 @@ printf "Hashed%8d new ARC lookup via timestamp similarity (%d total lookups)\n",
 #}
 
 my $pickidx=-1; # counter for array index (compat to old log messages)
+# TODO debug shortcut: work on small fixed list
+# @gimages = qw( 2016-12-24/DSC00876_1.JPG  2016-12-24/DSC_0556.JPG 2016-12-24/PICT_20161224_191328.JPG 2016-12-24/DSC00876.JPG 2016-12-24/DSC_0557.JPG );
 foreach my $pickedfull (@gimages) {
   $pickidx++;
   # TODO debug shortcut:
-  # next if ($pickedfull =~ m/Klappe.Die.Erste/);
   if (0) {
     print "DEBUG SHORTCUT: assuming being done with checking\n";
     last;
@@ -503,17 +509,19 @@ foreach my $pickedfull (@gimages) {
   {
     print `[ -d '$missingroot' ] || mkdir '$missingroot'`;
     print `[ -d '$foundroot' ] || mkdir '$foundroot'`;
+    print `rm -f '$missingroot/'none_'$jpgid' '$foundroot/'equal_'$jpgid'`;
+    print `rm -f '$missingroot/'diff_'$jpgid' '$foundroot/'same_'$jpgid'`;
   }
   if ($found) {
     #use Data::Dumper;
     #print Dumper $found, "found";
-    printf "+++ %8s: #%7d %s\n", "Found", $pickidx, $pickedfull;
+    printf "  = %15s @%06d: %s\n", "Found copy", $pickidx, $pickedfull;
     print `ln -fs '../Google Fotos/$pickedfull' '$foundroot/equal_$jpgid'`;
   } else {
     if (exists $arc_by_fn->{$lcfile}) {
       my $samenamecount = $#{$arc_by_fn->{$lcfile}} + 1;
-      my $samestr = sprintf "Name %3d", $samenamecount;
-      printf "  = %8s: #%7d %s\n", , $samestr, $pickidx, $pickedfull;
+      my $samestr = sprintf "%3d candidates", $samenamecount;
+      printf "  ? %15s @%06d: %s\n", , $samestr, $pickidx, $pickedfull;
       if (0) {
         printf "xxx %d -> %d -> %s\n", $#{$arc_by_fn->{$lcfile}}, $samenamecount;
         use Data::Dumper;
@@ -535,7 +543,7 @@ foreach my $pickedfull (@gimages) {
         if (1) {
           # [ -d t ] || mkdir t
           # rm -f DIFF_*.JPG;
-          # mogrify -path t -thumbnail 128x128 *.JPG
+          # mogrify -path t -thumbnail 128x128! *.JPG
           # for i in *JPG ; do
           #   # compare -metric PSNR 0000_*.JPG "$i" "DIFF_$i";
           #   echo "$i:" ;
@@ -554,49 +562,65 @@ foreach my $pickedfull (@gimages) {
           # alert-alike icon (VLC), extension .sfv (good) is a green check icon
           # in win 7 explorer
           # TODO NOTE: we ignore the 11 -iname '*jpeg' files for now!
-          print `
+          # Using -thumbnail geometry:
+          #   http://www.imagemagick.org/script/command-line-processing.php#geometry
+          #   widthxheight!     Width and height emphatically given,
+          #                     original aspect ratio ignored.
+          # otherwise we might fail comparing 85x128 and 86x128
+          #   (-auto-orient rounding difference?)
+          my $out = `
+            exec 2>&1;
             cd '$destdir';
+            rm -f 0000_A_FOUND* 0000_A_MISSING*;
             [ -d tmp ] || mkdir tmp;
-            mogrify -path tmp -thumbnail 128x128 -auto-orient *.[Jj][Pp][Gg];
+            mogrify -path tmp -thumbnail 128x128! -auto-orient *.[Jj][Pp][Gg];
             cd tmp;
-            pwd;
+            echo "  cwd=\$(pwd)";
             rm -f *_DIFF_*.JPG 0000_A_FOUND* 0000_A_MISSING*;
             touch 0000_A_MISSING.bin;
             for i in *[Jj][Pp][Gg]; do
-              echo "Analysing \$i:";
+              echo "  - Analysing \$i:";
               r=\$(compare -metric PSNR "\$i" 0000_*.[Jj][Pp][Gg] "tmp_DIFF_\$i" 2>&1);
               ret=\$?;
-              echo "ret=\$ret, r=\$r";
+              echo "    ret=\$ret, psnr=\$r";
               if [ \$ret -eq 0 ] ; then
-                echo "FOUND SAME";
+                echo "    FOUND SELF";
                 mv "tmp_DIFF_\$i" "JPG_DIFF_\${rf}_\${i}";
               elif [ \$ret -eq 1 ] ; then
                 rf=\$( LC_ALL=C printf "%06.2f" \$r 2>/dev/null);
                 ri=\${r%%.*};
-                echo "RESULT: \$ret --> \$rf (\$r) --> \$ri";
+                echo "    RESULT: \$ret --> \$rf (\$r) --> \$ri";
                 mv "tmp_DIFF_\$i" "JPG_DIFF_\${rf}_\${i}";
                 if [ "\$ri" -gt 25 ] ; then
-                  echo "FOUND (with \$r)!";
+                  echo "    FOUND SAME (with \$r)!";
                   rm -f 0000_A_MISSING.bin;
                   touch 0000_A_FOUND_\${rf}_\${i}.sfv;
                 else
-                  echo "NOT_FOUND (with \$r)";
+                  echo "    NOT_FOUND (with \$r)";
                 fi
               else
-                echo "UNCOMPARABLE (\$ret:\$r)";
+                echo "    UNCOMPARABLE (\$ret:\$r)";
               fi
-              echo; echo;
+              echo;
             done;
             cp -a 0000_A_* ..;
           `;
+          #print $out;
+          open T, '>:encoding(UTF-8)', "$destdir/tmp/PSNR.log";
+          print T $out;
+          close T;
           # If missing in form "different versions exist only",
           # then add link in missing directory as well:
+          # Note: we can have multiple 0000_A_FOUND_* files,
+          # (for very similar images), this does not harm here.
           {
             my @a_missing = glob("$destdir/0000_A_MISSING*");
             my @a_found = glob("$destdir/0000_A_FOUND*");
             if (@a_missing) {
+              printf "  ! %15s @%06d: %s\n", "all different", $pickidx, $pickedfull;
               print `ln -fs '../Google Fotos/$pickedfull' '$missingroot/diff_$jpgid'`;
             } elsif (@a_found) {
+              printf "  ~ %15s @%06d: %s\n", "Found same", $pickidx, $pickedfull;
               print `ln -fs '../Google Fotos/$pickedfull' '$foundroot/same_$jpgid'`;
             } else {
               print "$destdir/0000_A_MISSING*\n";
@@ -611,12 +635,13 @@ foreach my $pickedfull (@gimages) {
         }
       }
     } else {
-      printf "--- %8s: #%7d %s\n", "Missing", $pickidx, $pickedfull;
+      printf "  ! %15s @%06d: %s\n", "no candidates", $pickidx, $pickedfull;
       print `ln -fs '../Google Fotos/$pickedfull' '$missingroot/none_$jpgid'`;
     }
   }
   # die "debug end\n";
 }
+
 
 
 # Now present the output somehow.
@@ -689,10 +714,9 @@ foreach my $pickedfull (@gimages) {
   my $foundcount = 0;
   my $missingcount = 0;
   foreach my $pickedfull (@gimages) {
-    # TODO debug shortcut:
-    #next if ($pickedfull =~ m/Klappe.Die.Erste/);
     # TODO NOTE: we ignore the 11 -iname '*jpeg' files for now!
     next if ($pickedfull =~ m/.jpeg$/);
+    # TODO debug shortcut:
     if (0) {
       print "DEBUG SHORTCUT: assuming being done with postprocessing\n";
       last;
@@ -726,7 +750,7 @@ foreach my $pickedfull (@gimages) {
         die "  neither found or missing: $pickedfull\n";
       }
     }
-
+    # die "debug\n";
   }
   print "postprocess done, found = $foundcount, missing = $missingcount\n";
 }
