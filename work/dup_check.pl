@@ -4,11 +4,14 @@
 #
 # - collects all files from SRC
 # - filter SRC list to get only JPG
+# - extract timestamp information from JSON files and build LUT for similar timestamps
 # - checks if a file with same filehash exists (if so, it obviously exists)
 # - otherwise, symlink to MISSING folder (that contains images
 #   that do not binrary wise exist in arc)
-# - otherwise, all files with same name (and different filehash) are compared
-#   with imagemagick compare metric
+# - otherwise, all files with same name or similar timestamp (and different filehash)
+#   are compared with imagemagick compare metric
+#   Note:
+#     find . \( -iname '*.jpg' -o -iname '*.jpeg' \) -print0 | xargs --null exiv2 -T mv
 # - if metric > 25 (empirically picked value) count as "very similar existing"
 #   so produce a state file 0000_A_FOUND
 # - if none of the same named files is "very similar", produce a
@@ -16,7 +19,7 @@
 #
 # TODO:
 # - avoid comaparing with itself and remove special handling for PSNR==0 (equality)
-# - how to evalutate the result / state files?
+# - good idea to ignore all non-JPGs here? So others are invisible in check_result dir
 # - What next? delete existing from MISSING?
 # -- maybe first check if all Google Takeout files have at least
 #    one instance in a date folder?
@@ -32,24 +35,24 @@
 #   TMP $missingroot="/raid1/pics/GooglePhotos/Takeout/missing/"
 #
 # Some metrics:
-#   Found    54292 Google entries in /raid1/pics/GooglePhotos/Takeout/Google Fotos
-#   Found    24105 Google JPGs in /raid1/pics/GooglePhotos/Takeout/Google Fotos
-#   Hashed   24105 Google for timestamps in /raid1/pics/GooglePhotos/Takeout/Google Fotos
-#   Found   102904 ARC entries in /raid1/pics/arc
-#   Found    87383 ARC JPGs in /raid1/pics/arc
-#   Hashed   34122 ARC lookup by Google's name
-#   Hashed   78490 ARC timestamps in /raid1/pics/arc
-#   Found    15721 timestamp matches (11856 missed)
-#   Hashed    2331 new ARC lookup via timestamp similarity (36453 total lookups)
-#   Found    12530 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
-#   Hashed   12530 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
-#   Found    11564 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
-#   Hashed   11564 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
-#   postprocess done, found = 12530, missing = 11564
+#   Found    46574 Google entries in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Found    20363 Google JPGs in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Hashed   20363 Google for timestamps in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Found   102977 ARC entries in /raid1/pics/arc
+#   Found    87453 ARC JPGs in /raid1/pics/arc
+#   Hashed   34126 ARC lookup by Google's name
+#   Hashed   78756 ARC timestamps in /raid1/pics/arc
+#   Found    15983 timestamp matches (8708 missed)
+#   Hashed    1809 new ARC lookup via timestamp similarity (35935 total lookups)
+#   Found    10759 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
+#   Hashed   10759 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
+#   Found     9593 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
+#   Hashed    9593 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
+#   postprocess done, found = 10759, missing = 9593
 #
-#   real    157m16,288s
-#   user    94m28,768s
-#   sys     25m11,636s
+#   real    215m49,724s
+#   user    137m0,784s
+#   sys     40m46,272s
 
 use strict;
 use POSIX;
