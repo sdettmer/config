@@ -18,7 +18,6 @@
 #   state file 0000_A_MISSING
 #
 # TODO:
-# - avoid comaparing with itself and remove special handling for PSNR==0 (equality)
 # - good idea to ignore all non-JPGs here? So others are invisible in check_result dir
 # - What next? delete existing from MISSING?
 # -- maybe first check if all Google Takeout files have at least
@@ -434,7 +433,7 @@ my $arc_by_fn_name_count = scalar keys %$arc_by_fn;
             my @arcinfos  = @$arcinfo_r;
             foreach my $arcinfo (@arcinfos) {
               my $path = $arcinfo->{path};
-              # printf " - %5d %2d: %s\n", $zone, $jitter, $path;
+              # printf " - %5d %2d: %s (%s)\n", $zone, $jitter, $path, $gfilename;
               addArcByFn($arc_by_fn, lc(basename($gfilename)), $path);
             }
           }
@@ -531,8 +530,12 @@ foreach my $pickedfull (@gimages) {
         print Data::Dumper->Dump( [$arc_by_fn->{$lcfile} ], ["lcfile"] );
         die "end"
       }
-      my $destdir=$missingroot . "/tmp_$jpgid";
+      my $destdir = $missingroot . "/tmp_$jpgid";
       $destdir =~ s/.jpe?g$//i;
+      if (length ($destdir) < 5) {
+        die "bad destdir = $destdir\n"; # paranoia
+      }
+      print `[ -d '$destdir' ] && rm -r '$destdir'`;
       print `[ -d '$destdir' ] || mkdir '$destdir'`;
       print `ln -fs '../../Google Fotos/$pickedfull' '$destdir/0000_GooglePhotos__$jpgid'`;
       foreach my $arcmatch (@{$arc_by_fn->{$lcfile}}) {
@@ -571,6 +574,7 @@ foreach my $pickedfull (@gimages) {
           #                     original aspect ratio ignored.
           # otherwise we might fail comparing 85x128 and 86x128
           #   (-auto-orient rounding difference?)
+          # Note: sometimes different images are so similar that the thumbnails are "equal"
           my $out = `
             exec 2>&1;
             cd '$destdir';
@@ -583,12 +587,18 @@ foreach my $pickedfull (@gimages) {
             touch 0000_A_MISSING.bin;
             for i in *[Jj][Pp][Gg]; do
               echo "  - Analysing \$i:";
+              if [ "\$i" = '0000_GooglePhotos__$jpgid' ] ; then
+                echo "    SKIP SELF";
+                continue;
+              fi
               r=\$(compare -metric PSNR "\$i" 0000_*.[Jj][Pp][Gg] "tmp_DIFF_\$i" 2>&1);
               ret=\$?;
               echo "    ret=\$ret, psnr=\$r";
               if [ \$ret -eq 0 ] ; then
-                echo "    FOUND SELF";
-                mv "tmp_DIFF_\$i" "JPG_DIFF_\${rf}_\${i}";
+                echo "    FOUND SAME (exact)";
+                mv "tmp_DIFF_\$i" "JPG_DIFF_999.99_\${i}";
+                rm -f 0000_A_MISSING.bin;
+                touch 0000_A_FOUND_SAME_\${i}.sfv;
               elif [ \$ret -eq 1 ] ; then
                 rf=\$( LC_ALL=C printf "%06.2f" \$r 2>/dev/null);
                 ri=\${r%%.*};
