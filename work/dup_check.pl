@@ -34,24 +34,24 @@
 #   TMP $missingroot="/raid1/pics/GooglePhotos/Takeout/missing/"
 #
 # Some metrics:
-#   Found    46574 Google entries in /raid1/pics/GooglePhotos/Takeout/Google Fotos
-#   Found    20363 Google JPGs in /raid1/pics/GooglePhotos/Takeout/Google Fotos
-#   Hashed   20363 Google for timestamps in /raid1/pics/GooglePhotos/Takeout/Google Fotos
-#   Found   102977 ARC entries in /raid1/pics/arc
-#   Found    87453 ARC JPGs in /raid1/pics/arc
-#   Hashed   34126 ARC lookup by Google's name
-#   Hashed   78756 ARC timestamps in /raid1/pics/arc
-#   Found    15983 timestamp matches (8708 missed)
-#   Hashed    1809 new ARC lookup via timestamp similarity (35935 total lookups)
-#   Found    10759 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
-#   Hashed   10759 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
-#   Found     9593 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
-#   Hashed    9593 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
-#   postprocess done, found = 10759, missing = 9593
+#   Found    44896 Google entries in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Found    19324 Google JPGs in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Hashed   19324 Google for timestamps in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Found   102780 ARC entries in /raid1/pics/arc
+#   Found    87403 ARC JPGs in /raid1/pics/arc
+#   Hashed   34142 ARC lookup by Google's name
+#   Hashed   78762 ARC timestamps in /raid1/pics/arc
+#   Found    16195 timestamp matches (7610 missed)
+#   Hashed    1836 new ARC lookup via timestamp similarity (35978 total lookups)
+#   Found    10747 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
+#   Hashed   10747 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
+#   Found     8566 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
+#   Hashed    8566 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
+#   postprocess done, found = 10747, missing = 8566
 #
-#   real    215m49,724s
-#   user    137m0,784s
-#   sys     40m46,272s
+#   real    214m15,890s
+#   user    135m45,720s
+#   sys     40m45,384s
 
 use strict;
 use POSIX;
@@ -268,6 +268,13 @@ printf "Found %8d Google entries in $googleroot\n", $#gimages + 1;
 @gimages = filterJpg(\@gimages);
 # renumbered inside, checked manually (OK)
 @gimages = grep { !/^2015_12_09\//i } @gimages;
+  # DEBUG
+  if (0) {
+    print "DEBUG SPECIAL HACK\n";
+    print "first = $gimages[0]\n";
+    @gimages = grep { /^(2014-01-|Reise.nach.Thailand)/i } @gimages;
+    print "first = $gimages[0]\n";
+  }
 printf "Found %8d Google JPGs in $googleroot\n", $#gimages + 1;
 # Note: "2013-12-31-", "2013-12-31 -", "2013-12-31 -  #2" etc.
 #   are per-date backup folders (Google Photos mobile upload)
@@ -401,7 +408,9 @@ my $arc_by_fn_name_count = scalar keys %$arc_by_fn;
   #   '-7200' =>  1447, # "2010_11_27 Klappe Die Erste"  (again!) 0 -1 "24.04.2010" 1
   #   '10800' =>   292, # manually checked: filenames differ
   #  '-10800' =>   243, # manually checked: filenames differ
-  my @zones   = qw( 0 3600 -3600 -7200 );
+  #   '21600' =>        # manually looked up offset for Google Thailand
+  #   '43200' =>        # manually looked up offset for Google Neuseeland
+  my @zones   = qw( 0 3600 -3600 -7200 21600 43200 );
 
   my $jitter_stats = {};
   my $zone_stats = {};
