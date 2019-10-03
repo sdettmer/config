@@ -34,25 +34,25 @@
 #   TMP $missingroot="/raid1/pics/GooglePhotos/Takeout/missing/"
 #
 # Some metrics:
-#   Found    44896 Google entries in /raid1/pics/GooglePhotos/Takeout/Google Fotos
-#   Found    19324 Google JPGs in /raid1/pics/GooglePhotos/Takeout/Google Fotos
-#   Hashed   19324 Google for timestamps in /raid1/pics/GooglePhotos/Takeout/Google Fotos
-#   Found   102780 ARC entries in /raid1/pics/arc
-#   Found    87403 ARC JPGs in /raid1/pics/arc
-#   Hashed   34142 ARC lookup by Google's name
-#   Hashed   78762 ARC timestamps in /raid1/pics/arc
-#   Found    16195 timestamp matches (7610 missed)
-#   Hashed    1836 new ARC lookup via timestamp similarity (35978 total lookups)
-#   Found    10747 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
-#   Hashed   10747 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
-#   Found     8566 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
-#   Hashed    8566 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
-#   postprocess done, found = 10747, missing = 8566
+#   Found     6862 Google entries in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Found     3129 Google JPGs in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Hashed    3129 Google for timestamps in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Found   102778 ARC entries in /raid1/pics/arc
+#   Found    87404 ARC JPGs in /raid1/pics/arc
+#   Hashed   34143 ARC lookup by Google's name
+#   Hashed   78763 ARC timestamps in /raid1/pics/arc
+#   Found      698 timestamp matches (2615 missed)
+#   Hashed     271 new ARC lookup via timestamp similarity (34414 total lookups)
+#   Found      341 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
+#   Hashed     341 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
+#   Found     2786 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
+#   Hashed    2786 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
+#   postprocess done, found = 341, missing = 2786
 #
-#   real    214m15,890s
-#   user    135m45,720s
-#   sys     40m45,384s
-
+#   real    14m18,337s
+#   user    8m13,780s
+#   sys     2m26,424s
+#
 use strict;
 use POSIX;
 #use utf8;
