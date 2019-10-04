@@ -34,25 +34,25 @@
 #   TMP $missingroot="/raid1/pics/GooglePhotos/Takeout/missing/"
 #
 # Some metrics:
-#   Found     6862 Google entries in /raid1/pics/GooglePhotos/Takeout/Google Fotos
-#   Found     3129 Google JPGs in /raid1/pics/GooglePhotos/Takeout/Google Fotos
-#   Hashed    3129 Google for timestamps in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Found     5040 Google entries in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Found     2138 Google JPGs in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Hashed    2138 Google for timestamps in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Touchd       0 Google files with JSON 'takenTime' /raid1/pics/GooglePhotos/Takeout/Google Fotos
 #   Found   102778 ARC entries in /raid1/pics/arc
 #   Found    87404 ARC JPGs in /raid1/pics/arc
 #   Hashed   34143 ARC lookup by Google's name
 #   Hashed   78763 ARC timestamps in /raid1/pics/arc
-#   Found      698 timestamp matches (2615 missed)
-#   Hashed     271 new ARC lookup via timestamp similarity (34414 total lookups)
-#   Found      341 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
-#   Hashed     341 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
-#   Found     2786 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
-#   Hashed    2786 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
-#   postprocess done, found = 341, missing = 2786
+#   Found      190 timestamp matches (1994 missed)
+#   Hashed     104 new ARC lookup via timestamp similarity (34247 total lookups)
+#   Found        0 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
+#   Hashed       0 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
+#   Found     2137 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
+#   Hashed    2137 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
+#   postprocess done, found = 0, missing = 2137
 #
-#   real    14m18,337s
-#   user    8m13,780s
-#   sys     2m26,424s
-#
+#   real    7m46,702s
+#   user    4m49,560s
+#   sys     1m21,500s
 use strict;
 use POSIX;
 #use utf8;
@@ -95,7 +95,8 @@ sub filterJpg($)
     my $inlist = shift;
     my @jpgs = @${inlist};
 
-    @jpgs = grep { !/.(json|mp4|mts|m4v|mov|avi|bin)$/i } @jpgs;
+    @jpgs = grep { !/.json$/i } @jpgs;
+    @jpgs = grep { !/.(mp4|mts|m4v|mov|avi|bin)$/i } @jpgs;
     @jpgs = grep { !/.(par2|db|db.1|db.2|info|info.1|cr2|tmp|thm|ini|cpt|7z|log|zip|tps|xmp|putt|pspimage|rss|hdr)$/i } @jpgs;
     @jpgs = grep { !/.(gif|png|pdf|psd|webp)$/i } @jpgs;
     @jpgs = grep { !/descript.ion(.1)?|Online.url anzeigen$/i } @jpgs;
@@ -114,6 +115,8 @@ sub getJsonDate($)
   #       "timestamp": "1450924625",
   #       "formatted": "24.12.2015, 02:37:05 UTC"
   #   }
+  # For updating mtime, we need in one run the GIF, PNG, MP4 as well
+  #   (not tested whether jpeg matcher also works with GIF etc)
   if (! -e $filename) {
     # print "no $filename\n";
     my $originalname = $filename;
@@ -129,7 +132,7 @@ sub getJsonDate($)
     #   download_20140927_224311(1).jpeg -> download_20140927_224311.jpeg.json
     #   Then the few in 2018-05-04 (see below)
     {
-      $fbname =~ s/-bearbeitet((\(\d\))?.jpg.json)$/$1/;
+      $fbname =~ s/-bearbeitet((\(\d\))?.(jpg|JPG).json)$/$1/;
       if (-e $fbname) {
         $fallback = "(direct fallback)";
         $filename = $fbname;
@@ -149,8 +152,9 @@ sub getJsonDate($)
         #    DSC_0045-EFFECTS-bearbeitet(1).jpg -> DSC_0045-EFFECTS.jpg(1).json
         #    DSC_0026(1).JPG.json -> DSC_0026.JPG(1).json
         #    2019-03-23(19).jpg -> 2019-03-23.jpg(19).json
+        #    MOVIE(1).mp4 -> MOVIE.mp4(1).json
         my $altfb = $fbname;
-        $altfb =~ s/(\(\d\d?\)).(jpg|JPG).json$/.$2$1.json/g;
+        $altfb =~ s/(\(\d\d?\)).(jpg|JPG|mp4|png).json$/.$2$1.json/g;
         if (-e $altfb) {
           $filename = $altfb;
           $fallback = "(jpg(1).json fallback)";
@@ -162,7 +166,7 @@ sub getJsonDate($)
         # special handling for cases like:
         #    download_20140927_224311(1).jpeg -> download_20140927_224311.jpeg.json
         my $altfb = $fbname;
-        $altfb =~ s/(\(\d\)).jpeg.json$/.jpeg.json/g;
+        $altfb =~ s/\(\d\).(jpeg|png).json$/.$1.json/g;
         if (-e $altfb) {
           $filename = $altfb;
           $fallback = "(jpeg(1).json removal fallback)";
@@ -173,8 +177,9 @@ sub getJsonDate($)
       if (!-e $filename) {
         # special handling for cases like:
         #    2014-01-23.jpg -> 2014-01-23.json
+        #    8750749558250643191_account_id=1.png -> 8750749558250643191_account_id=1.json
         my $altfb = $fbname;
-        $altfb =~ s/.jpg.json$/.json/g;
+        $altfb =~ s/.(jpg|png|gif|MOV).json$/.json/g;
         if (-e $altfb) {
           $filename = $altfb;
           $fallback = "(no jpg fallback)";
@@ -224,6 +229,7 @@ sub getJsonDate($)
         $shortfb =~ s/\Q$googleroot\E\///;
         print "no fallbacks for $shortfb\n"
             . " fbname = $fbname\n";
+        # return 0; # DEBUG to get list of all missing JSONs
       } else {
         my $shortorg = $originalname;
         $shortorg =~ s/\Q$googleroot\E\///;
@@ -301,6 +307,26 @@ foreach my $pickedfull (@gimages) {
 }
 printf "Hashed%8d Google for timestamps in $googleroot\n", scalar keys %$gimagedate_by_fn;
 
+# Ensure the Google File has the correct timestamp (normally, it has not):
+my $touched = 0;
+foreach my $pickedfull (@gimages) {
+  my $gpath = $googleroot . "/" . $pickedfull;
+  my $takentime = $gimagedate_by_fn->{$pickedfull};
+  if (1) {
+    my @stat = stat($gpath) or die "cannot stat '$gpath': $!\n";
+    my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size,
+      $atime, $mtime, $ctime, $blksize, $blocks) = @stat;
+    if ($mtime != $takentime) {
+      #print "  - Setting utime $atime -> now, $mtime -> $takentime $gpath\n";
+      utime(time, $takentime, $gpath) or die "cannot touch '$gpath': $!\n";
+      $touched++;
+    } else {
+      #print "  . keeping utime $atime -> now, $mtime -> $takentime $gpath\n";
+    }
+    #die "debug\n";
+  }
+}
+printf "Touchd%8d Google files with JSON 'takenTime' $googleroot\n", $touched;
 
 
 my @arcimages = findFiles($arcroot);
