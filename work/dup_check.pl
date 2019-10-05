@@ -34,25 +34,25 @@
 #   TMP $missingroot="/raid1/pics/GooglePhotos/Takeout/missing/"
 #
 # Some metrics:
-#   Found     5040 Google entries in /raid1/pics/GooglePhotos/Takeout/Google Fotos
-#   Found     2138 Google JPGs in /raid1/pics/GooglePhotos/Takeout/Google Fotos
-#   Hashed    2138 Google for timestamps in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Found     3649 Google entries in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Found     1659 Google JPGs in /raid1/pics/GooglePhotos/Takeout/Google Fotos
+#   Hashed    1659 Google for timestamps in /raid1/pics/GooglePhotos/Takeout/Google Fotos
 #   Touchd       0 Google files with JSON 'takenTime' /raid1/pics/GooglePhotos/Takeout/Google Fotos
-#   Found   102778 ARC entries in /raid1/pics/arc
-#   Found    87404 ARC JPGs in /raid1/pics/arc
-#   Hashed   34143 ARC lookup by Google's name
-#   Hashed   78763 ARC timestamps in /raid1/pics/arc
-#   Found      190 timestamp matches (1994 missed)
-#   Hashed     104 new ARC lookup via timestamp similarity (34247 total lookups)
-#   Found        0 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
-#   Hashed       0 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
-#   Found     2137 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
-#   Hashed    2137 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
-#   postprocess done, found = 0, missing = 2137
+#   Found     1657 ARC entries in /raid1/pics/rapid_photo_downloads
+#   Found     1657 ARC JPGs in /raid1/pics/rapid_photo_downloads
+#   Hashed    1586 ARC lookup by Google's name
+#   Hashed    1588 ARC timestamps in /raid1/pics/rapid_photo_downloads
+#   Found     1807 timestamp matches (0 missed)
+#   Hashed       0 new ARC lookup via timestamp similarity (1586 total lookups)
+#   Found     1659 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
+#   Hashed    1659 FOUND entries in /raid1/pics/GooglePhotos/Takeout/found
+#   Found        0 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
+#   Hashed       0 MISSING entries in /raid1/pics/GooglePhotos/Takeout/missing
+#   postprocess done, found = 1659, missing = 0
 #
-#   real    7m46,702s
-#   user    4m49,560s
-#   sys     1m21,500s
+#   real    0m38,342s
+#   user    0m1,932s
+#   sys     0m3,180s
 use strict;
 use POSIX;
 #use utf8;
@@ -69,6 +69,8 @@ select(STDOUT); $| = 1;
 
 my $googleroot = "/raid1/pics/GooglePhotos/Takeout/Google Fotos";
 my $arcroot = "/raid1/pics/arc";
+#to remove all downloaded JPGs
+#my $arcroot = "/raid1/pics/rapid_photo_downloads";
 
 # These two must be direct subdirs of GooglePhotos/Takeout/:
 my $missingroot = "/raid1/pics/GooglePhotos/Takeout/missing";
@@ -554,6 +556,13 @@ foreach my $pickedfull (@gimages) {
     #print Dumper $found, "found";
     printf "  = %15s @%06d: %s\n", "Found copy", $pickidx, $pickedfull;
     print `ln -fs '../Google Fotos/$pickedfull' '$foundroot/equal_$jpgid'`;
+    # Unfortunately, our result processor logic does not allow this in same run
+    {
+      my $killCopiedSources = 0;
+      if ($killCopiedSources) {
+        unlink $gpath or die "cannot unlink $gpath: $!\n";
+      }
+    }
   } else {
     if (exists $arc_by_fn->{$lcfile}) {
       my $samenamecount = $#{$arc_by_fn->{$lcfile}} + 1;
