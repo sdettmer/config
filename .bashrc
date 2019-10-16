@@ -99,7 +99,8 @@ PS1=$PS1_mono
 # don't use it. bash-4.1.5(1) works (bash-3.2.33(1) doesn't).
 PS1_color='\[\e]0;\w\a\]\[\e[32m\]\u@\h:\[\e[33m\]\w\[\e[32m\]$(__git_ps1 " (%s)")\[\e[0m\] $ '
 PS1_color_n='\[\e]0;\w\a\]\[\e[32m\]\u@\h:\[\e[33m\]\w\[\e[32m\]$(__git_ps1 " (%s)")\[\e[0m\]\n$ '
-if [ "$TERM" = "xterm" -o "$TERM" = "rxvt-cygwin-native" ] ; then
+# =~ is regex and excepts xterm-256color etc.
+if [[ "$TERM" =~ "xterm" || "$TERM" = "rxvt-cygwin-native" ]] ; then
     [ "${BASH_VERSINFO[0]}" -ge "4" ] && PS1=$PS1_color
     # comment out next line to get monochrome propmt on bash-3.
     [ "${BASH_VERSINFO[0]}" -le "3" ] && PS1=$PS1_color_n
