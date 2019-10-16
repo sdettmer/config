@@ -60,8 +60,14 @@ test -z "$XAUTHORITY" && export XAUTHORITY=~/.Xauthority
 
 # Needed in ND environment with forced UTF-8 on servers (?)
 #   I hope I'll get a better idea how to workaround this one day...
+#   See also .bashrc
 #export LC_ALL=C.UTF-8
 #export LC_ALL=de_DE.UTF-8
+#export LANG=de_DE.ISO-8859-1
+# UTF8 console (how to autodetect?):
+export LC_ALL=de_DE.UTF-8
+export LANG=de_DE.UTF-8
+export LANGUAGE=de_DE.UTF-8
 
 # breaks mutt, so don't use xterm-256color
 #   test "$TERM" = "xterm" && export TERM=xterm-256color

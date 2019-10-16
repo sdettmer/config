@@ -48,7 +48,10 @@ export PERL5LIB=~/usr/lib/perl5:~/usr/lib/perl5/site_perl
 export LD_LIBRARY_PATH=~/usr/lib
 export MANPATH=~/usr/share/man:$MANPATH
 
-if [ -d ~/opt/jdk1.7.0_71 ] ; then
+if [ -d ~/opt/jdk1.8.0_171/ ] ; then
+    export JAVA_HOME=~/opt/jdk1.8.0_171
+    export PATH=~/bin:~/opt/jdk1.8.0_171/bin:$PATH:/home/pub/bin
+elif [ -d ~/opt/jdk1.7.0_71 ] ; then
     export JAVA_HOME=~/opt/jdk1.7.0_71
     export PATH=~/bin:~/opt/jdk1.7.0_71/bin:$PATH:/home/pub/bin
 fi
@@ -72,6 +75,10 @@ export A32DE_DFS_DIR="/cygdrive/c/Programme/Ingedev503/CommonFiles/~d~e0200_a32d
 export PATH=~/bin:$PATH:/home/pub/bin:/c/MinGW/bin:/c/cygwin/bin
 export KEYFILEPATH="c:/Programme/INGEDEV408/Key/"
 #export JAVA_HOME=/cygdrive/c/Programme/Java/jre1.5.0_06/
+
+# fslint is a toolset to find various problems with filesystems,
+# including duplicate files and problematic filenames etc.
+[ -d /usr/share/fslint/fslint/ ] && export PATH=$PATH:/usr/share/fslint/fslint/
 
 # Nomad Digital test port offset value for Steffen:
 export ND_PORT_OFFSET=9
@@ -110,7 +117,8 @@ PS1=$PS1_mono
 # don't use it. bash-4.1.5(1) works (bash-3.2.33(1) doesn't).
 PS1_color='\[\e]0;\w\a\]\[\e[32m\]\u@\h:\[\e[33m\]\w\[\e[32m\]$(__git_ps1 " (%s)")\[\e[0m\] $ '
 PS1_color_n='\[\e]0;\w\a\]\[\e[32m\]\u@\h:\[\e[33m\]\w\[\e[32m\]$(__git_ps1 " (%s)")\[\e[0m\]\n$ '
-if [ "$TERM" = "xterm" -o "$TERM" = "rxvt-cygwin-native" ] ; then
+# =~ is regex and excepts xterm-256color etc.
+if [[ "$TERM" =~ "xterm" || "$TERM" = "rxvt-cygwin-native" ]] ; then
     [ "${BASH_VERSINFO[0]}" -ge "4" ] && PS1=$PS1_color
     # comment out next line to get monochrome propmt on bash-3.
     [ "${BASH_VERSINFO[0]}" -le "3" ] && PS1=$PS1_color_n
@@ -158,6 +166,17 @@ shopt -q -s cmdhist
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=10000
 HISTFILESIZE=20000
+HISTTIMEFORMAT="[%F %T] "
+
+# auto pager (avoid plain "history" kills $HISTSIZE lines of terminal history)
+function history()
+{
+  if [ "$@" ] ; then
+    command history "$@"
+  else
+    command history | less
+  fi
+}
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -165,8 +184,6 @@ shopt -s checkwinsize
 
 # Turn on the extended pattern matching features
 # shopt -q -s extglob
-
-#export LANG=de_DE.ISO-8859-1
 
 
 #
@@ -201,6 +218,9 @@ fi
 if ! git rev-list --count HEAD >/dev/null 2>&1 ; then
     GIT_PS1_SHOWUPSTREAM="$GIT_PS1_SHOWUPSTREAM legacy"
 fi
+
+# export NVM_DIR="/net/dehecnas1/Homes/sdettmer/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
 umask 002
 # http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1

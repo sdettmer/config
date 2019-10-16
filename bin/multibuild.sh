@@ -9,17 +9,35 @@
 # cd build
 # rm */multibuild.info.tmp ; rmdir *
 
+# TODO
+# - if started in src without parameters, better build all below build?
+# - really good idea to start multibuild multiple times?
+# - when started in build/CONFIGNAME with -n "*", it will still use
+#   -p -t -b and thus not build all names --> using one selector
+#   removes others? e.g. when -n specified, don't use -t...?
+#   OR auto-filter only with -n (never use -t... from multibuild.info),
+#   -n is unique and sufficient anyway
+# - per default (no args): "update" modes
+#   - update all existing ("run for all below build/")
+#   - update the one that built latest ("rebuilt just the very last)
+#   - update all that were built with last call ("re-run with last args")
+# - at least -d | -D should be "merged" (e.g. with -n) to allow
+#   things like "rebuild the last, but now with DLU files"
 set -e
 
 workingdir=$(pwd)
 #echo "in $workingdir"
 
 # If invoked with any filter option, do not try any multibuild.info.
+# RTC-232409: calling "multibuild.sh $ARGS VERBOSE=1" (like make)
+# This little loop handles "-n VERBOSE=1 pismdtETP" incorrectly (no error)
 tryinfo="1"
-declare -a args=($@)
-for arg in "${args[@]}" ; do
+declare -a args=()
+for arg in "$@" ; do
     case $arg in
-        -n|-t|-b|-p) tryinfo="" ;;
+        -n|-t|-b|-p) tryinfo="" ; args+=($arg);;
+        VERBOSE=?*)  export VERBOSE="1";;
+        *)           args+=($arg);;
     esac
 done
 
@@ -28,6 +46,7 @@ useinfo()
 {
     echo "Using $multibuildinfo"
     . "${multibuildinfo}"
+    # very old tisc-src versions had multibuild.info without $multibuild.
     [ "${multibuild}" ] || multibuild="$topsrc/vobs/tisc_ccu-c/load/bld/multibuild.sh"
     ${multibuild} "$@" "$multibuildinfo"
 }
@@ -40,7 +59,7 @@ multimode=""
 for multibuildinfo in $(pwd)/*/multibuild.info ; do
   if [ -e "$multibuildinfo" -a "$tryinfo" ] ; then
       multimode=1
-      useinfo "$@"
+      useinfo "$args"
   fi
 done
 [ "$multimode" ] && exit 0
@@ -56,7 +75,7 @@ while [ ${workingdir#*vobs} ] ; do
     # If we have multibuild.info (and no parameters), use its parameters
     if [ -e "${workingdir}/multibuild.info" -a "$tryinfo" ] ; then
         multibuildinfo="${workingdir}/multibuild.info"
-        useinfo "$@"
+        useinfo ${args[@]}
         exit 0
     fi
     workingdir=${workingdir%/*}
@@ -64,11 +83,19 @@ while [ ${workingdir#*vobs} ] ; do
     # Maybe we found it as sibling:
     [ -d "${workingdir}/vobs" ] && workingdir="${workingdir}/vobs"
 done
-multibuild="$workingdir/tisc_ccu-c/load/bld/multibuild.sh"
+
+if [ -x "$workingdir/twcs_wcac/load/bld/multibuild.sh" ] ; then
+  multibuild="$workingdir/twcs_wcac/load/bld/multibuild.sh"
+elif [ -x "$workingdir/tisc_ccu-c/load/bld/multibuild.sh" ] ; then
+  multibuild="$workingdir/tisc_ccu-c/load/bld/multibuild.sh"
+else
+  echo "No multibuild.sh found below $workingdir" >&2
+  exit 2
+fi
 #echo multibuild=$multibuild
 
 # exec does the error handling here (gives e.g. "No such file or directory")
-exec $multibuild "$@"
+exec $multibuild ${args[@]}
 echo "Failed to execute multibuild" >&2
 exit 2
 

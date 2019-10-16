@@ -3,6 +3,8 @@ set pagination off
 set history save
 set history size 20000
 
+add-auto-load-safe-path /opt/tcms/localrepository/
+
 define show_clog
   if $is_show_clog && clogStaticLogBuffer_ != 0 && clogStaticLogBuffer_[0] != 0
     printf "%s", clogStaticLogBuffer_

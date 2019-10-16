@@ -63,7 +63,7 @@ for dir in "$@" ; do
             # echo "DEBUG: continue?" ; read
             $par2 c -B"$dir" -v -a "$arcname" -s128000 -rm"$rm" -n"$n" -- \
                "${files[@]}"
-            parsize=$(du -csm *par2|tail -1 |cut -f 1)
+            parsize=$(du -csm "$dir"/*par2|tail -1 |cut -f 1)
             echo "Created $dir ($parsize MB for ${#files[*]} files)"
             echo "(done   at $(date))"
        fi
