@@ -122,6 +122,10 @@ fi
 #   ssh-agent, except it leaves the key storage to Pageant.
 #   TODO we might need to kill agent somewhen and maybe just use
 #   one for all
+# Warn as workaround for uninstalled cygwin file still present
+if [ -e /usr/bin/gnome-keyring-daemon.exe ] ; then
+  echo "Warning, gnome-keyring-daemon.exe exists and will break SSH" >&2
+fi
 if [ -z "$SSH_AUTH_SOCK" ] && type ssh-pageant >/dev/null 2>&1 ; then
   eval $(ssh-pageant -q)
 fi
