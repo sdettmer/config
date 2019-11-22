@@ -849,6 +849,7 @@ __git_list_porcelain_commands ()
 	for i in "help" $__git_all_commands
 	do
 		case $i in
+		merge-ff) echo $i;;
 		*--*)             : helper pattern;;
 		applymbox)        : ask gittus;;
 		applypatch)       : ask gittus;;
@@ -1660,6 +1661,11 @@ _git_merge ()
 		return
 	esac
 	__gitcomp "$(__git_refs)"
+}
+
+_git_merge_ff ()
+{
+	_git_merge
 }
 
 _git_mergetool ()
