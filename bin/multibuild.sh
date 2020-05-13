@@ -71,7 +71,7 @@ done
 
 # try to find "vobs" directory in current working directory:
 # remove last directory until it ends with 'vobs', e.g.
-while [ ${workingdir#*vobs} ] ; do
+while [ ${workingdir##*vobs} ] ; do
     # If we have multibuild.info (and no parameters), use its parameters
     if [ -e "${workingdir}/multibuild.info" -a "$tryinfo" ] ; then
         multibuildinfo="${workingdir}/multibuild.info"

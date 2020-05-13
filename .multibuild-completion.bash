@@ -90,5 +90,5 @@ complete -F _multibuild multibuild.sh
 # (This) completion does not work with alias (it internally would call mb).
 #  alias mb=multibuild.sh
 if [ -x ~/bin/mb ] ; then
-  test -e ~/.multibuild-completion.bash && complete -F _multibuild mb
+  complete -F _multibuild mb
 fi
