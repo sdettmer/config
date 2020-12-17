@@ -75,6 +75,14 @@ while [ ${workingdir##*vobs} ] ; do
         useinfo "$@"
         exit 0
     fi
+    # If we have no multibuild.info (and no parameters),
+    # but multibuild.info.tmp, use its parameters (to avoid
+    # rebuilding all instead of one if canceled by user)
+    if [ -e "${workingdir}/multibuild.info.tmp" -a "$tryinfo" ] ; then
+        multibuildinfo="${workingdir}/multibuild.info.tmp"
+        useinfo "$@"
+        exit 0
+    fi
     workingdir=${workingdir%/*}
     #echo workingdir=$workingdir
     # Maybe we found it as sibling:
