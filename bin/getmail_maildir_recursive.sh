@@ -35,8 +35,10 @@ process()
             files=$((files+1))
             path=${emlfile%/*}
             file=${emlfile##*/}
-            printf "%3d%% in %s:%s to %s\n" \
-              "$((100*$files/$total))" "$path" "$file" "$outdir/$path"
+            if [ $((files % 37)) = 0 ] ; then
+                printf "%3d%% in %s:%s to %s\n" \
+                  "$((100*$files/$total))" "$path" "$file" "$outdir/$path"
+            fi
             #echo "   $emlfile"
             if [ ! -d "$outdir/$path/cur" ] ; then
                 echo "Creating new Maildir folder $outdir/$path"
