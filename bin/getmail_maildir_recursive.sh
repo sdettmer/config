@@ -30,20 +30,49 @@ process()
     files=0
     total="$(find "$indir" -iname '*.eml' -print | wc -l)"
     echo "Will import $total files."
+    echo "Deleting todo files..."
+    find "$outdir/" -iname '.todo-std-import' -print0 | \
+        xargs --null --no-run-if-empty rm
+    echo "Creating todo files..."
     find "$indir" -iname '*.eml' -print0 |
         while IFS= read -r -d '' emlfile ; do
             files=$((files+1))
             path=${emlfile%/*}
             file=${emlfile##*/}
-            printf "%3d%% in %s:%s to %s\n" \
-              "$((100*$files/$total))" "$path" "$file" "$outdir/$path"
+            if [ $((files % 37)) = 0 ] ; then
+                printf "%3d%% in %s:%s to %s\n" \
+                  "$((100*$files/$total))" "$path" "$file" "$outdir/$path"
+            fi
             #echo "   $emlfile"
             if [ ! -d "$outdir/$path/cur" ] ; then
                 echo "Creating new Maildir folder $outdir/$path"
                 maildirmake.dovecot "$outdir/$path/"
             fi
-            getmail_maildir "$outdir/$path/" < "$emlfile"
+            #getmail_maildir "$outdir/$path/" < "$emlfile"
+            echo "$emlfile" >> "$outdir/$path/.todo-std-import"
         done
+
+    files="$(find "$outdir/" -iname '.todo-std-import' -print | xargs cat | wc -l)"
+    total="$(find "$outdir/" -iname '.todo-std-import' -print | wc -l)"
+    echo "Procssing $files from $total todo files..."
+    files=0
+    find "$outdir/" -iname '.todo-std-import' -print0 |
+        while IFS= read -r -d '' todofile ; do
+            echo "todofile = $todofile"
+            files=$((files+1))
+            path=${todofile%/*}
+            file=${todofile##*/}
+            if [ $((files % 1)) = 0 ] ; then
+                printf "%3d%% in %s:%s to %s\n" \
+                  "$((100*$files/$total))" "$path" "$file" "$path"
+            fi
+            echo "cat $todofile | xargs cat | getmail_maildir $path/"
+            cat "$todofile" | xargs cat | getmail_maildir "$path/"
+        done
+
+    echo "Deleting todo files..."
+    find "$outdir/" -iname '.todo-std-import' -print0 | \
+        xargs --null --no-run-if-empty rm
 
     got="$(find "$outdir" -type f -print | wc -l)"
     echo "Having $got from $total files."
