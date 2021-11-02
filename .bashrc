@@ -35,6 +35,7 @@ test -e ~/.git-completion.bash && . ~/.git-completion.bash
 test -e ~/.ct-completion.bash && . ~/.ct-completion.bash
 
 test -e ~/.multibuild-completion.bash && . ~/.multibuild-completion.bash
+test -e ~/.bashrc.local && . ~/.bashrc.local
 
 # standard environment
 test -z "${LESS/*-R*/}" || export LESS="$LESS -R"
