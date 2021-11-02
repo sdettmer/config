@@ -29,15 +29,12 @@ workingdir=$(pwd)
 #echo "in $workingdir"
 
 # If invoked with any filter option, do not try any multibuild.info.
-# RTC-232409: calling "multibuild.sh $ARGS VERBOSE=1" (like make)
-# This little loop handles "-n VERBOSE=1 pismdtETP" incorrectly (no error)
+# Note: RTC-232409 ("VERBOSE") is fully handled by multibuild itself.
 tryinfo="1"
-declare -a args=()
-for arg in "$@" ; do
+declare -a args=($@)
+for arg in "${args[@]}" ; do
     case $arg in
-        -n|-t|-b|-p) tryinfo="" ; args+=($arg);;
-        VERBOSE=?*)  export VERBOSE="1";;
-        *)           args+=($arg);;
+        -n|-t|-b|-p) tryinfo="" ;;
     esac
 done
 
@@ -59,7 +56,7 @@ multimode=""
 for multibuildinfo in $(pwd)/*/multibuild.info ; do
   if [ -e "$multibuildinfo" -a "$tryinfo" ] ; then
       multimode=1
-      useinfo "$args"
+      useinfo "$@"
   fi
 done
 [ "$multimode" ] && exit 0
@@ -71,11 +68,19 @@ done
 
 # try to find "vobs" directory in current working directory:
 # remove last directory until it ends with 'vobs', e.g.
-while [ ${workingdir#*vobs} ] ; do
+while [ ${workingdir##*vobs} ] ; do
     # If we have multibuild.info (and no parameters), use its parameters
     if [ -e "${workingdir}/multibuild.info" -a "$tryinfo" ] ; then
         multibuildinfo="${workingdir}/multibuild.info"
-        useinfo ${args[@]}
+        useinfo "$@"
+        exit 0
+    fi
+    # If we have no multibuild.info (and no parameters),
+    # but multibuild.info.tmp, use its parameters (to avoid
+    # rebuilding all instead of one if canceled by user)
+    if [ -e "${workingdir}/multibuild.info.tmp" -a "$tryinfo" ] ; then
+        multibuildinfo="${workingdir}/multibuild.info.tmp"
+        useinfo "$@"
         exit 0
     fi
     workingdir=${workingdir%/*}
@@ -95,7 +100,7 @@ fi
 #echo multibuild=$multibuild
 
 # exec does the error handling here (gives e.g. "No such file or directory")
-exec $multibuild ${args[@]}
+exec $multibuild "$@"
 echo "Failed to execute multibuild" >&2
 exit 2
 

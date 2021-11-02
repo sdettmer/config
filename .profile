@@ -65,9 +65,13 @@ test -z "$XAUTHORITY" && export XAUTHORITY=~/.Xauthority
 #export LC_ALL=de_DE.UTF-8
 #export LANG=de_DE.ISO-8859-1
 # UTF8 console (how to autodetect?):
-export LC_ALL=de_DE.UTF-8
-export LANG=de_DE.UTF-8
-export LANGUAGE=de_DE.UTF-8
+#export LC_ALL=de_DE.UTF-8
+#export LANG=de_DE.UTF-8
+#export LANGUAGE=de_DE.UTF-8
+# UTF8 EN console:
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US.UTF-8
 
 # breaks mutt, so don't use xterm-256color
 #   test "$TERM" = "xterm" && export TERM=xterm-256color

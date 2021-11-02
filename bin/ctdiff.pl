@@ -32,6 +32,7 @@ if ($arg_file) {
     # use all checked out files
     # @files = `cleartool lsco -avobs -me -cview -s`;
     my $CLEARCASE_AVOBS=`cleartool catcs | grep -o "/vobs/[[:alpha:]|_|0-9-]*"| sort -u | tr "\\n" ":" | sed -e "s/:\$//"`;
+    if (!$CLEARCASE_AVOBS) { $CLEARCASE_AVOBS = "/vobs/TcmsGenSw:/vobs/tisc_ccu-c"; }
     @files = `CLEARCASE_AVOBS=$CLEARCASE_AVOBS; cleartool lsco -avobs -me -cview -s`;
     if($? != 0) { dodie("$me: failed to determine checked out files."); }
     if (@files) {

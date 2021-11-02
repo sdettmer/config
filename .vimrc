@@ -799,8 +799,9 @@ au BufNewFile,BufRead *nomad/*src*     call NomadSrcMode()
 au BufNewFile,BufRead *nomad/*ini  setf nomadini
 au BufNewFile,BufRead *nomad/*log  setf nomadlog
 " BT PIS
-au BufNewFile,BufRead /vobs*      call PisSrcMode()
-au BufNewFile,BufRead vobs/PIS*   call PisSrcMode()
+" au BufNewFile,BufRead /vobs*      call PisSrcMode()
+"au BufNewFile,BufRead vobs/PIS*   call PisSrcMode()
+au BufNewFile,BufRead vobs/*      call PisSrcMode()
 
 au BufNewFile,BufRead Makefile*   setl tw=0 noet nolist ts=8 sts=0
 au BufNewFile,BufRead *.utf8      setl fileencoding=utf8

@@ -33,6 +33,7 @@ test -e ~/.alias_all && . ~/.alias_all
 test -e ~/.alias && . ~/.alias
 test -e ~/.git-completion.bash && . ~/.git-completion.bash
 test -e ~/.ct-completion.bash && . ~/.ct-completion.bash
+test -e ~/.vboxmanage-completion.bash && . ~/.vboxmanage-completion.bash
 
 test -e ~/.multibuild-completion.bash && . ~/.multibuild-completion.bash
 test -e ~/.bashrc.local && . ~/.bashrc.local
@@ -227,3 +228,9 @@ umask 002
 # http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
 #   Currency sign: "¤"
 # vim: et sw=4 ts=4 tw=75:
+
+PATH="/home/sdettmer/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="/home/sdettmer/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/home/sdettmer/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/home/sdettmer/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/home/sdettmer/perl5"; export PERL_MM_OPT;

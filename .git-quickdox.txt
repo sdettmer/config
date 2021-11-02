@@ -23,6 +23,8 @@ git config --global pull.ff only # GIT 2.0+
 # ? git config --global alias.pl 'pull --ff-only'
 # ? git config --global branch.autosetup.merge false
 # or just get used to use git fetch or get used to type "git pull --ff-only"
+for ((l=1;l<10;l++)) ; do git config --global alias.l$l "log --oneline -$l" ; done
+for ((l=1;l<10;l++)) ; do git config --global alias.ls$l "log --oneline -$l --stat" ; done
 
 
 # Repos

@@ -24,6 +24,11 @@ alias ctlsco='CLEARCASE_AVOBS=`cleartool catcs | grep -o "/vobs/[[:alpha:]|_|0-9
 
 # alias devtags='ctags -eR --c-kinds=+px vobs/'
 alias devtags='ctags -eR vobs/'
+if [ -d "/local/users/sdettmer/work" ] ; then
+  alias cdw='cd /local/users/sdettmer/work/'
+else
+  alias cdw='cd ~/work/'
+fi
 
 # testing
 test -x /tmp/steffen-build/mutt-1.5.21/mutt && \
