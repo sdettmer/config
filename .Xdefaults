@@ -55,7 +55,7 @@ xterm*jumpScroll:	on
 !xterm*font:	-*-*-*-*-*-*-*-*-*-*-*-*-iso8859-15
 xterm*ScrollBar: on
 xterm*SaveLines: 10000
-! xterm*VisualBell: true
+xterm*VisualBell: true
 xterm.eightBitOutput:	true
 
 Scrollbar.JumpCursor:	True

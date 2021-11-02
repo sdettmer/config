@@ -343,5 +343,5 @@ if ($ARGV[0] eq "-l" || $ARGV[1] eq "-l" || $ARGV[2] eq "-l") {
     print "\n";
 
 }
-print "0m";
+print "[0m";
 exit;
