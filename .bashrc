@@ -190,6 +190,9 @@ fi
 # export NVM_DIR="/net/dehecnas1/Homes/sdettmer/.nvm"
 # [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
+# Bash 5.1 - bracketed-paste now on by default, so let's disable it:
+[[ ${SHELLOPTS} =~ (vi|emacs) ]] && bind 'set enable-bracketed-paste off'
+
 umask 002
 # http://vim.wikia.com/wiki/Forcing_UTF-8_Vim_to_read_Latin1_as_Latin1
 #   Currency sign: "¤"
