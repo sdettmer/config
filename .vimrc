@@ -1615,11 +1615,20 @@ autocmd BufReadPost server.log* :setf gflog
 "autocmd BufReadPost *.log :setl nowrap
 autocmd BufReadPost server.log* :setl wrap
 autocmd BufReadPost pis.log,*HePisTestAppl*.log,*.modTest*.log :setf helog
+autocmd BufReadPost apps.tisc-*.log call OnIt()
+autocmd BufReadPost apps.tisc-*.log-* call OnIt()
 " mszlog now is a syntax file (automatically loaded via setf mszlog)
 "so ~/.vim/mszlog.vim
 autocmd BufReadPost *.log :setf mszlog
 "autocmd BufReadPost *.log :setl nowrap
 autocmd BufReadPost *.log :setl wrap
+
+fun! OnIt()
+  call Disable_overlen_hi()
+  :colorscheme torte
+  :setf onit
+  :set nowrap
+endfun
 
 
 " make clogEnter and clogLeave around the current C function
@@ -1718,7 +1727,7 @@ fun! Enable_overlen_hi()
     endif
   elseif v:version >= 600
     "highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-    "highlight OverLength ctermbg=darkblue guibg=#f0f0f0
+    highlight OverLength ctermbg=darkblue guibg=#f0f0f0
     highlight OverLength guibg=#f0f0f0
     "match OverLength /\%81v.*/
     if exists("b:std_nocolorcol") && b:std_nocolorcol
