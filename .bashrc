@@ -28,6 +28,28 @@
 test -z "$PROFILEREAD" && test -z "$PROFILEONCE" &&
     { PROFILEONCE=true ; . /etc/profile ; }
 
+# early WSL detection
+# 5.10.16.3-microsoft-standard-WSL2
+if [[ $(uname -r) =~ "WSL2" ]] ; then
+    # Auto-detect DISPLAY by taking IP address from "DHCP" config
+    if [[ $DISPLAY = "" ]] ; then
+        # export WINDOWS_HOST=$(cat /etc/resolv.conf | grep nameserver | cut -d ' ' -f 2)
+        export WINDOWS_HOST=$(ip route show default|grep "default via"|cut -d ' ' -f 3)
+        export DISPLAY=$WINDOWS_HOST:0
+    fi
+    if [[ $(hostname -d) = "next.loc" ]] ; then
+        domain="bt.bombardier.net"
+    else
+        domain="$(hostname -d)"
+    fi
+    if [[ "$domain" ]] ; then
+        if ! grep $domain /etc/resolv.conf 2>/dev/null ; then
+            echo "search $domain" | sudo tee -a /etc/resolv.conf >/dev/null
+        fi
+    fi
+fi
+
+
 # Source helpers
 test -e ~/.alias_all && . ~/.alias_all
 test -e ~/.alias && . ~/.alias
